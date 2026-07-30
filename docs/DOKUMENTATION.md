@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-07-30 · **Version:** v56 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-07-30 · **Version:** v57 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -330,6 +330,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v52 | Leitlinien-Inhalte in einer Box, Genkarten-Umbrüche, Interaktionsknopf-Hover (`transform-box:fill-box`) |
 | v55 | Echtes PharmCAT-Genprofil (23 Gene) statt Demo-Genotypen, vierter Status „Offen", Leitlinien-Matrix mit Mehr-Gen-Logik, Abdeckungsblock im Arztbericht |
 | v56 | Umstellung auf Hristos PharmCAT-3.2.0-Lauf (40 Proben), Reporter-Stufe mit 168 CPIC/DPWG/FDA-Empfehlungen, Ampel aus PharmCATs eigenen Flags, Probe NA17454 |
+| v57 | Liste alphabetisch, Sub-Bewertungen aus dem Implikationstext statt aus dem Prodrug-Schalter, alle 611 gelesenen Varianten unter „Deine Gene" |
 
 
 ---
@@ -484,6 +485,48 @@ Stichproben: Codein **ALARM** (alle vier Quellen einig, CPIC *Strong*: „Avoid 
 use because of potential for serious toxicity"), Clopidogrel **OK**
 („use at standard dose (75 mg/day)", CYP2C19 \*1/\*1), Warfarin **ACHTUNG**
 („use 65 % of the standard initial dose").
+
+### Die vier Sub-Bewertungen
+
+Amitriptylin stand auf ALARM, darunter viermal „Normal". Zwei Ursachen, beide behoben:
+
+1. `statusFor` setzte bei einer PharmCAT-Empfehlung `lvl` fest auf 2, und `metrics()`
+   verzweigt über `lvl`. Jetzt kommt `lvl` aus dem Genotyp, auf den sich die Empfehlung
+   bezieht (bei mehreren Genen das am stärksten abweichende).
+2. Der Prodrug-Schalter aus `All Drugs V12` reicht nicht. Amitriptylin und Codein sind
+   beide CYP2D6-ultraschnell, aber bei Codein entsteht **mehr** Wirkstoff (Morphin →
+   Toxizität), bei Amitriptylin **weniger** (Wirkungsverlust). Der Unterschied steht nur
+   im Implikationstext, nicht im Genprofil.
+
+Die Boxen werden deshalb aus dem **Implikationstext der maßgeblichen Annotation**
+abgeleitet — der, die auch die Ampel bestimmt, nicht aus allen Quellen zusammengemischt.
+Die Texte von CPIC und DPWG sind formelhaft (`less active`, `lower plasma`,
+`increased formation`, `higher risk`, `typical risk`), erkannt wird an Wortgruppen.
+Was der Text nicht hergibt, wird **weggelassen** statt grau angezeigt; die Box
+**Handlung** (aus den Flags) und **Grundlage** (der Genotyp) stehen immer.
+
+Nebenbefund: bei ultraschnellem Abbau stand vorher generell „Wirkung: Verstärkt".
+Das gilt nur für Prodrugs — ein normaler Wirkstoff ist dann zu schnell weg und wirkt
+**zu schwach**. War ein alter Fehler in `metrics()`.
+
+Offene Feinheit: `alternateDrugAvailable` setzt PharmCAT auch bei bedingten Formulierungen
+(Fluvastatin: „≤40 mg/Tag; *falls* mehr nötig, Alternative erwägen"). Die Karte zeigt
+dann ALARM, obwohl Wirkung und Risiko normal sind. Der Wortlaut steht darunter.
+
+### Reihenfolge in der Liste
+
+Alphabetisch, nicht mehr nach Schweregrad. Sonst sieht man auf der ersten Seite nur
+ALARM und bekommt kein Gefühl für das Verhältnis. Der Arztbericht behält die Sortierung
+nach Dringlichkeit — dort ist genau das der Zweck.
+
+### Die 611 Einzelvarianten
+
+Unter „Deine Gene" stehen alle gelesenen Positionen, je Gen aufklappbar, mit rsID,
+Genotyp und Link zu dbSNP. Sie ergeben für sich genommen keinen Metabolisierertyp —
+sie sind die Bausteine, aus denen der Diplotyp zusammengesetzt wird. Aufgeführt, weil
+sie belegen, was geprüft wurde. Verteilung: G6PD 146, RYR1 90, DPYD 78, CFTR 61,
+CYP2C9 52, TPMT 38, CYP2C19 29, SLCO1B1 25, CYP2B6 24, NAT2 24, CYP3A4 23, CYP3A5 5,
+CYP4F2 4, UGT1A1 4, NUDT15 3, CACNA1S 2, ABCG2 1, IFNL3 1, VKORC1 1.
 
 ### Vierter Zustand „Offen"
 
