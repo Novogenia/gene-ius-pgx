@@ -1,6 +1,6 @@
-# GENE-IUS PGx — Projektdokumentation
+﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-07-30 · **Version:** v55 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-07-30 · **Version:** v56 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -329,136 +329,179 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v49 | „Alternativen" ehrlich umbenannt, ATC-Pfad sichtbar, Sammelgruppen gekennzeichnet |
 | v52 | Leitlinien-Inhalte in einer Box, Genkarten-Umbrüche, Interaktionsknopf-Hover (`transform-box:fill-box`) |
 | v55 | Echtes PharmCAT-Genprofil (23 Gene) statt Demo-Genotypen, vierter Status „Offen", Leitlinien-Matrix mit Mehr-Gen-Logik, Abdeckungsblock im Arztbericht |
+| v56 | Umstellung auf Hristos PharmCAT-3.2.0-Lauf (40 Proben), Reporter-Stufe mit 168 CPIC/DPWG/FDA-Empfehlungen, Ampel aus PharmCATs eigenen Flags, Probe NA17454 |
 
 
 ---
 
-## 11. PharmCAT als Quelle der Gendaten (ab v55)
+## 11. PharmCAT als Quelle der Gendaten (ab v56)
 
 ### Woher die Daten kommen
 
-Drei Dateien aus dem Download-Ordner:
+Quelle ist Hristos Validierungslauf, lokal über die OneDrive-Synchronisierung von
+`sites/IT`:
+
+```
+Novogenia GmbH\IT - Dokumente\General\PharmCAT Validation 20260730\
+```
 
 | Datei | Inhalt |
 |---|---|
-| `pharmcat.match (1).json` | gerufene und fehlende Positionen je Gen, Diplotyp-Kandidaten |
-| `pharmcat.phenotype (1).json` | Diplotyp, Phänotyp, Aktivitätsscore, Allelfunktionen je Gen |
-| `pharmcat.report (1).tsv` | dieselbe Information flach, nur zur Gegenkontrolle verwendet |
+| `pharmcat-v3.2.0-40-sample-assay-enriched-reports.tar.gz` | 11,7 MB → 182 MB, 407 Dateien, alle 40 Proben |
+| `cohort_summary.json` | pro Probe: Sentrix-ID, S3-Quelle, CYP2D6-Outside-Call, fehlende Positionen |
+| `README.md` | Hristos Protokoll: Assay-Overlay, SHA-256-Nachweise, Vorgehen |
+| `cyp2d6_outside_call_provenance.tsv` | Herkunft der fünf GeT-RM/Coriell-Diplotypen |
 
-`build_pharmcat.py` erzeugt daraus `pharmcat_profil.js` (49 kB, rein ASCII),
-`resplice.py` tauscht den Block zwischen den Markern
-`/* ===== BEGIN PHARMCAT PROFIL … */` … `END` in die HTML.
+Pro Probe liegen im Archiv `<Probe>.match.json`, `.phenotype.json`,
+**`.report.json` (1,86 MB)**, `.report.html`, `.report.tsv` und die vorverarbeitete VCF.
 
-**Wichtig:** `relatedDrugs` ist in dieser `phenotype.json` überall leer und es gibt keine
-`drugReports` — der Reporter-Schritt von PharmCAT wurde nicht gelaufen. Die
-Wirkstoff-Bewertungen kommen deshalb aus Novogenias eigener Matrix, nicht von PharmCAT.
+**Die `.report.json` ist der entscheidende Unterschied** — das ist die Reporter-Stufe.
+PharmCAT läuft in drei Schritten: Named Allele Matcher → Phenotyper → **Reporter**.
+Nur der Reporter erzeugt Wirkstoff-Empfehlungen. In den Dateien, die zuerst vorlagen,
+fehlte er (`relatedDrugs` überall leer, kein `drugReports`), deshalb kam die erste
+Fassung ohne PharmCAT-Empfehlungen aus. Wer künftig nur die Phenotyper-Ausgabe
+bekommt: der Reporter braucht keinen Neulauf, `pharmcat -reporter -ri <phenotype.json>
+-reporterJson` genügt.
 
-### Die Probe
+### Erzeugung
 
-`sampleId 208491470165_R06C01` — Format eines **Illumina-BeadChip-Barcodes** mit Position,
-also Array-Genotypisierung, keine Sequenzierung. Referenz GRCh38.p14, PharmCAT 2.0.0,
-Allel-Definitionen ClinPGx 2025-11-05, Auswertung vom 2026-02-02.
+```
+python 20_entpacken.py            # Archiv entpacken + Kohortenübersicht
+python build_pharmcat.py NA17454  # -> pharmcat_profil.js
+python resplice.py                # Block zwischen die Marker in die HTML
+```
 
-**522 von 1.201 erwarteten Positionen sind vorhanden = 43,5 % Abdeckung.**
-204 VCF-Warnungen, alle vom Typ `Ignoring: no call (./.)`.
+Der Probenname ist Argument — jede der 40 Proben lässt sich einsetzen.
 
-### Ergebnis je Gen
+### Die gewählte Probe
 
-| Zustand | Anzahl | Gene |
+**NA17454**, Sentrix `208475230023_R11C02`, GRCh38.p14, PharmCAT 3.2.0,
+Allel-Definitionen ClinPGx `2026-02-09-10-28`.
+
+Ein **öffentliches Coriell-Referenzgenom**, kein Kunde — damit ist die App auch in
+einem öffentlichen Repository unbedenklich. Von den 40 Proben sind `HG*` und `NA*`
+Referenzgenome (GIAB/Coriell), `N8A*`, `XA25*`, `XH1M*`, `XT2M*` echte Kunden.
+Für Demos ausschließlich Referenzgenome verwenden.
+
+Gewählt wurde NA17454, weil sie die meisten auffälligen Gene hat (8) und einen
+CYP2D6-Outside-Call:
+
+| Gen | Diplotyp | Phänotyp |
 |---|---|---|
-| eindeutig bestimmt | 14 | CACNA1S, CFTR, CYP2B6, CYP2C19, CYP2C9, CYP3A4, CYP3A5, DPYD, G6PD, NUDT15, RYR1, SLCO1B1, TPMT, UGT1A1 |
-| mehrdeutig | 2 | CYP2D6 (30 Diplotyp-Kandidaten), NAT2 (88) |
-| kein Ergebnis | 7 | ABCG2, CYP4F2, HLA-A, HLA-B, IFNL3, MT-RNR1, VKORC1 |
+| ABCG2 | rs2231142 T/T | Poor Function |
+| CYP2B6 | \*1/\*6 | Intermediär |
+| CYP2C9 | \*1/\*8 | Intermediär (AS 1,5) |
+| **CYP2D6** | **\*1x2/\*2x2** | **Ultraschnell (AS 4,0)** — Outside-Call |
+| CYP3A5 | \*1/\*3 | Intermediär |
+| NAT2 | | Intermediär |
 
-Auffällig ist genau **ein** Gen: **CYP3A5 \*3/\*3 = Langsamer Metabolisierer**. Das ist der
-in Europa häufigste CYP3A5-Genotyp; CPIC sieht dafür bei Tacrolimus die **Standarddosis**
-vor. Alle übrigen bestimmten Gene sind normal.
+611 Positionen gelesen, 437 fehlend = **58 % Abdeckung**, 27 VCF-Warnungen.
 
-### Abgleich mit `Pharmgkb drug recommendations V4.xlsx`
+### Was die Kohorte über die Datenqualität sagt
 
-Die Datei enthält **103 Zeilen für 43 Wirkstoffe**. Aufbau, den man kennen muss:
-
-- 89 Zeilen mit einem Gen, **14 mit zwei Genen** (alle CYP2C19 + CYP2D6, alle Amitriptylin).
-  Eine Zwei-Gen-Zeile gilt nur, wenn **beide** Phänotypen passen.
-- Die unbenannten Spalten ab Index 15 enthalten den **Twig/Jinja-Template-Code** des
-  Report Builders, z. B. `{% if CYP2C19Metabolizer == 'ULTRARAPID' and CYP2D6Metabolizer == 'POOR' %}`.
-  Daraus wird die Ampelfarbe gezogen: `BG_COLOR_DRUG_RED` → ALARM,
-  `BG_COLOR_DRUG_YELLOW` → ACHTUNG. **Alle 103 Zeilen haben eine Farbe: 83 rot, 20 gelb.**
-  Damit kommt der Schweregrad aus der Quelle und nicht aus einer Heuristik.
-- Vokabular: `EXTENSIVE` = normal (NM), `ULTRARAPID` = UM, `INTERMEDIATE` = IM, `POOR` = PM.
-  Für Transporter schreibt das Spreadsheet ebenfalls POOR/INTERMEDIATE, PharmCAT dagegen
-  `Poor Function`/`Decreased Function` — Äquivalenztabelle nötig (`PAEQ` in der App).
-- Drei Sonderformen: **UGT1A1 `*28/*28`** und **VKORC1 `TT`** vergleichen den Diplotyp
-  direkt, nicht den Phänotyp. **Warfarin** hat kein Gen in `GENE(1)`, sondern die
-  Dosisbereiche `0.5-2`, `3-4`, `5-7` mg/Tag — eine Formel aus CYP2C9 + VKORC1, in der
-  App noch nicht umgesetzt.
-- CYP2C9 und DPYD liefern in PharmCAT als `lookupKey` den **Aktivitätsscore** („2.0"),
-  nicht den Phänotyp. Der Phänotyp steht daneben in `phenotypes`. Immer `phenotypes`
-  zuerst lesen, sonst schlägt der Abgleich fehl.
-
-### Und das Ergebnis des Abgleichs
-
-**Keine einzige der 103 Zeilen greift bei dieser Probe.** Aufgeschlüsselt:
-
-| | Zeilen | Grund |
+| Gen | bestimmt | Verteilung |
 |---|---|---|
-| nicht entscheidbar | 54 | CYP2D6 mehrdeutig (46 Zeilen + 14 Zwei-Gen-Zeilen), VKORC1 und HLA-B ohne Ergebnis |
-| trifft nicht zu | 49 | das Gen ist bestimmt und normal — richtig, hier ist keine Anpassung nötig |
-| trifft zu | 0 | — |
+| ABCG2, CACNA1S, CFTR, CYP2B6, CYP2C9, CYP3A5, DPYD, G6PD, NAT2, NUDT15, RYR1, SLCO1B1, TPMT, VKORC1 | 40/40 | |
+| CYP2C19 | 38/40 | Normal 14, Intermediär 11, Rapid 11, Poor 2 |
+| CYP3A4 | 38/40 | Normal 38 |
+| **CYP2D6** | **5/40** | nur über Outside-Calls |
+| UGT1A1 | 17/40 | Indeterminate 23 |
+| CYP4F2, HLA-A, HLA-B, IFNL3, MT-RNR1 | 0/40 | |
 
-Das ist die fachlich richtige Antwort, nicht ein Fehler im Abgleich: das Profil ist
-bis auf CYP3A5 unauffällig, und die zwei Gene, die etwas ergeben hätten, sind nicht rufbar.
+**CYP2D6 ist die einzige echte Lücke, und sie ist bauartbedingt.** PharmCAT 3.2.0 ruft
+CYP2D6 grundsätzlich **nicht** aus VCF-SNP-Genotypen; es akzeptiert nur einen
+Outside-Call. Hristos README nennt den Grund: eine Neun-Locus-Teilpanel reicht nicht
+für Kopienzahl, Strukturvarianten und Tandems. Fünf Proben haben deshalb
+authoritative GeT-RM/Coriell-Calls: NA20296 `*1/*2`, HG01190 `*68+*4/*5`,
+NA17454 `*1x2/*2x2`, NA06989 `*9/*9`, NA18868 `*2/*5`.
 
-**Folge für die Oberfläche:** 2.578 Wirkstoffe grün, **0 gelb, 0 rot**, 119 grau („Offen").
-Die 119 sind die Wirkstoffe, deren Bewertung an CYP2D6, NAT2 oder VKORC1 hängt.
+Bemerkenswert: **CYP3A5 Poor Metabolizer bei 30 von 40** — das ist der in Europa
+häufigste Genotyp und braucht bei Tacrolimus die Standarddosis.
 
-### Eine Lücke im Spreadsheet
+### Korrektur eines früheren Befunds
 
-**CYP3A5 hat nur Zeilen für EXTENSIVE und INTERMEDIATE.** Für **POOR** — also genau Lisas
-Genotyp \*3/\*3 und den häufigsten in Europa — fehlt die Zeile. CPIC hat dafür eine
-Empfehlung (Standarddosis Tacrolimus). Sollte ergänzt werden.
+Eine erste Analyse der drei Dateien aus dem Download-Ordner (PharmCAT 2.0.0-Matcher,
+ältere VCF) ergab, dass mehrere leitlinienrelevante Positionen als `./.` No-Call im
+VCF standen — darunter DPYD \*2A, \*13 und c.2846A>T, NUDT15 \*3, CYP2C19 \*17 und
+VKORC1 rs9923231. Das wäre gefährlich gewesen, weil PharmCAT trotzdem
+„Normaler Metabolisierer" meldet.
 
-### Was diese Probe brauchbar machen würde
+**In den am 2026-07-29 neu erzeugten VCFs sind alle diese Positionen gelesen.**
+Abdeckung 43 % → 58 %, VCF-Warnungen 204 → 27. Der Befund gilt nur für die alte
+Datei; die Pipeline ist bereits repariert. Die Lehre bleibt trotzdem gültig:
+Ein `*1/*1` heißt nur „keine der **gelesenen** Varianten gefunden" — welche gelesen
+wurden, gehört in den Arztbericht.
 
-Vier der neun ungerufenen Gene hängen an **einer einzigen Position**:
+### Wirkstoff-Empfehlungen aus dem Reporter
 
-| Gen | fehlende Position | Bedeutung |
+Für NA17454: **168 Annotationen zu 94 Wirkstoffen**, davon 75 CPIC, 57 DPWG,
+13 FDA-Beipackzettel, 23 FDA-Assoziationen. **80 der 94 lassen sich der
+Wirkstoffdatenbank zuordnen.** Die 14 übrigen (Ivacaftor, Rasburicase, Succinylcholin,
+Tafenoquin, Eliglustat, Mavacamten …) stehen nicht in `All Drugs V12`.
+
+**Die Ampelstufe kommt aus PharmCATs eigenen Feldern, nicht aus einer Textdeutung:**
+
+| Feld | Stufe | Anzahl bei NA17454 |
 |---|---|---|
-| **VKORC1** | `rs9923231` | die Warfarin/Acenocoumarol-Position — Standardmarker auf praktisch jedem Array |
-| ABCG2 | `rs2231142` | Rosuvastatin, Allopurinol |
-| IFNL3 | `rs12979860` | Interferon-Ansprechen |
-| CYP4F2 | `rs2108622` (von 19 fehlenden) | Vitamin-K-Umsatz, Warfarin-Dosis |
+| `alternateDrugAvailable` | ALARM | 44 |
+| `dosingInformation` oder `otherPrescribingGuidance` | ACHTUNG | 37 |
+| keins davon | OK | 87 |
 
-Bei **CYP2D6** sind 84 von 156 Positionen offen; alle 30 Kandidaten enthalten die seltenen
-Allele **\*146** oder **\*148**, die nur an nicht gelesenen Stellen unterscheidbar sind.
-Kopienzahl-Varianten (\*5-Deletion, Duplikationen) sind aus Array-Daten grundsätzlich nicht
-rufbar — dafür braucht es einen Outside-Call (Astrolabe/StellarPGx) oder Sequenzierung.
-HLA-A und HLA-B haben **0 Positionen** im VCF und brauchen ein eigenes Typisierungsverfahren.
+Wichtig: **`classification` taugt nicht als Ampel.** 25 der 38 mit *Strong*
+klassifizierten Annotationen sind Strong-Empfehlungen, *nichts* zu tun
+(„No reason to avoid based on G6PD status", „Initiate therapy with recommended
+starting dose").
 
-### Wie die App damit umgeht
+Bei mehreren Quellen zu einem Wirkstoff gewinnt die schärfste Stufe, bei Gleichstand
+CPIC vor DPWG vor FDA-Label vor FDA-Assoziation. **Alle Zeilen bleiben sichtbar** —
+Quellen können sich unterscheiden, und das wird nicht geglättet.
 
-Vierter Zustand **„Offen"** (`unk`, grau, `RANK` zwischen OK und Achtung):
+### Namenszuordnung — ein Stolperstein
 
-- Gen-Karte zeigt statt eines Metabolisierertyps „Nicht bestimmbar" **plus den Grund**
-  („72 von 156 Stellen gelesen, 30 Kombinationen bleiben offen").
-- Wirkstoff-Bewertung wird offen gelassen, wenn eine Leitlinie existiert, aber ein dafür
-  nötiges Gen nicht bestimmt ist — mit dem konkreten Grund im Text.
-- Eigener Filterknopf, eigene Legendenbox, eigene Kennzahl in der Einleitung.
-- Der Arztbericht beginnt mit einem **Abdeckungsblock**: Probe-ID, Referenz, PharmCAT-Version,
-  522 gelesene Stellen, 43 % Abdeckung, und einer Tabelle mit allen 23 Genen
-  (Diplotyp, Phänotyp, Score, Stellen gelesen/erwartet, Status).
+Die Schlüssel in `DRUGS` sind uneinheitlich: Demo-Wirkstoffe haben deutsche Schlüssel
+(`codein`), die 2.697 aus der Datenbank synthetische (`w127`) mit englischem
+Anzeigenamen. PharmCAT nennt Wirkstoffe englisch und klein.
 
-Grundregel: **kein geratener Genotyp.** Eine sichtbare Lücke ist harmlos, eine erfundene
-Variante nicht — darauf würde eine Dosierung aufgebaut.
+Der erste Versuch, über die Schlüssel zuzuordnen, traf **11 von 94**. Richtig ist ein
+Namensregister (`Anzeigename klein → Schlüssel`) plus `ALIAS` in der Gegenrichtung,
+wobei die deutsche Demo-Karte Vorrang hat, damit sich die Bewertung nicht auf zwei
+Karten desselben Wirkstoffs aufteilt. Verbundpräparate stehen als `a / b / c` und
+werden je Bestandteil aufgelöst. Damit: **80 von 94**.
 
 ### Reihenfolge, in der bewertet wird
 
-1. Leitlinienzeile aus `P_REC`, deren **sämtliche** Genbedingungen zutreffen →
-   Text und Ampelfarbe aus der Quelle.
-2. Es gibt Zeilen, aber ein nötiges Gen ist nicht bestimmbar → **Offen**, mit Grund.
-3. Kein Eintrag in der Matrix → Rückfall auf `recForFallback` aus dem Wirkstoff-Datenblock
-   (nur bei `lvl >= 0` auf beiden Seiten, siehe Fallstrick 11).
-4. Sonst die bisherige Heuristik über Hauptgen + Prodrug-Logik.
+1. **PharmCAT-Empfehlung** für diesen Wirkstoff → Stufe und Wortlaut aus der Quelle.
+2. Novogenias Leitlinienmatrix `P_REC`, wenn **alle** Genbedingungen zutreffen.
+3. Es gibt Zeilen, aber ein nötiges Gen ist nicht bestimmbar → **Offen**, mit Grund.
+4. Rückfall `recForFallback` aus dem Wirkstoff-Datenblock (nur bei `lvl >= 0`
+   auf beiden Seiten, siehe Fallstrick 11).
+5. Sonst die Heuristik über Hauptgen und Prodrug-Logik.
+
+Ergebnis über die 2.697 Wirkstoffe: **2.500 OK, 170 Achtung, 27 Alarm.**
+Zum Vergleich das erste, fast normale Profil: 2.578 OK, 0/0, 119 offen.
+
+Stichproben: Codein **ALARM** (alle vier Quellen einig, CPIC *Strong*: „Avoid codeine
+use because of potential for serious toxicity"), Clopidogrel **OK**
+(„use at standard dose (75 mg/day)", CYP2C19 \*1/\*1), Warfarin **ACHTUNG**
+(„use 65 % of the standard initial dose").
+
+### Vierter Zustand „Offen"
+
+Bleibt unverändert in Kraft (`unk`, grau, `RANK` zwischen OK und Achtung) — er greift
+jetzt seltener, weil mehr Gene bestimmt sind, ist aber für CYP4F2, HLA-A/B, IFNL3,
+MT-RNR1 und UGT1A1 weiterhin nötig.
+
+Grundregel: **kein geratener Genotyp.** Eine sichtbare Lücke ist harmlos, eine
+erfundene Variante nicht — darauf würde eine Dosierung aufgebaut.
+
+### Datentransport — was nicht funktioniert hat
+
+Falls das Archiv nochmal aus SharePoint geholt werden muss: über die
+Browser-Automatisierung geht es **nicht**. Datei-Download über `download.aspx`,
+Blob-Download und POST an `http://localhost` werden alle unterdrückt oder
+abgebrochen, und Konsolenergebnisse werden bei etwa 1 kB abgeschnitten. Der Graph-
+Zugriff lehnt `application/x-gzip` ab. Funktioniert hat: den SharePoint-Ordner in
+OneDrive synchronisieren und lokal lesen.
 
 ---
 
