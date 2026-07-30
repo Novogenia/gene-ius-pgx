@@ -5,6 +5,7 @@
     --ok-t:#0d7d3e; --warn-t:#b06400; --crit-t:#b62220;
     --ok-bg:#EFF9F3; --warn-bg:#FEF6EA; --crit-bg:#FDEFEE;
     --ok-ln:#C4E6D2; --warn-ln:#F3D9AE; --crit-ln:#F2C4C2;
+    --unk:#8E8896; --unk-t:#55505E; --unk-bg:#F3F2F6; --unk-ln:#D9D6E0;
     --ink:#1A1620; --muted:#645D6B; --faint:#948C9B;
     --line:#E7E4EA; --line2:#DCD8E0; --bg:#EFEDF1; --panel:#F7F6F9; --cardw:352px;
     --blue:#1f6fb2;
@@ -202,6 +203,53 @@
   .ibox .iv{margin-top:2px;font-size:13px;font-weight:800;line-height:1.2;letter-spacing:-.01em}
   .t-ok{color:var(--ok-t)}.t-warn{color:var(--warn-t)}.t-crit{color:var(--crit-t)}
   .s-ok{color:var(--ok)}.s-warn{color:var(--warn)}.s-crit{color:var(--crit)}
+  /* ---- vierter Zustand: nicht bestimmbar --------------------------------
+     Wenn eine Genposition nicht gerufen werden kann oder mehrere Diplotypen
+     moeglich bleiben, ist die Aussage weder gruen noch rot. Dafuer gibt es
+     eine eigene, bewusst farblose Stufe. Eine erfundene Sicherheit waere
+     schlimmer als eine sichtbare Luecke. */
+  .s-unk{color:var(--unk)} .t-unk{color:var(--unk-t)}
+  .mchip.b-unk,.pillbadge.b-unk{background:var(--unk-bg);border-color:var(--unk-ln);color:var(--unk-t)}
+  .ibox.b-unk,.genebox.b-unk{background:var(--unk-bg);border-color:var(--unk-ln)}
+  .abox.s-unk{border-color:var(--unk)} .abox.s-unk .ab-h{background:#6B6575}
+  .rgene.s-unk,.rdrug.s-unk,.grow.s-unk,.mrow.s-unk{border-left-color:var(--unk)}
+  .genebox.b-unk .gscale .gs-seg{background:rgba(255,255,255,.82)}
+  .gi-unk{background:var(--unk-bg);color:var(--unk-t)}
+  .bf-unk{background:#77717F} .bf-unk[aria-pressed="true"]{background:#5B5664}
+  .sf-unk{background:#77717F}
+  .hbb.unk{background:#8E8896}
+  .hbk.k-unk{border-left-color:var(--unk)} .hbk.k-unk .hbkn,.hbk.k-unk .hbkl{color:var(--unk-t)}
+  .lg-unk .lgbox{background:#77717F} .lg-unk .lgmore{color:var(--unk-t)}
+  .wsleg.h-unk .lr1,.wsleg.h-unk .lr1 svg{color:var(--unk-t)} .wsleg.h-unk .n{background:var(--unk)}
+/* Abdeckungsblock im Arztbericht: was der Test wirklich lesen konnte */
+  .cov{margin:0 0 18px;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
+  .cov-h{display:flex;align-items:center;gap:9px;padding:11px 15px;background:var(--plum-050);
+    border-bottom:1px solid var(--line);font-size:13px;font-weight:800;color:var(--plum)}
+  .cov-h svg{flex:none;color:var(--plum)}
+  .cov-b{padding:13px 15px 15px}
+  .cov-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin-bottom:12px}
+  .cov-k{border:1px solid var(--line);border-radius:11px;padding:9px 11px;background:var(--panel)}
+  .cov-k .n{display:block;font-size:21px;font-weight:800;letter-spacing:-.03em;line-height:1.1;
+    font-variant-numeric:tabular-nums;color:var(--ink)}
+  .cov-k .l{display:block;font-size:10.5px;font-weight:700;color:var(--muted);line-height:1.35;margin-top:3px}
+  .cov-p{margin:0;font-size:12.5px;line-height:1.6;color:#3c3540}
+  .cov-p b{color:var(--plum)}
+  .cov-tab{width:100%;border-collapse:collapse;margin-top:11px;font-size:11.5px}
+  .cov-tab th{text-align:left;font-weight:800;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--line);
+    font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+  .cov-tab td{padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  .cov-tab td.mono{font-family:var(--mono);font-size:11px}
+  .cov-tab tr.miss td{background:var(--unk-bg)}
+  .cov-tab td .warnpin{color:var(--unk-t);font-weight:800}
+  /* Befundzeile statt Metabolisierer-Skala bei Risiko- und Zielgenen */
+  .gflat{display:flex;align-items:center;gap:7px;margin:9px 0 0;padding:8px 10px;border-radius:9px;
+    background:rgba(255,255,255,.72);border:1px solid var(--ok-ln);font-size:12px;font-weight:750;
+    line-height:1.35;color:var(--ok-t)}
+  .gflat svg{flex:none}
+  /* Hinweiszeile auf einer Genkarte, wenn PharmCAT nichts eindeutiges liefert */
+  .gwhy{margin:8px 0 0;padding:8px 10px;border-radius:9px;background:rgba(255,255,255,.7);
+    border:1px solid var(--unk-ln);font-size:11.5px;font-weight:600;line-height:1.45;color:var(--unk-t)}
+  .gwhy b{color:#3E3947}
 
   .btn{border-radius:11px;padding:10px 18px;cursor:pointer;border:1.5px solid var(--line2);background:#fff;color:var(--ink);font-size:13px;font-weight:750;display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:.15s}
   .btn:hover{border-color:var(--plum);color:var(--plum)}
@@ -494,7 +542,7 @@
   .start-empty .cta{margin-top:20px}
 
   /* ---- Kennzahlen im Kopf: die Zahlen tragen die Aussage ---- */
-  .hstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:24px;
+  .hstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin-top:24px;
     padding-top:22px;border-top:1px solid var(--line)}
   .hstat{position:relative;padding:0 22px}
   .hstat:first-child{padding-left:0}
@@ -523,7 +571,7 @@
     box-shadow:inset 0 1px 2px rgba(30,10,30,.12)}
   .hbb{height:100%} .hbb.ok{background:#12A150} .hbb.warn{background:#E08000} .hbb.crit{background:#D02A2A}
   .hbb+.hbb{box-shadow:-1px 0 0 rgba(255,255,255,.85)}
-  .hb-keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+  .hb-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
   @media(max-width:760px){.hb-keys{grid-template-columns:1fr}}
   .hbk{text-align:left;font:inherit;color:var(--ink);background:#fff;border:1.5px solid var(--line2);
     border-radius:13px;padding:11px 13px;cursor:pointer;transition:.14s;border-left-width:5px}
@@ -609,7 +657,7 @@
   .lirow{width:var(--cardw);max-width:100%}
   .lirow .cstate{margin-right:22px}
   /* Ampelfilter in der Suche */
-  .sevfilters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:11px}
+  .sevfilters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:11px}
   .sfb{display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:12px;font-weight:800;
     letter-spacing:.03em;padding:10px 6px;border-radius:10px;border:2px solid transparent;cursor:pointer;
     color:#fff;transition:.14s;box-shadow:0 2px 5px rgba(30,10,30,.16)}
@@ -873,40 +921,64 @@
 <div class="ixmodal" id="ixmodal" role="dialog" aria-modal="true"><div id="ixbody"></div></div>
 
 <script>
+/* ===== BEGIN PHARMCAT PROFIL (erzeugt, nicht von Hand aendern) ===== */
+/* ============================================================
+   GENE-IUS PGx - echtes Genprofil aus den PharmCAT-Ausgaben
+   Erzeugt von build_pharmcat.py. Nicht von Hand aendern.
+   Probe 208491470165_R06C01 | GRCh38.p14 | PharmCAT 2.0.0
+   Gene: 23 | Positionen gerufen: 522 | erwartet aber fehlend: 679
+   Leitlinienzeilen: 103 fuer 43 Wirkstoffe
+   ============================================================ */
+const P_META={"probe":"208491470165_R06C01","build":"GRCh38.p14","ver":"2.0.0","stand":"2026-02-02","posda":522,"posfehlt":679,"quelle":"sample.preprocessed.vcf.bgz"};
+/* je Gen: Symbol, Art, Rolle, Diplotyp, Phaenotyp, deutsch, Code, Stufe,
+   Aktivitaetsscore, Allel1+Funktion, Allel2+Funktion, eindeutig, mehrdeutig,
+   Positionen gerufen/fehlend, Kandidaten, gerufene Varianten, nicht rufbare Allele */
+const P_GENES=[{"g":"ABCG2","kind":"trans","rolle":"Transport von Rosuvastatin und Allopurinol","dip":"","kand":1,"phen":"","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":0,"pos":0,"fehlt":1,"alt":[],"var":[],"alle":["rs2231142 variant (T)"],"unc":["rs2231142 reference (G)","rs2231142 variant (T)"]},{"g":"CACNA1S","kind":"risiko","rolle":"Risiko einer malignen Hyperthermie unter Narkose","dip":"Reference/Reference","kand":1,"phen":"Uncertain Susceptibility","de":"Keine Risikovariante gefunden","code":"?","lvl":2,"score":"","flach":1,"a1":"Reference","f1":"normal","a2":"Reference","f2":"normal","ok":1,"mehr":0,"pos":2,"fehlt":0,"alt":[],"var":[["rs1800559","C/C"],["rs772226819","G/G"]],"alle":["c.3257G>A","c.520C>T"],"unc":[]},{"g":"CFTR","kind":"ziel","rolle":"Chloridkanal &mdash; Ansprechen auf Ivacaftor bei Mukoviszidose","dip":"Reference/Reference","kand":1,"phen":"ivacaftor non-responsive in CF patients","de":"Spricht nicht auf Ivacaftor an","code":"?","lvl":2,"score":"","flach":1,"a1":"ivacaftor non-responsive CFTR sequence","f1":"ivacaftor non-responsive","a2":"ivacaftor non-responsive CFTR sequence","f2":"ivacaftor non-responsive","ok":1,"mehr":0,"pos":50,"fehlt":43,"alt":[],"var":[["rs397508256","G/G"],["rs368505753","C/C"],["rs115545701","C/C"],["rs1800076","G/G"],["rs113993958","G/G"],["rs77834169","C/C"],["rs78655421","G/G"],["rs201958172","G/G"],["rs1800079","G/G"],["rs397508759","G/G"],["rs397508761","A/A"],["rs121908752","T/T"],["rs397508783","T/T"],["117540156","CCTT/CCTT"],["rs77409459","C/C"],["rs74571530","T/T"],["rs121909013","G/G"],["rs1800097","G/G"],["rs1800098","G/G"],["rs1800100","C/C"],["rs186089140","C/C"],["rs150157202","G/G"],["rs145449046","C/C"],["rs1800103","A/A"],["rs397508378","G/G"],["rs397508387","G/G"],["rs201759207","G/G"],["rs397508442","C/C"],["rs142773283","T/T"],["rs151048781","G/G"],["rs1800110","T/T"],["rs386134230","G/G"],["rs1800111","G/G"],["rs149279509","A/A"],["rs144055758","A/A"],["rs76151804","A/A"],["rs150212784","T/T"],["rs121909020","G/G"],["rs202179988","C/C"],["rs78769542","G/G"],["rs186045772","T/T"],["rs397508556","A/A"],["rs75541969","G/G"],["rs1800120","G/G"],["rs75039782","C/C"],["rs267606723","G/G"],["rs397508602","G/G"],["rs121909041","T/T"],["rs11971167","G/G"],["rs397508621","A/A"]],"alle":["2789+5G->A","3272-26A->G","3849+10kbC->T","711+3A->G","A1067T","A120T","A234D","A349V","A455E","D110E","D110H","D1152H","D1270N","D192G","D579G","D924N","E193K","E56K","E822K","E831X","F1052V","F1074L","F311L","F311del","F508C","F508C,S1251N","G1069R","G1244E","G1249R(G>A)","G1249R(G>C)","G1349D","G178E","G178R","G194R(G>A)","G194R(G>C)","G314E","G551D","G551S","G576A","G970D","H1375P","H939R","I1027T","I1139V","I148T","I175V","I807M","K1060T","L1480P","L206W","L320V","L967S","L997F(G>C)","L997F(G>T)","M152V","M952I(G>A)","M952I(G>C)","M952I(G>T)","M952T","P67L","Q1291R","Q237E","Q237H","Q359R","R1070Q","R1070W","R1162L","R117C","R117G","R117H","R117L","R117P","R1283M","R170H","R347H","R347L","R352Q","R553Q","R668C","R74W"],"unc":["2789+5G->A","A234D","A349V","A455E","D110E","D192G","D579G","F311L","G178E","G178R","G194R(G>A)","G194R(G>C)","G314E","G551D","G1069R","G1349D","H939R","H1375P","I148T","I175V","I1027T","K1060T","L320V","L1480P","M152V","Q237E","Q237H","Q359R","R347H","R347L","R352Q","R553Q","R933G","R1283M","S549N","S549R(A>C)","S549R(T>G)","S589N","S977F","S1159F","S1159P","S1251N","T1053I","V1293G","W1282R"]},{"g":"CYP2B6","kind":"enz","rolle":"Abbau von Efavirenz und weiteren HIV-Wirkstoffen","dip":"*1/*1","kand":1,"phen":"Normal Metabolizer","de":"Normaler Metabolisierer","code":"NM","lvl":2,"score":"","flach":0,"a1":"*1","f1":"normal","a2":"*1","f2":"normal","ok":1,"mehr":0,"pos":17,"fehlt":31,"alt":[],"var":[["rs34223104","T/T"],["rs281864907","T/T"],["rs36060847","G/G"],["rs12721655","A/A"],["rs145884402","G/G"],["rs36056539","C/C"],["rs3745274","G/G"],["rs373489637","T/T"],["rs45482602","C/C"],["rs34698757","C/C"],["rs28399499","T/T"],["rs34826503","C/C"],["rs200238771","T/T"],["rs35979566","T/T"],["rs35010098","C/C"],["rs564083989","G/G"],["rs3211371","C/C"]],"alle":["*2","*3","*4","*5","*6","*7","*8","*9","*10","*11","*12","*13","*14","*15","*17","*18","*19","*20","*21","*22","*23","*24","*25","*26","*27","*28","*31","*32","*33","*34","*35","*36","*37","*38","*39","*40","*41","*42","*43","*44","*45","*46","*47","*48","*49","*50"],"unc":["*2","*4","*10","*11","*14","*17","*23","*25","*27","*31","*32","*44","*45","*46","*47","*49"]},{"g":"CYP2C19","kind":"enz","rolle":"Abbau von Clopidogrel, Protonenpumpenhemmern und Antidepressiva","dip":"*1/*1","kand":1,"phen":"Normal Metabolizer","de":"Normaler Metabolisierer","code":"NM","lvl":2,"score":"","flach":0,"a1":"*1","f1":"normal","a2":"*1","f2":"normal","ok":1,"mehr":0,"pos":13,"fehlt":22,"alt":[],"var":[["rs55752064","T/T"],["rs145328984","C/C"],["rs118203756","G/G"],["rs12769205","A/A"],["rs41291556","T/T"],["rs17885179","A/A"],["rs72552267","G/G"],["rs4986893","G/G"],["rs6413438","C/C"],["rs4244285","G/G"],["rs3758581","G/G"],["rs17879685","C/C"],["rs56337013","C/C"]],"alle":["*1","*2","*3","*4","*5","*6","*7","*8","*9","*10","*11","*12","*13","*14","*15","*16","*17","*18","*19","*22","*23","*24","*25","*26","*28","*29","*30","*31","*32","*33","*34","*35","*39","*40","*41"],"unc":["*16","*34"]},{"g":"CYP2C9","kind":"enz","rolle":"Abbau von Gerinnungshemmern, Phenytoin und Schmerzmitteln","dip":"*1/*1","kand":1,"phen":"Normal Metabolizer","de":"Normaler Metabolisierer","code":"NM","lvl":2,"score":"2.0","flach":0,"a1":"*1","f1":"normal","a2":"*1","f2":"normal","ok":1,"mehr":0,"pos":21,"fehlt":62,"alt":[],"var":[["rs114071557","A/A"],["rs72558187","T/T"],["rs767576260","C/C"],["rs72558189","G/G"],["rs200965026","C/C"],["rs199523631","C/C"],["rs1799853","C/C"],["rs754487195","G/G"],["rs17847037","C/C"],["rs2256871","A/A"],["rs9332130","A/A"],["rs9332131","GA/GA"],["rs72558192","A/A"],["rs28371685","C/C"],["rs1274535931","C/C"],["rs1057910","A/A"],["rs764211126","A/A"],["rs2492662738","A/A"],["rs767284820","T/T"],["rs9332239","C/C"],["rs868182778","G/G"]],"alle":["*2","*3","*4","*5","*6","*7","*8","*9","*10","*11","*12","*13","*14","*15","*16","*17","*18","*19","*20","*21","*22","*23","*24","*25","*26","*27","*28","*29","*30","*31","*32","*33","*34","*35","*36","*37","*38","*39","*40","*41","*42","*43","*44","*45","*46","*47","*48","*49","*50","*51","*52","*53","*54","*55","*56","*57","*58","*59","*60","*61","*62","*63","*64","*65","*66","*67","*68","*69","*70","*71","*72","*73","*74","*75","*76","*77","*78","*79","*80","*81"],"unc":["*4","*5","*7","*8","*15","*17","*19","*20","*21","*22","*23","*24","*25","*27","*28","*29","*30","*31","*33","*34","*37","*38","*39","*40","*41","*42","*47","*48","*49","*50","*51","*52","*53","*54","*55","*57","*62","*63","*64","*65","*66","*67","*69","*70","*72","*74","*75","*76","*77","*78","*79","*80","*81","*82","*83","*84","*85","*86","*87","*88"]},{"g":"CYP2D6","kind":"enz","rolle":"Abbau von etwa jedem vierten Wirkstoff &mdash; Opioide, Antidepressiva, Betablocker","dip":"","kand":30,"phen":"Indeterminate","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":1,"pos":72,"fehlt":84,"alt":["*10/*146","*10/*148","*146/*147","*146/*150","*146/*164","*146/*177","*147/*148","*148/*150","*148/*164","*148/*177","*19/*146","*19/*148"],"var":[["rs1135840","G/G"],["rs747998333","A/A"],["rs75467367","G/G"],["rs74478221","C/C"],["rs1135837","C/C"],["42126634","A/A"],["rs766507177","T/T"],["rs28371735","G/G"],["rs765776661","C/C"],["rs1135835","T/T"],["rs1135833","G/G"],["42126681","G/G"],["42126697","G/G"],["rs532668079","C/C"],["rs730882251","G/G"],["rs267608319","C/C"],["rs569439709","C/C"],["rs763964554","G/G"],["rs28371733","C/C"],["rs75386357","C/C"],["rs72549346","G/G"],["rs267608295","G/G"],["rs59421388","C/C"],["rs748712690","T/T"],["rs78209835","C/C"],["rs72549348","T/T"],["rs28371725","C/C"],["rs72549349","C/C"],["rs730882170","GCACATCCGGATGTAGGATC/GCACATCCGGATGTAGGATC"],["rs79292917","C/C"],["rs5030867","T/T"],["rs949717872","T/T"],["rs16947","G/A"],["rs267608279","TG/TG"],["rs1135829","T/T"],["rs5030656","CCTT/CCTT"],["rs72549351","CTCAG/CTCAG"],["rs367543000","G/G"],["rs148769737","G/G"],["rs267608297","G/G"],["rs35742686","CT/CT"],["42128272","T/T"],["rs28371717","C/C"],["rs140900383","G/G"],["42128795","AG/AG"],["rs567606867","C/C"],["rs72549354","T/T"],["42128903","T/T"],["rs1135824","T/T"],["rs774943042","C/C"],["rs267608302","T/T"],["rs28371710","C/C"],["rs5030655","CA/CA"],["rs78482768","G/G"],["rs569229126","T/T"],["rs375135093","A/A"],["rs78459009","T/T"],["rs74802369","T/T"],["rs76187628","A/A"],["rs267608308","C/C"],["rs267608309","G/G"],["rs201377835","C/C"],["rs536109057","G/G"],["rs774671100","C/C"],["rs118203758","C/C"],["rs5030862","C/C"],["rs138100349","G/G"],["rs28371696","C/T"],["rs267608313","G/G"],["rs769258","C/C"],["rs72549358","C/C"],["rs773790593","G/G"]],"alle":["*2","*3","*4","*6","*7","*8","*9","*10","*11","*12","*14","*15","*17","*18","*19","*20","*21","*22","*23","*24","*25","*26","*27","*28","*29","*30","*31","*32","*33","*34","*35","*36","*37","*38","*39","*40","*41","*42","*43","*44","*45","*46","*47","*48","*49","*50","*51","*52","*53","*54","*55","*56","*58","*59","*60","*62","*64","*65","*69","*70","*71","*72","*73","*74","*75","*81","*82","*83","*84","*85","*86","*87","*88","*89","*90","*91","*92","*93","*94","*95"],"unc":["*23","*26","*27","*53","*74","*86","*107","*108","*110","*112","*116","*118","*120","*122","*124","*127","*130","*131","*134","*137","*139","*140","*144","*145","*151","*167","*169","*170","*173","*174","*176","*178","*181","*185"]},{"g":"CYP3A4","kind":"enz","rolle":"Abbau sehr vieler Wirkstoffe, gemeinsam mit CYP3A5","dip":"*1/*1","kand":1,"phen":"Normal Metabolizer","de":"Normaler Metabolisierer","code":"NM","lvl":2,"score":"","flach":0,"a1":"*1","f1":"normal","a2":"*1","f2":"normal","ok":1,"mehr":0,"pos":20,"fehlt":22,"alt":[],"var":[["rs67666821","G/G"],["rs4986910","A/A"],["rs4986909","G/G"],["rs12721629","G/G"],["rs67784355","G/G"],["rs201821708","T/T"],["rs28371759","A/A"],["rs4646438","G/G"],["rs138105638","G/G"],["rs55785340","A/A"],["rs55901263","G/G"],["rs4987161","A/A"],["rs12721627","G/G"],["rs35599367","G/G"],["rs72552798","C/C"],["rs4986907","C/C"],["rs57409622","G/G"],["rs72552799","C/C"],["rs55951658","T/T"],["rs12721634","A/A"]],"alle":["*2","*3","*4","*5","*6","*7","*8","*9","*10","*11","*12","*13","*14","*15","*16","*17","*18","*19","*20","*21","*22","*23","*24","*26","*28","*29","*30","*31","*32","*33","*34","*35","*37","*38","*39","*40","*41","*42","*43","*44","*45","*46","*47","*48"],"unc":["*7","*10","*19","*24","*28","*29","*30","*31","*32","*33","*34","*35","*39","*40","*41","*42","*43","*44","*45","*46","*47","*48"]},{"g":"CYP3A5","kind":"enz","rolle":"Abbau von Tacrolimus nach Organtransplantation","dip":"*3/*3","kand":1,"phen":"Poor Metabolizer","de":"Langsamer Metabolisierer","code":"PM","lvl":0,"score":"","flach":0,"a1":"*3","f1":"keine","a2":"*3","f2":"keine","ok":1,"mehr":0,"pos":4,"fehlt":1,"alt":[],"var":[["rs41303343","T/T"],["rs10264272","C/C"],["rs776746","C/C"],["rs55817950","G/G"]],"alle":["*3","*6","*7","*8","*9"],"unc":["*9"]},{"g":"CYP4F2","kind":"enz","rolle":"Vitamin-K-Umsatz, beeinflusst die Warfarin-Dosis","dip":"","kand":1,"phen":"","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":0,"pos":1,"fehlt":19,"alt":[],"var":[["rs145174239","G/G"]],"alle":["*2","*3","*4","*5","*6","*7","*8","*9","*10","*11","*12","*13","*14","*15","*17","*18","*19","*20","*21","*22","*23"],"unc":["*2","*3","*4","*5","*6","*7","*8","*9","*10","*11","*12","*13","*15","*17","*18","*19","*20","*21","*22","*23"]},{"g":"DPYD","kind":"enz","rolle":"Abbau der Krebsmedikamente Fluorouracil und Capecitabin","dip":"Reference/Reference","kand":1,"phen":"Normal Metabolizer","de":"Normaler Metabolisierer","code":"NM","lvl":2,"score":"2.0","flach":0,"a1":"Reference","f1":"normal","a2":"Reference","f2":"normal","ok":1,"mehr":0,"pos":64,"fehlt":19,"alt":[],"var":[["rs114096998","G/G"],["rs148799944","C/C"],["rs140114515","C/C"],["rs1801268","C/C"],["rs139459586","A/A"],["rs202144771","G/G"],["rs72547601","T/T"],["rs72547602","T/T"],["rs145529148","T/T"],["rs141044036","T/T"],["rs1801267","C/C"],["rs147545709","G/G"],["rs55674432","C/C"],["rs201035051","T/T"],["rs60139309","T/T"],["rs199634007","G/G"],["rs112766203","G/G"],["rs146529561","G/G"],["rs145548112","C/C"],["rs137999090","C/C"],["rs138545885","C/C"],["rs55971861","T/T"],["rs17376848","A/A"],["rs147601618","A/A"],["rs145773863","C/C"],["rs138616379","C/C"],["rs142619737","C/C"],["rs1801158","C/C"],["rs190951787","G/G"],["rs148994843","C/C"],["rs138391898","C/C"],["rs111858276","T/T"],["rs72549304","G/G"],["rs199549923","G/G"],["rs144395748","G/G"],["rs72975710","G/G"],["rs186169810","A/A"],["rs142512579","C/C"],["rs200064537","A/A"],["rs56038477","C/C"],["rs61622928","C/C"],["rs143815742","C/C"],["rs140602333","G/G"],["rs78060119","C/C"],["rs75017182","G/G"],["rs72549305","T/T"],["rs143154602","G/G"],["rs183385770","C/C"],["rs201018345","C/C"],["rs145112791","G/G"],["rs150437414","A/A"],["rs146356975","T/T"],["rs45589337","T/T"],["rs72549307","T/T"],["rs72549308","T/T"],["rs115232898","T/T"],["rs139834141","C/C"],["rs2297595","T/T"],["rs200562975","T/T"],["rs150385342","C/C"],["rs1801265","A/A"],["rs80081766","C/C"],["rs72549310","G/G"],["rs150036960","G/G"]],"alle":["c.1003G>T (*11)","c.1024G>A","c.1057C>T","c.1108A>G","c.1129-5923C>G","c.1129-5923C>G, c.1236G>A (HapB3)","c.1156G>T (*12)","c.1180C>T","c.1181G>T","c.1218G>A","c.1260T>A","c.1278G>T","c.1294G>A","c.1314T>G","c.1349C>T","c.1358C>G","c.1371C>T","c.1403C>A","c.1475C>T","c.1484A>G","c.1519G>A","c.1543G>A","c.1577C>G","c.1601G>A (*4)","c.1615G>A","c.1627A>G (*5)","c.1679T>G (*13)","c.1682G>T","c.1774C>T","c.1775G>A","c.1777G>A","c.1796T>C","c.1896T>C","c.1898delC (*3)","c.1905+1G>A (*2A)","c.1905C>G","c.1906A>C","c.1990G>T","c.2021G>A","c.2161G>A","c.2186C>T","c.2194G>A (*6)","c.2195T>G","c.2279C>T","c.2303C>A","c.2336C>A","c.2482G>A","c.2582A>G","c.2623A>C","c.2639G>T","c.2656C>T","c.2657G>A (*9B)","c.2846A>T","c.2872A>G","c.2915A>G","c.2921A>T","c.2933A>G","c.295_298delTCAT (*7)","c.2977C>T","c.2978T>G","c.2983G>T (*10)","c.3049G>A","c.3061G>C","c.3067C>A","c.313G>A","c.343A>G","c.451A>G","c.46C>G","c.496A>G","c.498G>A","c.525G>A","c.557A>G","c.601A>C","c.61C>T","c.62G>A","c.632A>G","c.703C>T (*8)","c.775A>G","c.85T>C (*9A)","c.868A>G"],"unc":["c.295_298delTCAT (*7)","c.343A>G","c.525G>A","c.703C>T (*8)","c.1003G>T (*11)","c.1278G>T","c.1371C>T","c.1627A>G (*5)","c.1679T>G (*13)","c.1682G>T","c.1774C>T","c.1898delC (*3)","c.1905+1G>A (*2A)","c.1905C>G","c.2194G>A (*6)","c.2195T>G","c.2303C>A","c.2482G>A","c.2846A>T"]},{"g":"G6PD","kind":"enz","rolle":"Schutz der roten Blutk&ouml;rperchen vor oxidativem Stress","dip":"B (reference)","kand":1,"phen":"Normal","de":"Kein G6PD-Mangel","code":"NM","lvl":2,"score":"","flach":0,"a1":"B (reference)","f1":"normal","a2":"","f2":"","ok":1,"mehr":0,"pos":104,"fehlt":67,"alt":[],"var":[["154532046","A"],["154532055","CTCT"],["154532082","G"],["154532083","G"],["154532085","C"],["rs137852348","G"],["rs137852344","G"],["rs782608284","C"],["154532279","C"],["rs137852324","C"],["154532392","A"],["154532403","C"],["154532408","T"],["154532432","G"],["154532458","A"],["rs782098548","C"],["154532570","G"],["154532590","G"],["154532608","C"],["154532623","T"],["rs137852336","C"],["154532634","T"],["154532639","C"],["154532649","G"],["154532661","T"],["rs137852325","C"],["154532667","G"],["rs137852335","C"],["rs137852316","C"],["154532692","T"],["rs137852320","T"],["154532699","G"],["154532700","C"],["rs137852322","A"],["154532713","A"],["154532715","A"],["154532716","T"],["154532758","T"],["rs137852329","G"],["154532773","C"],["rs137852333","G"],["154532802","C"],["rs34193178","C"],["rs137852342","G"],["rs5030869","C"],["154533016","G"],["rs137852339","C"],["154533064","C"],["154533077","C"],["rs137852327","C"],["rs74575103","C"],["154533587","G"],["154533589","A"],["rs137852318","C"],["154533607","G"],["154533608","A"],["154533615","C"],["154533619","T"],["154533620","C"],["154533629","C"],["rs137852346","C"],["154534036","G"],["154534074","TCAGTGC"],["154534092","T"],["rs782757170","G"],["rs137852332","C"],["rs137852330","G"],["154534414","GGGA"],["rs267606836","G"],["154534455","T"],["154534463","G"],["154534468","G"],["154534485","C"],["154534486","G"],["154534494","C"],["rs370918918","C"],["rs782487723","C"],["rs137852313","C"],["154535244","G"],["154535247","G"],["rs782322505","T"],["154535261","C"],["rs78365220","A"],["154535274","C"],["154535278","C"],["154535330","A"],["rs181277621","C"],["154535367","GCTT"],["154535379","G"],["rs782308266","C"],["154535980","A"],["rs782090947","T"],["rs137852349","A"],["154536008","A"],["154536021","CAGA"],["154536025","A"],["154536034","C"],["154536035","G"],["154536045","C"],["154546046","A"],["154546057","T"],["rs137852340","T"],["154546116","C"],["154546131","G"]],"alle":["202G>A_376A>G_1264C>G","A","A- 202A_376G","A- 680T_376G","A- 968C_376G","Aachen","Abeno","Acrokorinthos","Alhambra","Amazonia","Amiens","Amsterdam","Anadia","Ananindeua","Andalus","Arakawa","Asahi","Asahikawa","Aures","Aveiro","Bajo Maumere","Bangkok","Bangkok Noi","Bao Loc","Bari","Belem","Beverly Hills, Genova, Iwate, Niigata, Yamaguchi","Brighton","Buenos Aires","Cairo","Calvo Mackenna","Campinas","Canton, Taiwan-Hakka, Gifu-like, Agrigento-like","Cassano","Chatham","Chikugo","Chinese-1","Chinese-5","Cincinnati","Cleveland Corum","Clinic","Coimbra Shunde","Cosenza","Costanzo","Covao do Lobo","Crispim","Dagua","Durham","Farroupilha","Figuera da Foz","Flores","Fukaya","Fushan","Gaohe","Georgia","Gidra","Gond","Guadalajara","Guangzhou","Haikou","Hammersmith","Harilaou","Harima","Hartford","Hechi","Hermoupolis","Honiara","Ierapetra","Ilesha","Insuli","Iowa, Walter Reed, Springfield","Iwatsuki","Japan, Shinagawa","Kaiping, Anant, Dhon, Sapporo-like, Wosera","Kalyan-Kerala, Jamnaga, Rohini","Kambos","Kamiube, Keelung","Kamogawa","Kawasaki","Kozukata"],"unc":["A","A- 202A_376G","A- 680T_376G","A- 968C_376G","Acrokorinthos","Amazonia","Amiens","Asahi","Asahikawa","Aures","Bao Loc","Beverly Hills, Genova, Iwate, Niigata, Yamaguchi","Canton, Taiwan-Hakka, Gifu-like, Agrigento-like","Chikugo","Chinese-1","Cincinnati","Cosenza","Dagua","Flores","Fukaya","Fushan","Guadalajara","Haikou","Harilaou","Insuli","Kaiping, Anant, Dhon, Sapporo-like, Wosera","Kambos","Kamiube, Keelung","Krakow","Laibin","Liuzhou","Mahidol","Malaga","Manhattan","Mediterranean, Dallas, Panama, Sassari, Cagliari, Birmingham","Metaponto","Mexico City","Minnesota, Marion, Gastonia, LeJeune","Mizushima","Montpellier","Mt Sinai","Musashino","Nankang","Nara","Nice","North Dallas","Omiya","Orissa","Papua","Pawnee","Pedoplis-Ckaro","Praha","Radlowo","Rehevot","Rignano","Riverside","Santa Maria","Santiago de Cuba, Morioka","Sao Borja","Serres"]},{"g":"HLA-A","kind":"hla","rolle":"Risiko schwerer Hautreaktionen auf Carbamazepin","dip":"","kand":1,"phen":"","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":0,"pos":0,"fehlt":0,"alt":[],"var":[],"alle":[],"unc":[]},{"g":"HLA-B","kind":"hla","rolle":"Risiko schwerer &Uuml;berempfindlichkeit auf Abacavir und Carbamazepin","dip":"","kand":1,"phen":"","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":0,"pos":0,"fehlt":0,"alt":[],"var":[],"alle":[],"unc":[]},{"g":"IFNL3","kind":"marker","rolle":"Ansprechen auf Interferon-Therapie bei Hepatitis C","dip":"","kand":1,"phen":"","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":0,"pos":0,"fehlt":1,"alt":[],"var":[],"alle":["rs12979860 variant (T)"],"unc":["rs12979860 reference (C)","rs12979860 variant (T)"]},{"g":"MT-RNR1","kind":"risiko","rolle":"Risiko einer Schwerh&ouml;rigkeit unter Aminoglykosid-Antibiotika","dip":"","kand":1,"phen":"","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":0,"pos":0,"fehlt":0,"alt":[],"var":[],"alle":[],"unc":[]},{"g":"NAT2","kind":"enz","rolle":"Abbau von Isoniazid und weiteren Wirkstoffen","dip":"","kand":88,"phen":"Intermediate Metabolizer","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":1,"pos":21,"fehlt":26,"alt":["*19/*35","*19/*52","*19/*53","*19/*56","*19/*58","*19/*62","*19/*63","*19/*64","*19/*66","*19/*67","*27/*35","*27/*52"],"var":[["rs200893121","A/A"],["rs72466456","T/T"],["rs45477599","T/T"],["rs149283608","A/A"],["rs1801279","G/G"],["rs1801280","T/T"],["rs4986996","G/G"],["rs12720065","C/C"],["rs72466460","C/C"],["rs139351995","A/A"],["rs72554617","G/G"],["rs79050330","C/C"],["rs1799930","G/A"],["rs45618543","G/G"],["rs45607939","A/A"],["rs138707146","C/C"],["rs45518335","C/C"],["rs55700793","A/A"],["rs1208","A/A"],["rs56393504","G/G"],["rs1799931","G/G"]],"alle":["*4","*5","*6","*7","*10","*14","*15","*16","*19","*21","*27","*29","*30","*31","*32","*33","*34","*35","*36","*37","*38","*39","*40","*41","*42","*43","*44","*45","*46","*47","*48","*49","*50","*51","*52","*53","*54","*55","*56","*57","*58","*59","*60","*61","*62","*63","*64","*65","*66","*67","*68","*69","*70","*71","*72","*73","*74","*75"],"unc":["*42","*71"]},{"g":"NUDT15","kind":"enz","rolle":"Abbau von Thiopurinen wie Azathioprin","dip":"*1/*1","kand":1,"phen":"Normal Metabolizer","de":"Normaler Metabolisierer","code":"NM","lvl":2,"score":"","flach":0,"a1":"*1","f1":"normal","a2":"*1","f2":"normal","ok":1,"mehr":0,"pos":2,"fehlt":16,"alt":[],"var":[["rs186364861","G/G"],["rs147390019","G/G"]],"alle":["*2","*3","*4","*5","*6","*7","*8","*9","*10","*11","*12","*13","*14","*15","*16","*17","*18","*19","*20","*21"],"unc":["*2","*3","*6","*7","*8","*9","*10","*11","*12","*13","*14","*15","*16","*17","*18","*19","*20","*21"]},{"g":"RYR1","kind":"risiko","rolle":"Risiko einer malignen Hyperthermie unter Narkose","dip":"Reference/Reference","kand":1,"phen":"Uncertain Susceptibility","de":"Keine Risikovariante gefunden","code":"?","lvl":2,"score":"","flach":1,"a1":"Reference","f1":"normal","a2":"Reference","f2":"normal","ok":1,"mehr":0,"pos":83,"fehlt":230,"alt":[],"var":[["rs193922746","A/A"],["rs193922747","T/T"],["rs139161723","G/G"],["rs118192160","G/G"],["rs118192113","C/C"],["rs186983396","C/C"],["rs142474192","G/G"],["rs118192161","C/C"],["rs193922753","G/G"],["rs193922757","C/C"],["rs1801086","G/G"],["rs193922766","G/G"],["rs118192116","C/C"],["rs193922767","G/G"],["rs147723844","A/A"],["rs111888148","G/G"],["rs193922768","C/C"],["rs193922770","C/C"],["rs118204423","G/G"],["rs138874610","G/G"],["rs370634440","G/G"],["rs180714609","G/G"],["rs111272095","C/C"],["rs146429605","A/A"],["rs146504767","G/G"],["rs193922781","C/C"],["rs192863857","C/C"],["rs35364374","G/G"],["rs118192175","C/C"],["rs118192163","G/G"],["rs193922797","G/G"],["rs118192121","A/A"],["rs34390345","A/A"],["rs112563513","G/G"],["rs147213895","A/A"],["rs121918596","TGGA/TGGA"],["rs193922801","A/A"],["rs193922802","G/G"],["rs193922803","C/C"],["rs193922807","G/G"],["rs193922809","G/G"],["rs193922810","G/G"],["rs118192124","C/C"],["rs118192123","T/T"],["rs193922816","C/C"],["rs118192122","G/G"],["rs28933397","C/C"],["rs121918594","G/G"],["rs193922818","G/G"],["rs147707463","C/C"],["rs193922832","G/G"],["rs199738299","A/A"],["38517523","T/T"],["rs118192126","A/A"],["rs143987857","G/G"],["rs193922839","G/G"],["rs147136339","A/A"],["rs193922842","C/C"],["rs193922843","G/G"],["38561140","G/G"],["38561362","G/G"],["rs151119428","G/G"],["rs150396398","G/G"],["rs118192130","G/G"],["rs118192135","G/G"],["rs193922860","G/G"],["rs118192140","C/C"],["rs193922867","C/C"],["rs193922868","G/G"],["rs118192167","A/A"],["rs193922874","T/T"],["rs121918595","C/C"],["rs193922876","C/C"],["rs193922878","C/C"],["rs193922879","G/G"],["rs118192168","G/G"],["38580416","C/C"],["rs118192181","C/C"],["rs63749869","G/G"],["rs118192151","G/G"],["rs118192170","T/T"],["rs118192159","C/C"],["rs118192158","G/G"]],"alle":["c.10042C>T","c.10043G>A","c.10097G>A","c.10100A>G","c.1021G>A","c.1021G>C","c.10229C>A","c.10237A>T","c.1024G>A","c.10252A>G","c.103T>C","c.10556C>T","c.10616G>A","c.10747G>C","c.10750G>C","c.10891G>T","c.1100G>A","c.1100G>T","c.11086G>C","c.11120G>T","c.11126C>T","c.11132C>T","c.11266C>G","c.11314C>T","c.11315G>A","c.11416G>A","c.1144C>A","c.11518G>A","c.11708G>A","c.11723A>T","c.11748T>G","c.11798A>G","c.11813G>A","c.11947C>T","c.11953T>C","c.11958C>G","c.11969G>T","c.119G>C","c.1201C>A","c.1201C>G","c.1201C>T","c.12028G>A","c.1202G>A","c.1202G>T","c.12064A>G","c.1209C>G","c.12115A>T","c.12121C>T","c.12149C>A","c.12242C>T","c.12310G>C","c.12355A>T","c.12383C>T","c.12398A>G","c.12406C>A","c.12413T>C","c.12532G>A","c.12533G>T","c.12553G>A","c.12689T>G","c.12700G>C","c.12700G>T","c.12848A>T","c.12881C>T","c.12884C>T","c.130C>T","c.131G>A","c.13505A>G","c.13513G>C","c.13672C>T","c.13673G>A","c.13702C>G","c.13760C>T","c.13913G>A","c.13918A>G","c.13934G>A","c.13990T>C","c.13994_13995delTCinsCT","c.14002C>T","c.14051T>C"],"unc":["c.38T>G","c.51_53del","c.119G>C","c.130C>T","c.152C>A","c.190T>C","c.455C>A","c.463C>A","c.467G>A","c.479A>G","c.493G>A","c.496G>A","c.497A>G","c.526G>A","c.528G>T","c.533A>C","c.533A>G","c.625G>A","c.641C>T","c.652G>A","c.677T>A","c.680A>T","c.946C>T","c.947G>T","c.982C>T","c.992_994dup","c.1021G>A","c.1021G>C","c.1024G>A","c.1100G>A","c.1100G>T","c.1144C>A","c.1201C>A","c.1201C>G","c.1201C>T","c.1411C>T","c.1459C>G","c.1460T>C","c.1475G>A","c.1553T>C","c.1565A>C","c.1565A>G","c.1598G>A","c.1615T>C","c.1615T>G","c.1630G>T","c.1840C>T","c.1841G>T","c.2050G>C","c.2447C>T","c.2537C>T","c.2797G>A","c.2924G>A","c.3095G>A","c.3166G>A","c.3166G>C","c.3172G>A","c.3224G>A","c.3418C>T","c.3527C>T"]},{"g":"SLCO1B1","kind":"trans","rolle":"Aufnahme von Statinen in die Leber","dip":"*1/*1","kand":1,"phen":"Normal Function","de":"Normale Transportfunktion","code":"NF","lvl":2,"score":"","flach":0,"a1":"*1","f1":"normal","a2":"*1","f2":"normal","ok":1,"mehr":0,"pos":17,"fehlt":18,"alt":[],"var":[["rs139257324","C/C"],["rs373327528","G/G"],["rs2306283","A/A"],["rs2306282","A/A"],["rs4149056","T/T"],["rs79135870","A/A"],["rs11045852","A/A"],["rs11045853","G/G"],["rs72559747","C/C"],["rs1228465562","T/T"],["rs59113707","C/C"],["rs72559748","A/A"],["rs59502379","G/G"],["rs200994482","G/G"],["rs34671512","A/A"],["rs55737008","A/A"],["rs140790673","C/C"]],"alle":["*2","*4","*5","*6","*8","*9","*10","*11","*14","*15","*16","*19","*20","*23","*24","*25","*26","*27","*28","*29","*30","*31","*32","*33","*34","*36","*37","*39","*40","*41","*42","*43","*44","*45","*47","*50","*51","*52","*53","*54","*55","*56","*57","*58"],"unc":["*2","*4","*6","*10","*26","*34","*41","*50","*58"]},{"g":"TPMT","kind":"enz","rolle":"Abbau von Thiopurinen wie Azathioprin und Mercaptopurin","dip":"*1/*1","kand":1,"phen":"Normal Metabolizer","de":"Normaler Metabolisierer","code":"NM","lvl":2,"score":"","flach":0,"a1":"*1","f1":"normal","a2":"*1","f2":"normal","ok":1,"mehr":0,"pos":28,"fehlt":15,"alt":[],"var":[["rs1142345","T/T"],["rs150900439","T/T"],["rs139392616","C/C"],["rs398122996","A/A"],["rs377085266","A/A"],["rs72556347","A/A"],["rs79901429","A/A"],["18132163","C/C"],["rs74423290","G/G"],["rs9333570","C/C"],["rs144041067","C/C"],["rs1800460","C/C"],["rs72552737","C/C"],["rs72552738","C/C"],["rs200220210","G/G"],["rs151149760","T/T"],["rs115106679","C/C"],["rs111901354","G/G"],["rs1800462","C/C"],["rs281874771","G/G"],["rs777686348","C/C"],["rs200591577","G/G"],["18147856","A/A"],["rs72552740","A/A"],["rs750424422","C/C"],["rs72552742","T/T"],["rs267607275","A/A"],["rs9333569","T/T"]],"alle":["*2","*3A","*3B","*3C","*4","*5","*6","*7","*8","*9","*10","*11","*12","*13","*14","*15","*16","*17","*18","*19","*20","*21","*22","*23","*24","*25","*26","*27","*28","*29","*30","*31","*32","*33","*34","*35","*36","*37","*38","*39","*40","*41","*42","*43","*44"],"unc":["*4","*6","*7","*8","*17","*19","*24","*27","*28","*33","*38","*42","*43","*44"]},{"g":"UGT1A1","kind":"enz","rolle":"Ausscheidung von Irinotecan und Atazanavir","dip":"*1/*1","kand":1,"phen":"Normal Metabolizer","de":"Normaler Metabolisierer","code":"NM","lvl":2,"score":"","flach":0,"a1":"*1","f1":"normal","a2":"*1","f2":"normal","ok":1,"mehr":0,"pos":3,"fehlt":1,"alt":[],"var":[["rs887829","C/C"],["rs3064744","CAT/CAT"],["rs4148323","G/G"]],"alle":["*6","*27","*28","*36","*37","*80","*80+*28","*80+*37"],"unc":["*27"]},{"g":"VKORC1","kind":"ziel","rolle":"Angriffspunkt der Vitamin-K-Antagonisten Warfarin und Acenocoumarol","dip":"","kand":1,"phen":"","de":"","code":"?","lvl":-1,"score":"","flach":0,"a1":"","f1":"","a2":"","f2":"","ok":0,"mehr":0,"pos":0,"fehlt":1,"alt":[],"var":[],"alle":["rs9923231 variant (T)"],"unc":["rs9923231 reference (C)","rs9923231 variant (T)"]}];
+const P_TXT=["Abacavir is not recommended. High risk of hypersensitivity (~6% of patients) due to the presence of at least one *57:01 allele.","Adjust dose in response to plasma concentration and record ECG or select alternative drug (e.g., sotalol, disopyramide, quinidine, amiodarone).","Avoid amitriptyline use.","Avoid amitriptyline use. If amitriptyline is warranted, consider 50% reduction of recommended starting dose.","Avoid amitriptyline use. If amitriptyline is warranted, consider a 50% reduction of recommended starting dose.","Avoid amitriptyline use. If amitriptyline is warranted, consider titrating to a higher target dose (compared to normal metabolizers).","Avoid moderate and strong CYP2D6 inhibitors. Initiate therapy with recommended standard of care dosing.","Avoid tricyclic use due to potential for side effects. Consider alternative drug not metabolized by CYP2D6. If a TCA is warranted, consider 50% reduction of recommended starting dose.g Utilize therapeutic drug monitoring to guide dose adjustments.","Avoid tricyclic use due to potential lack of efficacy. Consider alternative drug not metabolized by CYP2D6. If a TCA is warranted, consider titrating to a higher target dose (compared to normal metabolizers). Utilize therapeutic drug monitoring to guide dose adjustments.","Avoid tricyclic use due to potential side effects. Consider alternative drug not metabolized by CYP2D6. If a TCA is warranted, consider 50% reduction of recommended starting dose. Utilize therapeutic drug monitoring to guide dose adjustments.","Be alert to decreased efficacy. Consider dose increase. If response is still inadequate, select alternative drug (not oxycodone or codeine) or be alert to symptoms of insufficient pain relief.","Be alert to decreased haloperidol plasma concentration and adjust maintenance dose in response to haloperidol plasma concentration or select alternative drug (e.g., pimozide, flupenthixol, fluphenazine, quetiapine, olanzapine, clozapine).","Be alert to decreased venlafaxine and increased (O-desmethyl)venlafaxine plasma concentration. Titrate dose to a maximum of 150% of the normal dose or select alternative drug (e.g., citalopram, sertraline).","Be alert to low zuclopenthixol plasma concentrations or select alternative drug (flupenthixol, quetiapine, olanzapine, clozapine).","Be alert to reduced efficacy or select alternative drug (e.g., methylphenidate, clonidine).","Be extra alert to insufficient response. Consider dose increase by 200%.","Be extra alert to insufficient response. Consider dose increase by 400%.","Be extra alert to insufficient response. Consider dose increase by 50-100%.","Check INR more frequently.","Choose an alternative agent that is not dependent on CYP2C19 metabolism as primary therapy in lieu of voriconazole. Such agents include isavuconazole, liposomal amphotericin B, and posaconazole.","Choose an alternative agent that is not dependent on CYP2C19 metabolism as primary therapy in lieu of voriconazole. Such agents include isavuconazole, liposomal amphotericin B, and posaconazole. In the event that voriconazole is considered to be the most appropriate agent, based on clinical advice, voriconazole should be administered at a preferably lower than standard dosage with careful therapeutic drug monitoring.","Consider 25% reduction of recommended starting dose.","Consider 25% reduction of recommended starting dose. Utilize therapeutic drug monitoring to guide dose adjustments.","Consider 25% reduction of recommended starting dose.g Utilize therapeutic drug monitoring to guide dose adjustments.","Consider a 25-50% reduction of recommended starting dose and titrate to response or use an alternative drug not metabolized by CYP2D6.","Consider a 50% reduction of recommended starting dose and titrate to response or select alternative drug not predominantly metabolized by CYP2C19.","Consider alternative drug not metabolized by CYP2C19.","Consider an alternative agent particularly where jaundice would be of concern to the patient.","Consider an alternative drug not predominantly metabolized by CYP2C19.","Consider hormonal therapy such as an aromatase inhibitor for postmenopausal women or aromatase inhibitor along with ovarian function suppression in premenopausal women, given that these approaches are superior to tamoxifen regardless of CYP2D6 genotype. If aromatase inhibitor use is contraindicated, consideration should be given to use a higher but FDA approved tamoxifen dose (40 mg/day). Avoid CYP2D6 strong to weak inhibitors.","For malignancy, start with drastically reduced doses (reduce daily dose by 10-fold and reduce frequency to thrice weekly instead of daily) andadjust dose based on degree of myelosuppression and disease-specific guidelines. Allow 4-6 weeks to reach steady state after each dose adjustment. In setting of myelosuppression, emphasis should be on reducing mercaptopurine over other agents. For nonmalignant conditions, consider alternative nonthiopurine immunosuppressant therapy.","In patients with a heart failure, select alternative drug (e.g., bisoprolol, carvedilol) or reduce dose by 50%. For other indications, be alert to ADEs (e.g., bradycardia, cold extremities) or select alternative drug (e.g., atenolol, bisoprolol).","In patients with a heart failure, select alternative drug (e.g., bisoprolol, carvedilol) or reduce dose by 75%. For other indications, be alert to ADEs (e.g., bradycardia, cold extremities) or select alternative drug (e.g., atenolol, bisoprolol).","In patients with a heart failure, select alternative drug (e.g., bisoprolol, carvedilol) or titrate dose to a maximum of 250% of the normal dose in response to efficacy and ADE. For other indications, select alternative drug (e.g., atenolol, bisoprolol) or titrate dose to a maximum of 250% of the normal dose in response to efficacy and ADE.","Increase starting dose 1.5 to 2 times recommended starting dose. Total starting dose should not exceed 0.3mg/kg/day. Use therapeutic drug monitoring to guide dose adjustments.","Increased risk for reduced response to clopidogrel. Consider alternative drug. Prasugrel is not or to a much smaller extent metabolized by CYP2C19 but is associated with an increased bleeding risk compared to clopidogrel","Increased risk of cisplatin-induced ototoxicity (hearing loss) in pediatric patients. Alternative treatments may be prescribed when they have demonstrated equal efficacy, manageable and acceptable toxicity, less ototoxicity, and are considered options within the current standards of care.","Initiate therapy with recommended starting dose. If patient does not respond to recommended maintenance dosing, consider alternative drug not predominantly metabolized by CYP2C19.","Insufficient data to allow calculation of dose adjustment. Select alternate drug - not tramadol or codeine - or be alert to symptoms of insufficient pain relief.","Prescribe a lower dose or consider an alternative statin (e.g. pravastatin or rosuvastatin); consider routine CK surveillance.","Recommend alternative hormonal therapy such as an aromatase inhibitor for postmenopausal women or aromatase inhibitor along with ovarian function suppression in premenopausal women given that these approaches are superior to tamoxifen regardless of CYP2D6 genotype and based on knowledge that CYP2D6 poor metabolizers switched from tamoxifen to anastrozole do not have an increased risk of recurrence. Note, higher dose tamoxifen (40 mg/day) increases but does not normalize endoxifen concentrations and can be considered if there are contraindications to aromatase inhibitor therapy.","Record ECG and monitor plasma concentration or select alternative drug (e.g., sotalol, disopyramide, quinidine, amiodarone).","Reduce dose by 25% or select alternative drug (flupenthixol, quetiapine, olanzapine, clozapine).","Reduce dose by 25%, record ECG, monitor plasma concentration.","Reduce dose by 30% and be alert to ADEs (e.g., nausea, vomiting, constipation, respiratory depression, confusion, urinary retention) or select alternative drug (e.g., acetaminophen, NSAID, morphine, not oxycodone or codeine).","Reduce dose by 50% or select alternative drug (e.g., flupenthixol, quetiapine, olanzapine, clozapine).","Reduce dose by 50% or select alternative drug (e.g., pimozide, flupenthixol, fluphenazine, quetiapine, olanzapine, clozapine).","Reduce dose by 50% or select alternative drug. Tegafur is not a suitable alternative because this drug is also a substrate for DPD. Increase dose in response to toxicity and efficacy.","Reduce dose by 50%, record ECG, monitor plasma concentration.","Reduce dose by 70%, record ECG, monitor plasma concentration.","Reduce initial dose by 30% for patients receiving more than 250 mg/m2. Increase dose in response to neutrophil count.","Reduce maximum dose to 10 mg/day (67% of the maximum recommended daily dose).","Select alterantive drug. Fluorouracil or capecitabine are not suitable alternatives because both are also metabolized by DPD.","Select alterantive drug. Tegafur is not a suitable alternative because this drug is also metabolized by DPD.","Select alternative drug (e.g., acetaminophen, NSAID, morphine-not tramadol or oxycodone) or be alert to ADE. Be extra alert to ADEs due to increased morphine plasma concentration.","Select alternative drug (e.g., acetaminophen, NSAID, morphine-not tramadol or oxycodone) or be alert to symptoms of insufficient pain relief.","Select alternative drug (e.g., citalopram, sertraline) or adjust dose to clinical response and monitor (O-desmethyl)venlafaxine plasma concentration.","Select alternative drug (e.g., quetiapine, olanzapine, clozapine) or be extra alert to ADEs and adjust dose to clinical response.","Select alternative drug (e.g., quetiapine,olanzapine, clozapine) or be extra alert to ADEs and adjust dose to clinical response.","Select alternative drug (not oxycodone or codeine) or be alert to symptoms of insufficient pain relief.","Select alternative drug not predominantly metabolized by CYP2D6 d or if paroxetine use warranted, consider a 50% reduction of recommended starting dose and titrate to response.","Select alternative drug not predominantly metabolized by CYP2D6.","Select alternative drug or reduce dose by 50%. Increase dose in response of hematologic monitoring and efficacy.","Select alternative drug or reduce dose by 90%. Increase dose in response of hematologic monitoring and efficacy.","Select and alternative drug not predominantly metabolized by CYP2D6 (i.e. granisetron).","Start with drastically reduced doses (reduce daily dose by 10-fold and dose thrice weekly instead of daily) and adjust doses of thioguanine based on degree of myelosuppression and disease-specific guidelines. Allow 4-6 weeks to reach steady state after each dose adjustment. In setting of myelosuppression, emphasis should be on reducing thioguanine over other agents. For nonmalignant conditions, consider alternative nonthiopurine immunosuppressant therapy.","Start with reduced doses (reduce by 30-50%) and adjust doses of thioguanine based on degree of myelosuppression and disease-specific guidelines. Allow 2-4 weeks to reach steady state after each dose adjustment. In setting of myelosuppression, and depending on other therapy, emphasis should be on reducing thioguanine over other agents.","Start with reduced doses (start at 30-70% of full dose) and adjust doses based on degree of myelosuppression and disease-specific guidelines. Allow 2-4 weeks to reach steady state after each dose adjustment. In those who require a dosage reduction based on myelosuppression, the median dose may be ~40% lower (44 mg/m2) than that tolerated in wild-type patients (75 mg/m2). In setting of myelosuppression, and depending on other therapy, emphasis should be on reducing mercaptopurine over other agents.","There is no need to avoid prescribing of atazanavir based on UGT1A1 genetic test result. Inform the patient that some patients stop atazanavir because of jaundice (yellow eyes and skin), but that this patient&rsquo;s genotype makes this unlikely.","Use standard loading dose and reduce maintenance dose by 25%. Evaluate response and serum concentration after 7-10 days. Be alert to ADEs (e.g., ataxia, nystagmus, dysarthria, sedation).","Use standard loading dose and reduce maintenance dose by 50%. Evaluate response and serum concentration after 7-10 days. Be alert to ADEs (e.g., ataxia, nystagmus, dysarthria, sedation).","Use www.warfarindosing.org to calculate exact warfarin dosing recommendation."];
+const P_GL=["CPIC","DPWG","CPNDS","FDA"];
+/* [Wirkstoff, OM-ID, [[Gen,Code,Rohwert],...], Textindex, Leitlinienmaske,
+    DoseOverride, Ampelfarbe aus dem Template, Dosisbereich (nur Warfarin)] */
+const P_REC=[["Abacavir","17058",[["HLA-B","","YES"]],0,3,"0","crit",""],["Acenocoumarol","17070",[["CYP2C9","IM","INTERMEDIATE"]],18,2,"","crit",""],["Acenocoumarol","17070",[["CYP2C9","PM","POOR"]],18,2,"","crit",""],["Acenocoumarol","17070",[["VKORC1","","TT"]],18,2,"","crit",""],["Amitriptyline","17182",[["CYP2C19","UM","ULTRARAPID"],["CYP2D6","UM","ULTRARAPID"]],2,3,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","UM","ULTRARAPID"],["CYP2D6","NM","EXTENSIVE"]],26,1,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","UM","ULTRARAPID"],["CYP2D6","IM","INTERMEDIATE"]],26,1,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","UM","ULTRARAPID"],["CYP2D6","PM","POOR"]],2,3,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","NM","EXTENSIVE"],["CYP2D6","UM","ULTRARAPID"]],5,3,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","NM","EXTENSIVE"],["CYP2D6","IM","INTERMEDIATE"]],21,3,"1","warn",""],["Amitriptyline","17182",[["CYP2C19","NM","EXTENSIVE"],["CYP2D6","PM","POOR"]],3,1,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","IM","INTERMEDIATE"],["CYP2D6","UM","ULTRARAPID"]],2,3,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","IM","INTERMEDIATE"],["CYP2D6","IM","INTERMEDIATE"]],21,3,"1","warn",""],["Amitriptyline","17182",[["CYP2C19","IM","INTERMEDIATE"],["CYP2D6","PM","POOR"]],3,3,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","PM","POOR"],["CYP2D6","UM","ULTRARAPID"]],2,3,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","PM","POOR"],["CYP2D6","NM","EXTENSIVE"]],4,1,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","PM","POOR"],["CYP2D6","IM","INTERMEDIATE"]],2,1,"0","crit",""],["Amitriptyline","17182",[["CYP2C19","PM","POOR"],["CYP2D6","PM","POOR"]],2,3,"0","crit",""],["Aripiprazole","17223",[["CYP2D6","PM","POOR"]],51,2,"1","warn",""],["Atazanavir","17238",[["UGT1A1","IM","INTERMEDIATE"]],68,1,"","crit",""],["Atazanavir","17238",[["UGT1A1","PM","POOR"]],27,1,"0","crit",""],["Atomoxetine","17240",[["CYP2D6","UM","ULTRARAPID"]],14,2,"0","crit",""],["Azathioprine","17255",[["TPMT","IM","INTERMEDIATE"]],62,3,"0","crit",""],["Azathioprine","17255",[["TPMT","PM","POOR"]],63,3,"0","crit",""],["Capecitabine","17447",[["DPYD","PM","POOR"]],53,3,"0","crit",""],["Capecitabine","17447",[["DPYD","IM","INTERMEDIATE"]],47,3,"0","crit",""],["Cisplatin","17612",[["TPMT","PM","POOR"]],36,4,"0","crit",""],["Cisplatin","17612",[["TPMT","IM","INTERMEDIATE"]],36,4,"0","crit",""],["Citalopram","17613",[["CYP2C19","UM","ULTRARAPID"]],28,3,"0","crit",""],["Citalopram","17613",[["CYP2C19","PM","POOR"]],25,1,"1","warn",""],["Clopidogrel","17655",[["CYP2C19","PM","POOR"]],35,3,"0","crit",""],["Clopidogrel","17655",[["CYP2C19","IM","INTERMEDIATE"]],35,3,"0","crit",""],["Codeine","17671",[["CYP2D6","PM","POOR"]],55,3,"0","crit",""],["Codeine","17671",[["CYP2D6","IM","INTERMEDIATE"]],55,3,"0","crit",""],["Codeine","17671",[["CYP2D6","UM","ULTRARAPID"]],54,3,"0","crit",""],["Desipramine","17750",[["CYP2D6","UM","ULTRARAPID"]],8,1,"","crit",""],["Desipramine","17750",[["CYP2D6","IM","INTERMEDIATE"]],23,1,"","crit",""],["Desipramine","17750",[["CYP2D6","PM","POOR"]],7,1,"","crit",""],["Escitalopram","17963",[["CYP2C19","UM","ULTRARAPID"]],28,3,"0","crit",""],["Escitalopram","17963",[["CYP2C19","PM","POOR"]],25,1,"0","crit",""],["Esomeprazole","17967",[["CYP2C19","UM","ULTRARAPID"]],17,2,"3","warn",""],["Flecainide","18082",[["CYP2D6","PM","POOR"]],48,2,"1","warn",""],["Flecainide","18082",[["CYP2D6","IM","INTERMEDIATE"]],43,2,"1","warn",""],["Flecainide","18082",[["CYP2D6","UM","ULTRARAPID"]],41,2,"0","crit",""],["Fluorouracil","18115",[["DPYD","PM","POOR"]],53,3,"0","crit",""],["Fluorouracil","18115",[["DPYD","IM","INTERMEDIATE"]],47,3,"0","crit",""],["Fluvoxamine","18133",[["CYP2D6","PM","POOR"]],24,1,"0","crit",""],["Haloperidol","18238",[["CYP2D6","PM","POOR"]],46,2,"0","crit",""],["Haloperidol","18238",[["CYP2D6","UM","ULTRARAPID"]],11,2,"0","crit",""],["Irinotecan","18377",[["UGT1A1","","*28/*28"]],50,10,"1","warn",""],["Lansoprazole","18424",[["CYP2C19","UM","ULTRARAPID"]],15,0,"3","warn",""],["Mercaptopurine","18586",[["TPMT","IM","INTERMEDIATE"]],67,3,"1","warn",""],["Mercaptopurine","18586",[["TPMT","PM","POOR"]],30,3,"1","warn",""],["Metoprolol","18663",[["CYP2D6","PM","POOR"]],32,2,"0","crit",""],["Metoprolol","18663",[["CYP2D6","IM","INTERMEDIATE"]],31,2,"0","crit",""],["Metoprolol","18663",[["CYP2D6","UM","ULTRARAPID"]],33,2,"0","crit",""],["Nortriptyline","18826",[["CYP2D6","UM","ULTRARAPID"]],8,3,"0","crit",""],["Nortriptyline","18826",[["CYP2D6","IM","INTERMEDIATE"]],22,3,"1","warn",""],["Nortriptyline","18826",[["CYP2D6","PM","POOR"]],9,3,"0","crit",""],["Ondansetron","18845",[["CYP2D6","UM","ULTRARAPID"]],64,1,"0","crit",""],["Oxycodone","18884",[["CYP2D6","PM","POOR"]],38,2,"0","crit",""],["Oxycodone","18884",[["CYP2D6","IM","INTERMEDIATE"]],38,2,"0","crit",""],["Oxycodone","18884",[["CYP2D6","UM","ULTRARAPID"]],38,2,"0","crit",""],["Pantoprazole","18906",[["CYP2C19","UM","ULTRARAPID"]],16,2,"3","warn",""],["Paroxetine","18919",[["CYP2D6","UM","ULTRARAPID"]],61,3,"0","crit",""],["Paroxetine","18919",[["CYP2D6","PM","POOR"]],60,1,"0","crit",""],["Phenytoin","18991",[["CYP2C9","IM","INTERMEDIATE"]],69,2,"1","warn",""],["Phenytoin","18991",[["CYP2C9","PM","POOR"]],70,2,"1","warn",""],["Propafenone","19122",[["CYP2D6","PM","POOR"]],49,2,"1","warn",""],["Propafenone","19122",[["CYP2D6","IM","INTERMEDIATE"]],1,2,"0","crit",""],["Propafenone","19122",[["CYP2D6","UM","ULTRARAPID"]],1,2,"0","crit",""],["Risperidone","19223",[["CYP2D6","PM","POOR"]],58,2,"0","crit",""],["Risperidone","19223",[["CYP2D6","IM","INTERMEDIATE"]],57,2,"0","crit",""],["Risperidone","19223",[["CYP2D6","UM","ULTRARAPID"]],57,2,"0","crit",""],["Sertraline","19281",[["CYP2C19","UM","ULTRARAPID"]],37,1,"0","crit",""],["Sertraline","19281",[["CYP2C19","PM","POOR"]],25,3,"0","crit",""],["Simvastatin","19292",[["SLCO1B1","PM","POOR"]],39,1,"0","crit",""],["Simvastatin","19292",[["SLCO1B1","IM","INTERMEDIATE"]],39,1,"0","crit",""],["Tacrolimus","19415",[["CYP3A5","NM","EXTENSIVE"]],34,1,"3","warn",""],["Tacrolimus","19415",[["CYP3A5","IM","INTERMEDIATE"]],34,1,"3","warn",""],["Tamoxifen","19422",[["CYP2D6","UM","ULTRARAPID"]],6,1,"","crit",""],["Tamoxifen","19422",[["CYP2D6","NM","EXTENSIVE"]],6,1,"","crit",""],["Tamoxifen","19422",[["CYP2D6","IM","INTERMEDIATE"]],29,3,"0","crit",""],["Tamoxifen","19422",[["CYP2D6","PM","POOR"]],40,3,"0","crit",""],["Tegafur","19454",[["DPYD","PM","POOR"]],52,2,"0","crit",""],["Tioguanine","19547",[["TPMT","IM","INTERMEDIATE"]],66,1,"1","warn",""],["Tioguanine","19547",[["TPMT","PM","POOR"]],65,1,"1","warn",""],["Tramadol","19588",[["CYP2D6","PM","POOR"]],59,2,"0","crit",""],["Tramadol","19588",[["CYP2D6","IM","INTERMEDIATE"]],10,2,"0","crit",""],["Tramadol","19588",[["CYP2D6","UM","ULTRARAPID"]],44,2,"0","crit",""],["Tropisetron","19643",[["CYP2D6","UM","ULTRARAPID"]],64,1,"0","crit",""],["Venlafaxine","19681",[["CYP2D6","PM","POOR"]],56,2,"0","crit",""],["Venlafaxine","19681",[["CYP2D6","IM","INTERMEDIATE"]],56,2,"0","crit",""],["Venlafaxine","19681",[["CYP2D6","UM","ULTRARAPID"]],12,2,"0","crit",""],["Voriconazole","19707",[["CYP2C19","UM","ULTRARAPID"]],19,1,"0","crit",""],["Voriconazole","19707",[["CYP2C19","IM","INTERMEDIATE"]],19,1,"0","crit",""],["Voriconazole","19707",[["CYP2C19","PM","POOR"]],20,1,"0","crit",""],["Warfarin","19710",[],71,0,"","crit","0.5-2"],["Warfarin","19710",[],71,0,"","crit","3-4"],["Warfarin","19710",[],71,0,"","crit","5-7"],["Zuclopenthixol","19748",[["CYP2D6","PM","POOR"]],45,2,"0","crit",""],["Zuclopenthixol","19748",[["CYP2D6","IM","INTERMEDIATE"]],42,2,"0","crit",""],["Zuclopenthixol","19748",[["CYP2D6","UM","ULTRARAPID"]],13,2,"0","crit",""]];
+/* ===== END PHARMCAT PROFIL ===== */
 /* ================= DATEN ================= */
-const PHENO={CYP2C19:{lvl:1},CYP2D6:{lvl:2},CYP2C9:{lvl:0},VKORC1:{lvl:0},DPYD:{lvl:1},SLCO1B1:{lvl:1},TPMT:{lvl:2},UGT1A1:{lvl:1},CYP3A4:{lvl:2},NAT2:{lvl:1},ABCB1:{lvl:1},G6PD:{lvl:2},CYP1A2:{lvl:3}};
+/* Die Gendaten kommen nicht mehr aus der Hand, sondern aus dem PharmCAT-Lauf
+   der Probe P_META.probe. lvl -1 heisst: PharmCAT konnte kein eindeutiges
+   Ergebnis liefern - entweder fehlen Positionen im VCF oder es bleiben mehrere
+   Diplotypen moeglich. Dieser Fall wird als eigener Zustand gefuehrt und
+   NICHT zu "normal" geglaettet. */
+const PGENE={}; P_GENES.forEach(g=>{PGENE[g.g]=g;});
+const PHENO={};
+P_GENES.forEach(g=>{PHENO[g.g]={lvl:g.lvl,code:g.code,art:g.kind,eind:!!g.ok,
+  mehr:!!g.mehr,kand:g.kand,score:g.score,rolle:g.rolle,phen:g.phen,de:g.de};});
 /* Deutsche Fachbegriffe nach CPIC-Systematik, engl. Kuerzel als Zusatz */
-const LVL={3:{t:"Ultraschneller Metabolisierer",k:"UM",s:"Sehr schnell",col:"var(--ok-t)"},2:{t:"Normaler Metabolisierer",k:"NM",s:"Normal",col:"var(--ok-t)"},1:{t:"Intermedi&auml;rer Metabolisierer",k:"IM",s:"Vermindert",col:"var(--warn-t)"},0:{t:"Langsamer Metabolisierer",k:"PM",s:"Stark vermindert",col:"var(--crit-t)"}};
+const LVL={3:{t:"Ultraschneller Metabolisierer",k:"UM",s:"Sehr schnell",col:"var(--ok-t)"},2:{t:"Normaler Metabolisierer",k:"NM",s:"Normal",col:"var(--ok-t)"},1:{t:"Intermedi&auml;rer Metabolisierer",k:"IM",s:"Vermindert",col:"var(--warn-t)"},0:{t:"Langsamer Metabolisierer",k:"PM",s:"Stark vermindert",col:"var(--crit-t)"},
+"-1":{t:"Nicht bestimmbar",k:"?",s:"Offen",col:"var(--unk-t)"}};
+/* Fuer Transporter und Zielproteine passt das Wort Metabolisierer nicht.
+   PharmCAT liefert dort eigene Phaenotyp-Woerter, die im Datenblock schon
+   uebersetzt sind - LVLFOR nimmt sie, wenn vorhanden. */
+function lvlLabel(g){
+  const p=PHENO[g];
+  if(!p)return LVL[2];
+  if(p.de)return {t:p.de,k:LVL[p.lvl]?LVL[p.lvl].k:"?",s:LVL[p.lvl]?LVL[p.lvl].s:"Offen",
+                  col:LVL[p.lvl]?LVL[p.lvl].col:"var(--unk-t)"};
+  return LVL[p.lvl]||LVL["-1"];
+}
 /* kopien = die zwei geerbten Genkopien, explizit hinterlegt (nicht aus dem
    Genotyp-String geraten), jeweils [Bezeichnung, Funktion] */
-const GENO={
-  CYP2C19:{genotyp:"*1/*2",allele:"*1, *2, *3, *4, *5, *6, *7, *8, *9, *10, *17, *35",
-    kopien:[["*1","normal"],["*2","keine"]]},
-  CYP2D6:{genotyp:"*1/*1",allele:"*1, *2, *3, *4, *5, *6, *9, *10, *17, *29, *41, xN",
-    kopien:[["*1","normal"],["*1","normal"]]},
-  CYP2C9:{genotyp:"*3/*3",allele:"*1, *2, *3, *4, *5, *6, *8, *11",
-    kopien:[["*3","stark reduziert"],["*3","stark reduziert"]]},
-  VKORC1:{genotyp:"c.-1639G>A A/A",allele:"rs9923231",
-    kopien:[["c.-1639A","Empfindlichkeit erh&ouml;ht"],["c.-1639A","Empfindlichkeit erh&ouml;ht"]]},
-  DPYD:{genotyp:"c.1905+1G>A (*2A) het.",allele:"*2A, *13, c.2846A>T, HapB3",
-    kopien:[["*2A","keine"],["*1","normal"]]},
-  SLCO1B1:{genotyp:"c.521T>C C/C (*5)",allele:"*1, *5, *15, *17",
-    kopien:[["*5","reduziert"],["*5","reduziert"]]},
-  TPMT:{genotyp:"*1/*1",allele:"*1, *2, *3A, *3B, *3C, *4",
-    kopien:[["*1","normal"],["*1","normal"]]},
-  UGT1A1:{genotyp:"*1/*28",allele:"*1, *6, *28, *36, *37",
-    kopien:[["*1","normal"],["*28","reduziert"]]},
-  CYP3A4:{genotyp:"*1/*1",allele:"*1, *22",
-    kopien:[["*1","normal"],["*1","normal"]]},
-  NAT2:{genotyp:"*5/*6",allele:"*4, *5, *6, *7, *12, *13, *14",
-    kopien:[["*5","reduziert"],["*6","reduziert"]]},
-  ABCB1:{genotyp:"3435C>T C/T",allele:"rs1045642",
-    kopien:[["3435C","normal"],["3435T","ver&auml;nderter Transport"]]},
-  G6PD:{genotyp:"B/B",allele:"B, A-, Mediterranean",
-    kopien:[["B","normal"],["B","normal"]]},
-  CYP1A2:{genotyp:"*1F/*1F",allele:"*1A, *1C, *1F, *1K",
-    kopien:[["*1F","gesteigert"],["*1F","gesteigert"]]}
-};
+/* GENO wird aus dem PharmCAT-Profil gebaut. kopien = die beiden gerufenen
+   Allele mit ihrer Funktion, wie PharmCAT sie meldet. Bei nicht eindeutigem
+   Ergebnis bleibt kopien leer - dann zeigt die Karte den Grund statt zwei
+   erfundene Kopien. */
+const GENO={};
+P_GENES.forEach(g=>{
+  const kop=[];
+  if(g.ok&&g.a1)kop.push([g.a1,g.f1]);
+  if(g.ok&&g.a2)kop.push([g.a2,g.f2]);
+  GENO[g.g]={genotyp:g.dip||"nicht bestimmbar",
+    allele:(g.alle&&g.alle.length)?g.alle.join(", "):"&mdash;",
+    kopien:kop, score:g.score, unc:g.unc||[], var:g.var||[],
+    pos:g.pos, fehlt:g.fehlt, kand:g.kand, alt:g.alt||[]};
+});
 /* Funktionszuordnung der Sternchen-Allele (PharmVar / CPIC) */
 const AFN={
   CYP2C19:{'*1':'normal','*17':'gesteigert','*2':'keine','*3':'keine','*4':'keine','*5':'keine','*6':'keine','*7':'keine','*8':'keine','*9':'reduziert','*10':'reduziert','*35':'keine'},
@@ -923,8 +995,17 @@ const AFN={
   ABCB1:{'rs1045642':'ver&auml;nderter Transport'},
   G6PD:{'B':'normal','A-':'Mangel','Mediterranean':'Mangel'}
 };
+/* Die von PharmCAT gemeldeten Funktionen der gerufenen Allele haben Vorrang
+   vor der hinterlegten Tabelle - sie stammen direkt aus der Allel-Definition
+   der verwendeten ClinPGx-Version. */
+P_GENES.forEach(g=>{
+  AFN[g.g]=AFN[g.g]||{};
+  if(g.a1&&g.f1)AFN[g.g][g.a1]=g.f1;
+  if(g.a2&&g.f2)AFN[g.g][g.a2]=g.f2;
+});
 const AFNC={'normal':'ok','gesteigert':'ultra','reduziert':'warn','stark reduziert':'warn','keine':'crit','Mangel':'crit',
-  'Empfindlichkeit erh&ouml;ht':'warn','ver&auml;nderter Transport':'warn'};
+  'Empfindlichkeit erh&ouml;ht':'warn','ver&auml;nderter Transport':'warn',
+  'm&ouml;glicherweise reduziert':'warn','unklar':'warn','unbekannt':'warn'};
 const EVID={guideline:{n:4,label:"Klinische Leitlinie"},label:{n:3,label:"Beipackzettel"},reviewed:{n:2,label:"Medizinisch gepr&uuml;ft"},studies:{n:1,label:"Wissenschaftliche Studien"}};
 
 const DEMO_DRUGS={
@@ -1173,10 +1254,15 @@ D_REC.forEach(r=>{
   (RECBY[k]=RECBY[k]||[]).push({gen:D_RECGENES[r[1]], lvl:r[2], gt:r[3],
     txt:r[4]>=0?D_TXT[r[4]]:'', gl:glFrom(r[5])});
 });
-/* Empfehlung, die zu Lisas Phaenotyp passt */
-function recFor(id){
+/* Rueckfall: Empfehlung aus dem Wirkstoff-Datenblock. Wird nur genommen, wenn
+   die genauere Leitlinien-Matrix P_REC fuer diesen Wirkstoff nichts hat.
+   Die Stufen muessen beide >= 0 sein - Stufe -1 heisst im Datenblock
+   "Sondergenotyp", im Profil aber "nicht bestimmbar". Das darf sich nicht
+   versehentlich treffen. */
+function recForFallback(id){
   const rs=RECBY[id]; if(!rs)return null;
-  for(const r of rs){ const p=PHENO[r.gen]; if(p&&p.lvl===r.lvl)return r; }
+  for(const r of rs){ const p=PHENO[r.gen];
+    if(p&&r.lvl>=0&&p.lvl>=0&&p.lvl===r.lvl)return r; }
   return null;
 }
 
@@ -1253,7 +1339,7 @@ Object.keys(DRUGS).forEach(k=>{
    Bewertungs-Zwischenspeicher weiter unten im Skript steht */
 var _dbstat=null;
 function DBSTATS(){
-  if(!_dbstat){const t={total:0,ok:0,warn:0,crit:0};
+  if(!_dbstat){const t={total:0,ok:0,warn:0,crit:0,unk:0};
     Object.keys(DRUGS).forEach(k=>{t.total++;t[listSev(k)]++;});_dbstat=t;}
   return _dbstat;
 }
@@ -1296,13 +1382,109 @@ let watchlist=new Set(["clopidogrel","warfarin","ibuprofen"]);
 let openCards={}, openBoxes={dose:false,gene:false,alt:false}, openGenes={}, altChoice={}, altMenuOpen=null;
 let q="", fCat="all", fSev="all", fFav=false, fWatch=false, geneTech={};
 
+/* ---- Leitlinien-Matrix aus 'Pharmgkb drug recommendations V4' -------------
+   Eine Zeile gilt nur, wenn ALLE ihre Genbedingungen zutreffen. 14 der 103
+   Zeilen verlangen zwei Gene gleichzeitig (CYP2C19 und CYP2D6 bei
+   Amitriptylin) - wer nur die erste Bedingung prueft, ordnet dem Kunden eine
+   fremde Empfehlung zu. Das war beim ersten Abgleich genau der Fehler. */
+const PRECBY={};
+P_REC.forEach(r=>{
+  const k=r[0].toLowerCase();
+  (PRECBY[k]=PRECBY[k]||[]).push({drug:r[0],om:r[1],cond:r[2],
+    txt:r[3]>=0?P_TXT[r[3]]:'', gl:pglFrom(r[4]), dose:r[5], sev:r[6]||'warn',
+    dosis:r[7]});
+});
+function pglFrom(m){return P_GL.filter((_,i)=>m&(1<<i));}
+/* Transporter- und Enzymvokabular treffen sich: das Spreadsheet schreibt
+   POOR/INTERMEDIATE auch dort, wo PharmCAT PF/DF meldet. */
+const PAEQ={NF:'NM',DF:'IM',PF:'PM',IF:'UM'};
+/* Ergebnis je Bedingung: true trifft zu, false trifft nicht zu,
+   null nicht entscheidbar (Gen fehlt, mehrdeutig oder ohne Ergebnis). */
+function condTrifft(c){
+  const gen=c[0], code=c[1], roh=c[2];
+  const p=PHENO[gen];
+  if(!p)return [null,gen+' ist nicht Teil des Panels'];
+  if(p.mehr)return [null,gen+' ist mehrdeutig &mdash; '+p.kand+' Diplotypen bleiben m&ouml;glich'];
+  if(!p.eind)return [null,'f&uuml;r '+gen+' liegt kein Ergebnis vor'];
+  if(code){
+    const mine=[p.code]; if(PAEQ[p.code])mine.push(PAEQ[p.code]);
+    return [mine.indexOf(code)>=0, gen+' ist '+p.code+', die Zeile verlangt '+code];
+  }
+  /* Kein Phaenotyp-Code: das Spreadsheet vergleicht hier den Diplotyp
+     direkt, etwa UGT1A1 *28/*28 oder VKORC1 TT. */
+  const gn=GENO[gen];
+  const a=(gn&&gn.genotyp||'').replace(/\s/g,'').toUpperCase();
+  const b=(roh||'').replace(/\s/g,'').toUpperCase();
+  if(!a||a==='NICHTBESTIMMBAR')return [null,'f&uuml;r '+gen+' liegt kein Diplotyp vor'];
+  return [a===b, gen+' ist '+gn.genotyp+', die Zeile verlangt '+roh];
+}
+/* Die Zeile, die zum Profil passt. Zusaetzlich wird festgehalten, ob eine
+   Zeile nur deshalb nicht greift, weil ein Gen nicht bestimmbar ist. */
+function recMatch(id){
+  const rs=PRECBY[id]; if(!rs)return {rec:null,offen:null};
+  let offen=null;
+  for(const r of rs){
+    if(!r.cond.length)continue;                 /* Warfarin-Dosisformel, s.u. */
+    let alle=true, unklar=null;
+    for(const c of r.cond){
+      const [ok,warum]=condTrifft(c);
+      if(ok===false){alle=false;break;}
+      if(ok===null){unklar=warum;alle=false;}
+    }
+    if(alle)return {rec:r,offen:null};
+    if(unklar&&!offen)offen={grund:unklar,n:rs.length};
+  }
+  return {rec:null,offen:offen};
+}
+const _recCache={};
+function _rc(id){
+  let v=_recCache[id];
+  if(v===undefined){v=recMatch(id);_recCache[id]=v;}
+  return v;
+}
+function recFor(id){
+  const v=_rc(id);
+  if(v.rec)return{gen:v.rec.cond.map(c=>c[0]).join(' + '),
+                  cgen:v.rec.cond[0]?v.rec.cond[0][0]:null,
+                  gt:v.rec.cond.map(c=>c[2]).join(' + '),
+                  txt:v.rec.txt, gl:v.rec.gl, sev:v.rec.sev,
+                  dose:v.rec.dose, om:v.rec.om, quelle:'matrix'};
+  /* nichts in der Matrix - dann der Rueckfall aus dem Wirkstoff-Datenblock */
+  const fb=recForFallback(id);
+  return fb?Object.assign({},fb,{sev:null,cgen:fb.gen,quelle:'datenblock'}):null;
+}
+/* Warum eine Leitlinie zwar existiert, aber nicht angewandt werden kann */
+function recOffen(id){return _rc(id).offen;}
+
 /* ================= LOGIK ================= */
 function ico(id,cls,size){return `<svg class="${cls||''}" ${size?`width="${size}" height="${size}"`:''}><use href="#${id}"/></svg>`;}
 function hasPGx(id){return !!PHENO[DRUGS[id].gene];}
 function statusFor(id){
   const d=DRUGS[id],g=d.gene;
+  /* 1. Vorrang: eine Leitlinienzeile, deren Genbedingungen exakt zutreffen.
+        Der Schweregrad kommt dann aus der Quelle selbst (rot/gelb im
+        Novogenia-Template), nicht aus einer Heuristik. */
+  const rc=recFor(id);
+  if(rc&&rc.quelle==='matrix')return{sev:rc.sev, lvl:PHENO[rc.cgen]?PHENO[rc.cgen].lvl:2,
+    leit:true,
+    text:"F&uuml;r "+d.name+" gibt es eine offizielle Empfehlung, die genau auf deinen "
+      +"Genotyp "+rc.gt+" passt. Sie steht unten im Wortlaut."};
+  /* 2. Eine Leitlinie existiert, laesst sich aber nicht anwenden, weil ein
+        dafuer noetiges Gen nicht eindeutig bestimmt werden konnte. */
+  const off=recOffen(id);
+  if(off)return{sev:"unk", lvl:-1, offen:off,
+    text:"F&uuml;r "+d.name+" gibt es offizielle Empfehlungen &mdash; sie h&auml;ngen aber an "
+      +"einem Gen, das in deiner Analyse nicht eindeutig bestimmt werden konnte "
+      +"("+off.grund+"). Deshalb bleibt die Bewertung offen."};
   if(!PHENO[g])return{sev:"ok",lvl:2,nopgx:true,text:"F&uuml;r "+d.name+" ist &uuml;ber deine getesteten Gene kein relevanter genetischer Einfluss bekannt. Die Standarddosis ist f&uuml;r dich unauff&auml;llig."};
   const lvl=PHENO[g].lvl;let sev,text;
+  /* 3. Gen ist im Panel, hat aber kein eindeutiges Ergebnis. */
+  if(lvl<0)return{sev:"unk",lvl:-1,
+    text:"Ob "+d.name+" zu dir passt, h&auml;ngt von "+g+" ab. Dieses Gen konnte in deiner "
+      +"Analyse nicht eindeutig bestimmt werden &mdash; "
+      +(PHENO[g].mehr?("es bleiben "+PHENO[g].kand+" m&ouml;gliche Varianten offen")
+                     :"die daf&uuml;r n&ouml;tigen Positionen wurden nicht gelesen")
+      +". Eine Aussage w&auml;re geraten, deshalb bleibt sie offen."};
   if(d.prodrug){
     if(lvl===2){sev="ok";text="Dein "+g+" arbeitet normal &mdash; "+d.name+" wird zuverl&auml;ssig aktiviert. Die Standarddosis ist f&uuml;r dich passend.";}
     else if(lvl===1){sev="warn";text=d.name+" wird bei dir nur reduziert aktiviert. Die Wirkung kann schw&auml;cher ausfallen &mdash; eine Alternative oder Dosisanpassung sollte gepr&uuml;ft werden.";}
@@ -1317,8 +1499,10 @@ function statusFor(id){
   if(d.gene2&&PHENO[d.gene2]&&PHENO[d.gene2].lvl===0)sev="crit";
   return{sev,lvl,text};
 }
-const RANK={ok:0,warn:1,crit:2};
-const SLABEL={ok:"OK",warn:"Achtung",crit:"ALARM"};
+/* unk liegt zwischen OK und Achtung: eine offene Frage ist ernster als
+   ein unauffaelliges Ergebnis, aber kein belegter Handlungsbedarf. */
+const RANK={ok:0,unk:1,warn:2,crit:3};
+const SLABEL={ok:"OK",unk:"Offen",warn:"Achtung",crit:"ALARM"};
 function ddisFor(id,pool){return DDI.filter(x=>(x.a===id&&pool.includes(x.b))||(x.b===id&&pool.includes(x.a)));}
 function overallSev(id,pool){
   const st=statusFor(id);let s=st.sev;
@@ -1410,7 +1594,13 @@ function genePair(lvl){
   if(lvl===2)return bar('on')+bar('on');
   if(lvl===1)return bar('on')+bar('off');
   if(lvl===0)return bar('off')+bar('off');
-  return bar('ultra')+bar('ultra');
+  if(lvl===3)return bar('ultra')+bar('ultra');
+  /* nicht bestimmbar: zwei graue Balken mit Fragezeichen statt Haken */
+  const q=(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">`
+    +`<rect x="0" y="0" width="${w}" height="${h}" rx="${h/2}" fill="#8E8896"/>`
+    +`<text x="31.5" y="${h/2+3.4}" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff"`
+    +` font-family="var(--font)">?</text></svg>`;
+  return q(44,12)+q(44,12);
 }
 
 /* ================= NAV ================= */
@@ -1460,7 +1650,8 @@ function bigFiltersHtml(){
     {k:'all',   sev:'all',  cls:'bf-all',  lab:'Alle Medikamente', cnt:all.length, txt:'Die gesamte Datenbank durchsuchen.'},
     {k:'crit',  sev:'crit', cls:'bf-crit', lab:'Alarm',            cnt:n('crit'),  txt:'Dein Genprofil ergibt Handlungsbedarf.'},
     {k:'warn',  sev:'warn', cls:'bf-warn', lab:'Achtung',          cnt:n('warn'),  txt:'Dosis anpassen oder Wirkung beobachten.'},
-    {k:'ok',    sev:'ok',   cls:'bf-ok',   lab:'Unauff&auml;llig', cnt:n('ok'),    txt:'Standarddosis ist f&uuml;r dich passend.'}
+    {k:'ok',    sev:'ok',   cls:'bf-ok',   lab:'Unauff&auml;llig', cnt:n('ok'),    txt:'Standarddosis ist f&uuml;r dich passend.'},
+    {k:'unk',   sev:'unk',  cls:'bf-unk',  lab:'Offen',            cnt:n('unk'),   txt:'Ein n&ouml;tiges Gen ist nicht bestimmbar.'}
   ];
   const btns=tabs.map(t=>`<button class="bf ${t.cls}" aria-pressed="${!fWatch&&fSev===t.sev}"
       onclick="${t.sev==='all'?"setSev('all')":`setSev('${t.sev}')`}">
@@ -1485,6 +1676,8 @@ function toolbarInner(){
         ${ico('st-excl','',16)} Achtung</button>
       <button class="sfb sf-ok" aria-pressed="${!fWatch&&fSev==='ok'}" onclick="setSev('ok')">
         ${ico('st-ok','',16)} OK</button>
+      <button class="sfb sf-unk" aria-pressed="${!fWatch&&fSev==='unk'}" onclick="setSev('unk')">
+        ${ico('c-search','',16)} Offen</button>
       <button class="sfb sf-fav" aria-pressed="${fWatch}" onclick="setWatchFilter()">
         ${ico('star','',15)} Vorgemerkt</button>
     </div>
@@ -1552,7 +1745,11 @@ function vDashboard(){
         </div>
         <div class="dashgrid">${workspace.map(i=>cardHtml(i,'dash',{sevPool:workspace})).join('')}</div>
       </div>`;
-  const auff=Object.keys(PHENO).filter(g=>PHENO[g].lvl!==2).length;
+  /* auffaellig = weicht vom Normalen ab. Offene Gene sind NICHT auffaellig,
+     die zaehlen getrennt - sonst wird eine Wissenslueke als Befund verkauft. */
+  const auff=Object.keys(PHENO).filter(g=>PHENO[g].lvl>=0&&PHENO[g].lvl!==2).length;
+  const offen=Object.keys(PHENO).filter(g=>PHENO[g].lvl<0).length;
+  const nGene=Object.keys(PHENO).length;
   const D=DBSTATS(), pct=n=>Math.max(1.2,(100*n/D.total)).toFixed(1);
   const nf=n=>n.toLocaleString('de-DE');
   return `<div class="hero">
@@ -1565,15 +1762,15 @@ function vDashboard(){
     <div class="hstats">
       <div class="hstat">
         <div class="hsic">${ico('n-dna','',22)}</div>
-        <div class="hsn">233</div>
-        <div class="hsl">Gene analysiert</div>
-        <div class="hsd">der komplette pharmakogenetische Satz</div>
+        <div class="hsn">${nGene}</div>
+        <div class="hsl">Gene ausgewertet</div>
+        <div class="hsd">die pharmakogenetisch entscheidenden Gene</div>
       </div>
       <div class="hstat">
         <div class="hsic">${ico('c-search','',22)}</div>
-        <div class="hsn">6.566</div>
-        <div class="hsl">Genvariationen untersucht</div>
-        <div class="hsd">einzelne Stellen im Erbgut, Punkt f&uuml;r Punkt gelesen</div>
+        <div class="hsn">${nf(P_META.posda)}</div>
+        <div class="hsl">Stellen im Erbgut gelesen</div>
+        <div class="hsd">einzeln bestimmt, Position f&uuml;r Position</div>
       </div>
       <div class="hstat hs-mark">
         <div class="hsic">${ico('st-excl','',22)}</div>
@@ -1581,17 +1778,24 @@ function vDashboard(){
         <div class="hsl">Gene arbeiten anders${ihelp('gene')}</div>
         <div class="hsd">bei dir weicht die Funktion vom Durchschnitt ab</div>
       </div>
+      <div class="hstat">
+        <div class="hsic">${ico('c-search','',22)}</div>
+        <div class="hsn">${offen}</div>
+        <div class="hsl">Gene noch offen${ihelp('offen')}</div>
+        <div class="hsd">hier reichen die gelesenen Stellen nicht f&uuml;r ein Ergebnis</div>
+      </div>
     </div>
 
     <div class="hband">
       <div class="hb-head">
         <span class="hb-n">${nf(D.total)}</span>
         <span class="hb-t">Medikamente gegen dein Profil gepr&uuml;ft${ihelp('ampel')}<br>
-          <span>so verteilen sie sich auf die drei Bewertungen</span></span>
+          <span>so verteilen sie sich auf die Bewertungen</span></span>
       </div>
       <div class="hb-bar">
         <div class="hbb ok"   style="width:${pct(D.ok)}%"   title="${nf(D.ok)} unauff&auml;llig"></div>
         <div class="hbb warn" style="width:${pct(D.warn)}%" title="${nf(D.warn)} mit Achtung"></div>
+        <div class="hbb unk"  style="width:${pct(D.unk)}%"  title="${nf(D.unk)} offen"></div>
         <div class="hbb crit" style="width:${pct(D.crit)}%" title="${nf(D.crit)} mit Alarm"></div>
       </div>
       <div class="hb-keys">
@@ -1607,6 +1811,10 @@ function vDashboard(){
           <span class="hbkn">${nf(D.crit)}</span>
           <span class="hbkl">mit Alarm</span>
           <span class="hbkd">hier gibt es eine offizielle Handlungsempfehlung</span></button>
+        <button class="hbk k-unk" onclick="goFilter('unk')">
+          <span class="hbkn">${nf(D.unk)}</span>
+          <span class="hbkl">noch offen</span>
+          <span class="hbkd">ein daf&uuml;r n&ouml;tiges Gen ist nicht bestimmbar</span></button>
       </div>
     </div>
   </div>
@@ -1661,6 +1869,15 @@ function vDashboard(){
           lohnt sich trotzdem.</p>
         <span class="lgmore">In der Datenbank ansehen ${ico('arr','',14)}</span></div>
     </button>
+    <button class="lg lg-unk" onclick="goFilter('unk')">
+      <div class="lgbox"><span class="lgn">${DBSTATS().unk.toLocaleString('de-DE')}</span><span class="lgl">Offen</span></div>
+      <div class="lgtx"><h4>Medikamente, bei denen die Antwort offen bleibt</h4>
+        <p>F&uuml;r diese Wirkstoffe gibt es sehr wohl eine Leitlinie &mdash; sie h&auml;ngt aber an
+          einem Gen, das <b>in dieser Analyse nicht eindeutig bestimmt werden konnte</b>.
+          Statt zu raten wird das offen gelassen. Eine gezielte Nachbestimmung schlie&szlig;t
+          diese L&uuml;cke.${ihelp('offen')}</p>
+        <span class="lgmore">In der Datenbank ansehen ${ico('arr','',14)}</span></div>
+    </button>
     <button class="lg lg-ix" onclick="go('meine')">
       <div class="lgbox"><span class="lgic">${ico('c-ix','',30)}</span><span class="lgl">Interaktion</span></div>
       <div class="lgtx"><h4>Wechselwirkungen</h4>
@@ -1671,8 +1888,47 @@ function vDashboard(){
   </div>`;
 }
 /* ================= ARZTBERICHT ("F&uuml;r deinen Arzt") ================= */
+/* Was der Test wirklich lesen konnte. Diese Angaben gehoeren an den Anfang des
+   Arztberichts, weil jede Aussage darunter nur so weit tragt wie die Abdeckung. */
+function covBlock(offen){
+  const M=P_META, ges=M.posda+M.posfehlt;
+  const pct=(100*M.posda/ges).toFixed(0);
+  const rows=P_GENES.slice().sort((a,b)=>(a.ok===b.ok?0:a.ok?1:-1)||a.g.localeCompare(b.g))
+    .map(g=>{
+      const zu=g.pos+g.fehlt;
+      const st=g.ok?'bestimmt':(g.mehr?g.kand+' Varianten offen':'nicht bestimmbar');
+      return `<tr class="${g.ok?'':'miss'}">
+        <td class="mono"><b>${g.g}</b></td>
+        <td class="mono">${g.dip||'&mdash;'}</td>
+        <td>${g.ok?(g.de||g.phen||'&mdash;'):'nicht bestimmbar'}</td>
+        <td class="mono">${g.score||'&mdash;'}</td>
+        <td>${g.pos} / ${zu}</td>
+        <td>${g.ok?st:`<span class="warnpin">${st}</span>`}</td></tr>`;
+    }).join('');
+  return `<div class="cov">
+    <div class="cov-h">${ico('c-pillbox','',17)} Grundlage dieser Auswertung</div>
+    <div class="cov-b">
+      <div class="cov-g">
+        <div class="cov-k"><span class="n">${P_GENES.length}</span><span class="l">Gene im Panel</span></div>
+        <div class="cov-k"><span class="n">${M.posda.toLocaleString('de-DE')}</span><span class="l">Stellen gelesen</span></div>
+        <div class="cov-k"><span class="n">${pct}&thinsp;%</span><span class="l">Abdeckung der ben&ouml;tigten Stellen</span></div>
+        <div class="cov-k"><span class="n">${offen.length}</span><span class="l">Gene ohne eindeutiges Ergebnis</span></div>
+      </div>
+      <p class="cov-p">Probe <b>${M.probe}</b> &middot; Referenz <b>${M.build}</b> &middot;
+        Allel-Definitionen <b>ClinPGx</b> &middot; Auswertung <b>PharmCAT ${M.ver}</b> &middot;
+        Stand <b>${M.stand}</b>.
+        ${offen.length?`Bei <b>${offen.map(g=>g).join(', ')}</b> reichen die gelesenen Stellen
+          nicht f&uuml;r ein eindeutiges Ergebnis. Diese Gene sind unten als offen gekennzeichnet und
+          flie&szlig;en in keine Empfehlung ein.`:''}</p>
+      <table class="cov-tab">
+        <thead><tr><th>Gen</th><th>Diplotyp</th><th>Ph&auml;notyp</th><th>Score</th>
+          <th>Stellen</th><th>Status</th></tr></thead>
+        <tbody>${rows}</tbody></table>
+    </div></div>`;
+}
 /* Reihenfolge der Gene: langsam, intermedi&auml;r, normal, ultraschnell */
-const GORDER=[0,1,2,3];
+/* schlechteste Gene zuerst, danach die offenen Faelle, zuletzt die normalen */
+const GORDER=[0,1,-1,3,2];
 function sortedGenes(){
   return Object.keys(PHENO).sort((a,b)=>
     GORDER.indexOf(PHENO[a].lvl)-GORDER.indexOf(PHENO[b].lvl)||a.localeCompare(b));
@@ -1687,8 +1943,10 @@ function geneReportCard(g){
   return `<div class="rgene s-${sv}">
     <div class="rg-card">${geneCardHtml(g,{flat:true})}</div>
     <div class="rg-info">
-      <div class="rg-type t-${sv==='ultra'?'ok':sv}">${LVL[lvl].t}
-        <span class="rg-kuerzel">${LVL[lvl].k}</span></div>
+      <div class="rg-type t-${sv==='ultra'?'ok':sv}">${lvlLabel(g).t}
+        <span class="rg-kuerzel">${lvlLabel(g).k}</span></div>
+      ${PHENO[g]&&PHENO[g].rolle?`<div class="rg-sub" style="margin-top:2px">Zust&auml;ndig f&uuml;r
+        ${PHENO[g].rolle}</div>`:''}
       <div class="rg-plain">${plainSentence(g)}</div>
       <div class="rg-sub">Deine zwei Genkopien</div>
       <div class="gcopies">${copiesHtml(g)}</div>
@@ -1742,7 +2000,9 @@ function vMerk(){
   const auff=genes.filter(g=>PHENO[g].lvl!==2);
   const cnt={ok:0,warn:0,crit:0};workspace.forEach(id=>cnt[overallSev(id,workspace)]++);
   const nIx=DDI.filter(x=>workspace.includes(x.a)&&workspace.includes(x.b)).length;
+  const nOffen=genes.filter(g=>PHENO[g].lvl<0);
   return `<div class="sec-title">F&uuml;r deinen Arzt &mdash; pharmakogenetischer Bericht</div>
+  ${covBlock(nOffen)}
   <div class="scope scope-me">${ico('star','',18)}
     <div><b>Dieser Bericht ist zum Mitnehmen gedacht.</b>${ihelp('merk')}
       Er f&uuml;hrt Schritt f&uuml;r Schritt durch dein Genprofil, erkl&auml;rt jedes deiner Medikamente
@@ -1848,7 +2108,8 @@ function vGene(){
 }
 /* ---- Gen-Eintrag (aufklappbar) ---- */
 function geneItemHtml(g,ctx){
-  const lvl=PHENO[g]?PHENO[g].lvl:2, sev=lvl===2||lvl===3?'ok':lvl===1?'warn':'crit';
+  const lvl=PHENO[g]?PHENO[g].lvl:2;
+  const sev=lvl<0?'unk':lvl===2||lvl===3?'ok':lvl===1?'warn':'crit';
   const key=ctx+":"+g,open=openGenes[key],gn=GENO[g];
   const rows=[
     {lvl:2,sev:'ok',t:"Normaler Metabolisierer",e:"Abbau bzw. Aktivierung wie erwartet (100 %)",d:"Standarddosis"},
@@ -1861,7 +2122,7 @@ function geneItemHtml(g,ctx){
     <div class="gitem-h" onclick="toggleGene('${key}')">
       ${ico(sev==='ok'?'st-ok':'st-excl','s-'+sev,22)}
       <span class="gname">${g}</span>
-      <span class="gstat t-${sev}">${LVL[lvl].t}</span>
+      <span class="gstat t-${sev}">${lvlLabel(g).t}</span>
       ${gn?`<span class="bh-note" style="font-family:var(--mono)">${gn.genotyp}</span>`:''}
       ${ico('chev','chev',18)}
     </div>
@@ -1897,7 +2158,14 @@ const FNPLAIN={
 function geneCopies(g){return (GENO[g]&&GENO[g].kopien)?GENO[g].kopien:[];}
 function copiesHtml(g){
   const cps=geneCopies(g);
-  if(!cps.length)return `<div class="anno">F&uuml;r dieses Gen sind keine Einzelkopien hinterlegt.</div>`;
+  if(!cps.length){
+    const gn=GENO[g]||{};
+    const kand=(gn.alt&&gn.alt.length)
+      ? `<div class="anno" style="margin-top:7px">M&ouml;gliche Kombinationen (Auszug):
+           <b class="mono">${gn.alt.slice(0,8).join(' &middot; ')}</b>${gn.kand>8?' &hellip;':''}</div>`
+      : '';
+    return `<div class="anno">${gwhyText(g)}</div>${kand}`;
+  }
   return cps.map((c,i)=>{
     const [a,fn]=c, p=FNPLAIN[fn]||FNPLAIN['unbekannt'];
     const on=p[1]==='ok'||p[1]==='ultra';
@@ -1908,6 +2176,12 @@ function copiesHtml(g){
         <div class="gcs">Fachbegriff: <b>${g} ${a}</b></div></div></div>`;}).join('');
 }
 function plainSentence(g){
+  const p=PHENO[g];
+  if(p&&p.lvl<0)return 'Von jedem Elternteil hast du eine Kopie des Gens <b>'+g+'</b> geerbt. '
+    +'Welche genau, l&auml;sst sich aus dieser Analyse nicht sicher sagen &mdash; '
+    +(p.mehr?'es bleiben mehrere Varianten m&ouml;glich':'die daf&uuml;r n&ouml;tigen Stellen wurden nicht gelesen')
+    +'. Deshalb steht hier bewusst kein Ergebnis statt einer Vermutung.'
+    +(p.rolle?' Dieses Gen ist zust&auml;ndig f&uuml;r: '+p.rolle+'.':'');
   const cps=geneCopies(g), fns=cps.map(c=>c[1]);
   const nNorm=fns.filter(f=>f==='normal').length;
   const nOff=fns.filter(f=>f==='keine'||f==='Mangel').length;
@@ -1935,7 +2209,15 @@ function techToggleHtml(g,key){
     <div class="techbox ${open?'open':''}">
       <div class="anno" style="margin:0 0 8px">Was die Sternchen bedeuten${ihelp('allel')}<br>Genotyp-Schreibweise: <b style="font-family:var(--mono)">${GENO[g]?GENO[g].genotyp:'&mdash;'}</b>.
         Deine Varianten sind hervorgehoben; alle &uuml;brigen wurden untersucht und bei dir <b>nicht</b> gefunden.</div>
-      <div class="achips">${chips}</div></div>`;
+      <div class="achips">${chips}</div>
+      ${(GENO[g]&&GENO[g].var&&GENO[g].var.length)?`<div class="anno" style="margin-top:9px">
+        Gelesene Stellen (${GENO[g].var.length}):
+        ${GENO[g].var.slice(0,24).map(v=>`<b class="mono">${v[0]} ${v[1]}</b>`).join(' &middot; ')}
+        ${GENO[g].var.length>24?' &hellip;':''}</div>`:''}
+      ${(GENO[g]&&GENO[g].unc&&GENO[g].unc.length)?`<div class="anno" style="margin-top:7px;color:var(--unk-t)">
+        Nicht pr&uuml;fbar, weil Stellen fehlen (${GENO[g].unc.length}):
+        <b class="mono">${GENO[g].unc.slice(0,24).join(', ')}</b>${GENO[g].unc.length>24?' &hellip;':''}</div>`:''}
+      </div>`;
 }
 function toggleTech(k){geneTech[k]=!geneTech[k];
   if(geneModalG&&k.indexOf('modaltech:')===0){openGene(geneModalG);return;}
@@ -1970,15 +2252,16 @@ function geneDetailHtml(g){
       Beeinflusst <b>${GENE_DRUGS[g]||0}</b> Medikamente in der Datenbank.</div>
     <div class="srcrow"><a class="srclink" href="https://www.pharmgkb.org/search?query=${encodeURIComponent(g)}" target="_blank" rel="noopener">Zur Quelle</a></div>`;
 }
-const GSEV={0:'crit',1:'warn',2:'ok',3:'ultra'};
-const GPCT={0:'0 %',1:'50 %',2:'100 %',3:'200 %'};
-const GCOL={0:'#E12D2D',1:'#F08A00',2:'#12A150',3:'#0b6b36'};
+const GSEV={0:'crit',1:'warn',2:'ok',3:'ultra','-1':'unk'};
+const GPCT={0:'0 %',1:'50 %',2:'100 %',3:'200 %','-1':'nicht bestimmbar'};
+const GCOL={0:'#E12D2D',1:'#F08A00',2:'#12A150',3:'#0b6b36','-1':'#8E8896'};
 /* DNA-Helix in Zustandsfarbe: Sprossen zeigen die Funktion,
    gebrochene Sprossen = Funktionsverlust, dichte = gesteigerte Aktivit&auml;t */
 function helix(lvl){
   const c=GCOL[lvl];
   const rungs=[[7.5,5.4],[12,7.6],[16.5,5.4],[27.5,5.4],[32,7.6],[36.5,5.4]];
-  const ok={0:[],1:[0,1,2],2:[0,1,2,3,4,5],3:[0,1,2,3,4,5]}[lvl];
+  /* -1: alle Sprossen gebrochen zeichnen - offen, nicht ausgefallen */
+  const ok={0:[],1:[0,1,2],2:[0,1,2,3,4,5],3:[0,1,2,3,4,5],'-1':[]}[lvl];
   const sw=lvl===3?2.6:2.1;
   let bars='';
   rungs.forEach((r,i)=>{
@@ -2012,6 +2295,18 @@ function customerAlleles(g){
 function testedAlleles(g){
   return (GENO[g]?GENO[g].allele:'').split(',').map(x=>x.trim()).filter(Boolean);
 }
+/* Warum ein Gen kein eindeutiges Ergebnis hat - direkt aus dem PharmCAT-Lauf */
+function gwhyText(g){
+  const p=PHENO[g], gn=GENO[g]||{};
+  if(!p)return 'Dieses Gen war nicht Teil der Auswertung.';
+  if(p.mehr)return '<b>Mehrere Varianten m&ouml;glich.</b> Die gelesenen Stellen schlie&szlig;en '
+    +'sich nicht auf ein Ergebnis ein &mdash; es bleiben <b>'+p.kand+'</b> Kombinationen offen. '
+    +'Daf&uuml;r fehlen '+gn.fehlt+' der insgesamt '+(gn.pos+gn.fehlt)+' Stellen, die dieses Gen '
+    +'braucht.';
+  return '<b>Kein Ergebnis.</b> Von den '+(gn.pos+gn.fehlt)+' Stellen, die dieses Gen braucht, '
+    +'konnten '+gn.fehlt+' nicht gelesen werden'
+    +(gn.pos?' &mdash; die '+gn.pos+' gelesenen reichen nicht aus.':'.');
+}
 function geneCardHtml(g,opts){
   opts=opts||{};
   const has=!!PHENO[g], lvl=has?PHENO[g].lvl:null, sv=has?GSEV[lvl]:'none', gn=GENO[g];
@@ -2021,22 +2316,33 @@ function geneCardHtml(g,opts){
   const segs=[0,1,2,3].map(i=>`<div class="gs-seg s${i} ${i===lvl?'on':''}"></div>`).join('');
   const labs=['Langsam','Vermindert','Normal','Schnell'].map((t,i)=>
     `<span class="${i===lvl?'on':''}" title="${['Langsamer Metabolisierer (PM)','Intermedi&auml;rer Metabolisierer (IM)','Normaler Metabolisierer (NM)','Ultraschneller Metabolisierer (UM)'][i]}">${t}</span>`).join('');
-  const short=LVL[lvl].t;
-  const colr=sv==='ultra'?'#0b6b36':sv==='ok'?'var(--ok-t)':sv==='warn'?'var(--warn-t)':'var(--crit-t)';
+  const short=lvlLabel(g).t;
+  const colr=sv==='ultra'?'#0b6b36':sv==='ok'?'var(--ok-t)':sv==='warn'?'var(--warn-t)'
+    :sv==='unk'?'var(--unk-t)':'var(--crit-t)';
+  /* Bei offenem Ergebnis gehoert der Grund auf die Karte. Ohne den steht dort
+     nur "Nicht bestimmbar" und der Nutzer haelt es fuer einen Anzeigefehler. */
+  const why=lvl<0?`<div class="gwhy">${gwhyText(g)}</div>`:'';
+  /* Risiko-, Ziel- und HLA-Gene haben keinen Metabolisierertyp. Eine
+     Metabolisierer-Skala waere dort schlicht falsch, also steht statt der
+     Skala der Befund im Wortlaut. */
+  const skala=(PGENE[g]&&PGENE[g].flach)
+    ? `<div class="gflat">${ico('st-ok','',15)} ${PGENE[g].de}</div>`
+    : `<div class="gsrow"><div class="genepair">${genePair(lvl)}</div>
+      <div class="gsbar"><div class="gscale">${segs}</div><div class="gs-lab">${labs}</div></div></div>`;
   const key='gene:'+g+(opts.ctx||''), open=openGenes[key];
   if(opts.flat)return `<div class="genebox flat b-${sv}">
     <div class="gb-top"><div class="gb-ic gi-${sv}">${helix(lvl)}</div>
       <div class="gb-tx"><div class="gn">${g}</div><div class="gs" style="color:${colr}">${short}</div></div></div>
-    <div class="gsrow"><div class="genepair">${genePair(lvl)}</div>
-      <div class="gsbar"><div class="gscale">${segs}</div><div class="gs-lab">${labs}</div></div></div></div>`;
+    ${skala}
+    ${why}</div>`;
   return `<div class="genebox b-${sv} ${open?'open':''}" onclick="toggleGene('${key}')">
     <div class="gb-top">
       <div class="gb-ic gi-${sv}">${helix(lvl)}</div>
       <div class="gb-tx"><div class="gn">${g}</div><div class="gs" style="color:${colr}">${short}</div></div>
       ${ico('chev','gchev')}
     </div>
-    <div class="gsrow"><div class="genepair">${genePair(lvl)}</div>
-      <div class="gsbar"><div class="gscale">${segs}</div><div class="gs-lab">${labs}</div></div></div>
+    ${skala}
+    ${why}
     <div class="gexp" onclick="event.stopPropagation()">
       <div class="gsec">Was heisst das f&uuml;r dich?</div>
       <div class="plain sm">${plainSentence(g)}</div>
@@ -2068,6 +2374,18 @@ function closeGene(){geneModalG=null;document.getElementById('scrim').classList.
 
 /* ================= ERKL&Auml;R-POPUPS ================= */
 const INFO={
+  offen:["Warum bleibt ein Ergebnis offen?",
+    `<p>Um ein Gen zu bestimmen, m&uuml;ssen bestimmte Stellen im Erbgut gelesen werden.
+     Ein Gen gilt erst dann als bestimmt, wenn <b>genug dieser Stellen</b> vorliegen, um genau
+     eine Variante &uuml;brig zu lassen.</p>
+     <p>In deiner Auswertung wurden <b>${P_META.posda} Stellen</b> gelesen. F&uuml;r die meisten
+     Gene reicht das, f&uuml;r einige nicht. Dann gibt es zwei F&auml;lle: entweder bleiben
+     <b>mehrere Varianten m&ouml;glich</b>, oder es liegt <b>gar kein Ergebnis</b> vor.</p>
+     <p>In beiden F&auml;llen steht hier bewusst <b>kein Ergebnis</b> &mdash; und keine Vermutung.
+     Eine geratene Variante w&auml;re gef&auml;hrlicher als eine sichtbare L&uuml;cke, weil darauf
+     eine Dosierung aufgebaut werden k&ouml;nnte.</p>
+     <div class="ex">Solche L&uuml;cken lassen sich schlie&szlig;en: die fehlenden Stellen k&ouml;nnen
+     gezielt nachbestimmt werden. Der Rest der Auswertung bleibt davon unber&uuml;hrt.</div>`],
   pgx:["Was ist Pharmakogenetik?",
     `<p>Jedes Medikament muss in deinem K&ouml;rper <b>abgebaut</b> werden &mdash; meist in der Leber, durch Enzyme.
      Welche Enzyme du hast und wie gut sie arbeiten, steht in deinen Genen.</p>
@@ -2304,7 +2622,7 @@ function altNote(id){
 function assessBox(id,sev){
   const st=statusFor(id), rc=recFor(id), d=DRUGS[id];
   return `<div class="abox s-${sev}">
-    <div class="ab-h">${ico(sev==='ok'?'st-ok':'st-excl','',18)}
+    <div class="ab-h">${ico(sev==='ok'?'st-ok':sev==='unk'?'c-search':'st-excl','',18)}
       <span>Beurteilung f&uuml;r dein Genprofil</span>
       <span class="ab-badge b-${sev}">${SLABEL[sev]}</span></div>
     <div class="ab-plain">${st.text}</div>
@@ -2313,7 +2631,7 @@ function assessBox(id,sev){
         <div class="ab-gh">${ico('c-pillbox','',15)} Offizielle Leitlinien-Empfehlung
           <span class="ab-gt">${rc.gen} &middot; ${rc.gt}</span></div>
         <div class="ab-gx">${rc.txt}</div>
-        <div class="ab-gs">${rc.gl.length?rc.gl.join(' &middot; '):'PharmGKB'} &middot; Originaltext englisch${ihelp('leit')}</div>
+        <div class="ab-gs">${rc.gl.length?rc.gl.join(' &middot; '):'PharmGKB'} &middot; Originaltext englisch${ihelp('leit')}${rc.om?' &middot; OM '+rc.om:''}</div>
       </div>`
     :(d.pro?`<div class="ab-sep"></div><div class="ab-g"><div class="ab-gx">${d.pro}</div>
         <div class="ab-gs">PharmGKB &middot; Originaltext englisch${ihelp('leit')}</div></div>`

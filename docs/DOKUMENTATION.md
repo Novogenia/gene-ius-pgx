@@ -1,6 +1,11 @@
 # GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-07-28 · **Version:** v52 · **Status:** Clickdummy mit echten Daten, lauffähig
+**Stand:** 2026-07-30 · **Version:** v55 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+
+**Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
+`https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
+(Vorgabe von Nick Wassermann, IT). Das alte GitHub-Remote heißt lokal `github` und
+bespielt weiterhin die öffentliche Testseite; es wird **nicht** automatisch mitgepusht.
 
 Diese Datei ist die Übergabe- und Arbeitsdoku. Sie wird bei jeder größeren Änderung
 fortgeschrieben. Wenn etwas hier steht, ist es geprüft — Vermutungen sind als solche
@@ -241,6 +246,27 @@ Diese Punkte hat Daniel entschieden. Nicht ohne Rücksprache ändern.
    deshalb über `javascript_tool` mit `getBoundingClientRect`, `scrollWidth` vs
    `clientWidth`, `getComputedStyle` — das ist verlässlich und schneller.
 
+8. **Anker, die nur einmal vorkommen, aber an der falschen Stelle** — der Abdeckungs-CSS-Block
+   wurde an `/* ================= ERKL` gehängt. Der String kam genau einmal vor — aber im
+   **JavaScript**, nicht im Stylesheet. Das ganze Skript hat danach nicht mehr geparst
+   („Unexpected token '.'"), und zwar **ohne Konsolenmeldung**, weil ein Parse-Fehler im
+   Inline-Skript nicht in der MCP-Konsolenausgabe landet. Diagnose: HTML per `fetch` holen,
+   Skript herausschneiden, `new Function(src)` in einer binären Suche über die Zeilenzahl.
+   Konsequenz: eine Zusicherung auf die **Anzahl** der Treffer reicht nicht, der **Ort**
+   muss mitgeprüft werden (`style`-Bereich vs. `script`-Bereich).
+9. **Zwei Bedingungen, nur eine geprüft** — 14 der 103 Leitlinienzeilen verlangen
+   CYP2C19 **und** CYP2D6 gleichzeitig. Der erste Abgleich prüfte nur `GENE(1)` und
+   meldete drei Amitriptylin-Treffer, die in Wirklichkeit CYP2D6 voraussetzen. Bei
+   Mehr-Gen-Zeilen müssen **alle** Bedingungen erfüllt sein.
+10. **„Uncertain Susceptibility" ist ein Ergebnis, keine Lücke** — bei RYR1 und CACNA1S
+   heißt das: *keine bekannte Risikovariante gefunden*. Wer das als „nicht bestimmbar"
+   führt, macht aus einem beruhigenden Befund eine Wissenslücke. Gleiches gilt für
+   CFTR („spricht nicht auf Ivacaftor an").
+11. **Stufe −1 bedeutet in zwei Datensätzen Verschiedenes** — im Wirkstoff-Datenblock
+   `D_REC` heißt −1 „Sondergenotyp" (z. B. `*28/*28`), im Genprofil „nicht bestimmbar".
+   Der Rückfall-Matcher muss `lvl >= 0` auf beiden Seiten fordern, sonst greift eine
+   Sondergenotyp-Empfehlung bei einem Gen ohne Ergebnis.
+
 ---
 
 ## 7. Prüfroutine nach jeder Änderung
@@ -270,11 +296,11 @@ Diese Punkte hat Daniel entschieden. Nicht ohne Rücksprache ändern.
 - **Offen:** einbauen mit Kennzeichnung „US-Handelsname" oder auf DACH-Lizenz warten?
   Derzeit zeigen Karten ohne Marken das Anwendungsgebiet aus ATC-Ebene 2.
 
-**Falsche Typbezeichnung bei drei Genen**
-VKORC1, ABCB1 und G6PD tragen im Demo-Datensatz einen Metabolisierertyp, obwohl sie keine
-abbauenden Enzyme sind. Der Klartext-Satz erfindet dort nichts mehr (er verweist auf die
-Bewertung), aber die Typbezeichnung auf der Karte bleibt fachlich falsch, bis die echte
-Phänotyp-Spalte vorliegt.
+**Falsche Typbezeichnung bei Nicht-Enzym-Genen — erledigt**
+Behoben mit v55: G6PD heißt jetzt „Kein G6PD-Mangel" statt „Normaler Metabolisierer",
+SLCO1B1/ABCG2 bekommen Transportfunktions-Begriffe, RYR1/CACNA1S/CFTR zeigen statt der
+Metabolisierer-Skala eine Befundzeile. ABCB1 und CYP1A2 fallen weg — sie sind nicht Teil
+des PharmCAT-Panels (keine CPIC-Gene).
 
 **Zahlen der Legende**
 Daniels Vorgabe war 2.655 / 2.144 / 133 / 249; die Summe ergibt 2.526, es fehlen 129.
@@ -301,7 +327,138 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v45 | Arztbericht mit Gen-Karten, Pastell-Genkarten, halbe/halbe Aufteilung |
 | v47 | Einleitung mit hervorgehobenen Kennzahlen und Verteilungsbalken |
 | v49 | „Alternativen" ehrlich umbenannt, ATC-Pfad sichtbar, Sammelgruppen gekennzeichnet |
+| v52 | Leitlinien-Inhalte in einer Box, Genkarten-Umbrüche, Interaktionsknopf-Hover (`transform-box:fill-box`) |
+| v55 | Echtes PharmCAT-Genprofil (23 Gene) statt Demo-Genotypen, vierter Status „Offen", Leitlinien-Matrix mit Mehr-Gen-Logik, Abdeckungsblock im Arztbericht |
 
+
+---
+
+## 11. PharmCAT als Quelle der Gendaten (ab v55)
+
+### Woher die Daten kommen
+
+Drei Dateien aus dem Download-Ordner:
+
+| Datei | Inhalt |
+|---|---|
+| `pharmcat.match (1).json` | gerufene und fehlende Positionen je Gen, Diplotyp-Kandidaten |
+| `pharmcat.phenotype (1).json` | Diplotyp, Phänotyp, Aktivitätsscore, Allelfunktionen je Gen |
+| `pharmcat.report (1).tsv` | dieselbe Information flach, nur zur Gegenkontrolle verwendet |
+
+`build_pharmcat.py` erzeugt daraus `pharmcat_profil.js` (49 kB, rein ASCII),
+`resplice.py` tauscht den Block zwischen den Markern
+`/* ===== BEGIN PHARMCAT PROFIL … */` … `END` in die HTML.
+
+**Wichtig:** `relatedDrugs` ist in dieser `phenotype.json` überall leer und es gibt keine
+`drugReports` — der Reporter-Schritt von PharmCAT wurde nicht gelaufen. Die
+Wirkstoff-Bewertungen kommen deshalb aus Novogenias eigener Matrix, nicht von PharmCAT.
+
+### Die Probe
+
+`sampleId 208491470165_R06C01` — Format eines **Illumina-BeadChip-Barcodes** mit Position,
+also Array-Genotypisierung, keine Sequenzierung. Referenz GRCh38.p14, PharmCAT 2.0.0,
+Allel-Definitionen ClinPGx 2025-11-05, Auswertung vom 2026-02-02.
+
+**522 von 1.201 erwarteten Positionen sind vorhanden = 43,5 % Abdeckung.**
+204 VCF-Warnungen, alle vom Typ `Ignoring: no call (./.)`.
+
+### Ergebnis je Gen
+
+| Zustand | Anzahl | Gene |
+|---|---|---|
+| eindeutig bestimmt | 14 | CACNA1S, CFTR, CYP2B6, CYP2C19, CYP2C9, CYP3A4, CYP3A5, DPYD, G6PD, NUDT15, RYR1, SLCO1B1, TPMT, UGT1A1 |
+| mehrdeutig | 2 | CYP2D6 (30 Diplotyp-Kandidaten), NAT2 (88) |
+| kein Ergebnis | 7 | ABCG2, CYP4F2, HLA-A, HLA-B, IFNL3, MT-RNR1, VKORC1 |
+
+Auffällig ist genau **ein** Gen: **CYP3A5 \*3/\*3 = Langsamer Metabolisierer**. Das ist der
+in Europa häufigste CYP3A5-Genotyp; CPIC sieht dafür bei Tacrolimus die **Standarddosis**
+vor. Alle übrigen bestimmten Gene sind normal.
+
+### Abgleich mit `Pharmgkb drug recommendations V4.xlsx`
+
+Die Datei enthält **103 Zeilen für 43 Wirkstoffe**. Aufbau, den man kennen muss:
+
+- 89 Zeilen mit einem Gen, **14 mit zwei Genen** (alle CYP2C19 + CYP2D6, alle Amitriptylin).
+  Eine Zwei-Gen-Zeile gilt nur, wenn **beide** Phänotypen passen.
+- Die unbenannten Spalten ab Index 15 enthalten den **Twig/Jinja-Template-Code** des
+  Report Builders, z. B. `{% if CYP2C19Metabolizer == 'ULTRARAPID' and CYP2D6Metabolizer == 'POOR' %}`.
+  Daraus wird die Ampelfarbe gezogen: `BG_COLOR_DRUG_RED` → ALARM,
+  `BG_COLOR_DRUG_YELLOW` → ACHTUNG. **Alle 103 Zeilen haben eine Farbe: 83 rot, 20 gelb.**
+  Damit kommt der Schweregrad aus der Quelle und nicht aus einer Heuristik.
+- Vokabular: `EXTENSIVE` = normal (NM), `ULTRARAPID` = UM, `INTERMEDIATE` = IM, `POOR` = PM.
+  Für Transporter schreibt das Spreadsheet ebenfalls POOR/INTERMEDIATE, PharmCAT dagegen
+  `Poor Function`/`Decreased Function` — Äquivalenztabelle nötig (`PAEQ` in der App).
+- Drei Sonderformen: **UGT1A1 `*28/*28`** und **VKORC1 `TT`** vergleichen den Diplotyp
+  direkt, nicht den Phänotyp. **Warfarin** hat kein Gen in `GENE(1)`, sondern die
+  Dosisbereiche `0.5-2`, `3-4`, `5-7` mg/Tag — eine Formel aus CYP2C9 + VKORC1, in der
+  App noch nicht umgesetzt.
+- CYP2C9 und DPYD liefern in PharmCAT als `lookupKey` den **Aktivitätsscore** („2.0"),
+  nicht den Phänotyp. Der Phänotyp steht daneben in `phenotypes`. Immer `phenotypes`
+  zuerst lesen, sonst schlägt der Abgleich fehl.
+
+### Und das Ergebnis des Abgleichs
+
+**Keine einzige der 103 Zeilen greift bei dieser Probe.** Aufgeschlüsselt:
+
+| | Zeilen | Grund |
+|---|---|---|
+| nicht entscheidbar | 54 | CYP2D6 mehrdeutig (46 Zeilen + 14 Zwei-Gen-Zeilen), VKORC1 und HLA-B ohne Ergebnis |
+| trifft nicht zu | 49 | das Gen ist bestimmt und normal — richtig, hier ist keine Anpassung nötig |
+| trifft zu | 0 | — |
+
+Das ist die fachlich richtige Antwort, nicht ein Fehler im Abgleich: das Profil ist
+bis auf CYP3A5 unauffällig, und die zwei Gene, die etwas ergeben hätten, sind nicht rufbar.
+
+**Folge für die Oberfläche:** 2.578 Wirkstoffe grün, **0 gelb, 0 rot**, 119 grau („Offen").
+Die 119 sind die Wirkstoffe, deren Bewertung an CYP2D6, NAT2 oder VKORC1 hängt.
+
+### Eine Lücke im Spreadsheet
+
+**CYP3A5 hat nur Zeilen für EXTENSIVE und INTERMEDIATE.** Für **POOR** — also genau Lisas
+Genotyp \*3/\*3 und den häufigsten in Europa — fehlt die Zeile. CPIC hat dafür eine
+Empfehlung (Standarddosis Tacrolimus). Sollte ergänzt werden.
+
+### Was diese Probe brauchbar machen würde
+
+Vier der neun ungerufenen Gene hängen an **einer einzigen Position**:
+
+| Gen | fehlende Position | Bedeutung |
+|---|---|---|
+| **VKORC1** | `rs9923231` | die Warfarin/Acenocoumarol-Position — Standardmarker auf praktisch jedem Array |
+| ABCG2 | `rs2231142` | Rosuvastatin, Allopurinol |
+| IFNL3 | `rs12979860` | Interferon-Ansprechen |
+| CYP4F2 | `rs2108622` (von 19 fehlenden) | Vitamin-K-Umsatz, Warfarin-Dosis |
+
+Bei **CYP2D6** sind 84 von 156 Positionen offen; alle 30 Kandidaten enthalten die seltenen
+Allele **\*146** oder **\*148**, die nur an nicht gelesenen Stellen unterscheidbar sind.
+Kopienzahl-Varianten (\*5-Deletion, Duplikationen) sind aus Array-Daten grundsätzlich nicht
+rufbar — dafür braucht es einen Outside-Call (Astrolabe/StellarPGx) oder Sequenzierung.
+HLA-A und HLA-B haben **0 Positionen** im VCF und brauchen ein eigenes Typisierungsverfahren.
+
+### Wie die App damit umgeht
+
+Vierter Zustand **„Offen"** (`unk`, grau, `RANK` zwischen OK und Achtung):
+
+- Gen-Karte zeigt statt eines Metabolisierertyps „Nicht bestimmbar" **plus den Grund**
+  („72 von 156 Stellen gelesen, 30 Kombinationen bleiben offen").
+- Wirkstoff-Bewertung wird offen gelassen, wenn eine Leitlinie existiert, aber ein dafür
+  nötiges Gen nicht bestimmt ist — mit dem konkreten Grund im Text.
+- Eigener Filterknopf, eigene Legendenbox, eigene Kennzahl in der Einleitung.
+- Der Arztbericht beginnt mit einem **Abdeckungsblock**: Probe-ID, Referenz, PharmCAT-Version,
+  522 gelesene Stellen, 43 % Abdeckung, und einer Tabelle mit allen 23 Genen
+  (Diplotyp, Phänotyp, Score, Stellen gelesen/erwartet, Status).
+
+Grundregel: **kein geratener Genotyp.** Eine sichtbare Lücke ist harmlos, eine erfundene
+Variante nicht — darauf würde eine Dosierung aufgebaut.
+
+### Reihenfolge, in der bewertet wird
+
+1. Leitlinienzeile aus `P_REC`, deren **sämtliche** Genbedingungen zutreffen →
+   Text und Ampelfarbe aus der Quelle.
+2. Es gibt Zeilen, aber ein nötiges Gen ist nicht bestimmbar → **Offen**, mit Grund.
+3. Kein Eintrag in der Matrix → Rückfall auf `recForFallback` aus dem Wirkstoff-Datenblock
+   (nur bei `lvl >= 0` auf beiden Seiten, siehe Fallstrick 11).
+4. Sonst die bisherige Heuristik über Hauptgen + Prodrug-Logik.
 
 ---
 
