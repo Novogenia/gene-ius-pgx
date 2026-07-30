@@ -276,7 +276,10 @@
   .ws-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
   .ws-head h3{margin:0;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--plum);padding:6px 14px;border-radius:999px}
   #wsvg{position:absolute;inset:0;pointer-events:none;z-index:6}
-  #wsvg .ixbtn{transition:transform .15s;transform-origin:center}
+  /* transform-box:fill-box ist zwingend - ohne das bezieht sich transform-origin
+     bei SVG auf den Viewport statt auf das Element, und der Knopf springt beim
+     Ueberfahren an eine andere Stelle */
+  #wsvg .ixbtn{transition:transform .15s;transform-box:fill-box;transform-origin:center}
   #wsvg .ixbtn:hover{transform:scale(1.12)}
   #wsvg .ixbtn.crit{animation:ixpulse 1.9s ease-in-out infinite}
   @keyframes ixpulse{0%,100%{opacity:1}50%{opacity:.72}}
