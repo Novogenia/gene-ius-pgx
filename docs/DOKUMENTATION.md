@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-07-30 · **Version:** v58 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-04 · **Version:** v59 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -113,29 +113,32 @@ Demo oder ein öffentliches Repo. Aktuell eingebaut: **NA17454** (Coriell).
 Fertig und live: echtes Genprofil, PharmCAT-Empfehlungen als erste
 Bewertungsquelle, vierter Status „Offen", Arztbericht mit Abdeckungsnachweis,
 alphabetische Liste, Sub-Bewertungen aus dem Implikationstext, alle 611
-gelesenen Varianten.
+gelesenen Varianten, Ampel-Deckel bei normaler Wirkung (v59).
 
 Offen, in dieser Reihenfolge sinnvoll:
 
-1. **Bedingte Alternativen herunterstufen.** PharmCAT setzt
-   `alternateDrugAvailable` auch bei „…*falls* mehr nötig, Alternative erwägen"
-   (Fluvastatin). Die Karte zeigt dann ALARM bei normaler Wirkung und normalem
-   Risiko. Daniel wurde darauf hingewiesen, Entscheidung steht aus.
-2. **CYP3A5-Lücke in der Novogenia-Matrix.** Für `POOR` fehlt die Zeile,
+1. **CYP3A5-Lücke in der Novogenia-Matrix.** Für `POOR` fehlt die Zeile,
    obwohl das der häufigste europäische Genotyp ist (30 von 40 in der Kohorte)
    und CPIC eine Empfehlung hat.
-3. **`data/*.json` verdrahten** — Handelsnamen (1.216), Alternativen (1.533),
+2. **`data/*.json` verdrahten** — Handelsnamen (1.216), Alternativen (1.533),
    Interaktionen (1.852), Risikoklassen (QT 115, anticholinerg 151,
    hepatotox 207). Alles gebaut, nichts davon in der App. Für die Risikoklassen
    gilt: QT paarweise ist zulässig, anticholinerge Last und Hepatotoxizität
    müssen **kumulativ** modelliert werden, nicht als 19.171 Paare.
-4. **Warfarin-Dosisformel.** Die Matrix hat dafür Dosisbereiche statt
+3. **Warfarin-Dosisformel.** Die Matrix hat dafür Dosisbereiche statt
    Phänotypen (`0.5-2`, `3-4`, `5-7` mg/Tag) — eine Formel aus CYP2C9 und
    VKORC1, noch nicht umgesetzt.
-5. **198 Lückenwirkstoffe** aus `data/luecke_prio.json` recherchieren. Beim
+4. **198 Lückenwirkstoffe** aus `data/luecke_prio.json` recherchieren. Beim
    ersten Versuch nur 22 bearbeitet, weil eine gekürzte Liste hartkodiert war;
    außerdem war die Gegenprüfung zu streng und hat 21 von 22 an Kleinigkeiten
    verworfen. Beides beim nächsten Lauf anders machen.
+5. **Die zwölf ALARM-Karten ohne Befund** (siehe §11, Ampel-Deckel). Bei
+   Metoprolol, Flecainid, Haloperidol, Risperidon, Propafenon, Ivacaftor,
+   Eliglustat, Succinylcholin, den drei Inhalationsnarkotika und dem
+   Dihydrocodein-Kombipräparat sagt der Implikationstext weder etwas über
+   Wirkung noch über Risiko. Dort trägt weiterhin allein das Flag den ALARM.
+   Ohne Beleg wird nicht heruntergestuft — zu klären wäre, ob CPIC/DPWG die
+   Implikation an anderer Stelle liefern.
 
 ---
 
@@ -392,6 +395,20 @@ Diese Punkte hat Daniel entschieden. Nicht ohne Rücksprache ändern.
    `D_REC` heißt −1 „Sondergenotyp" (z. B. `*28/*28`), im Genprofil „nicht bestimmbar".
    Der Rückfall-Matcher muss `lvl >= 0` auf beiden Seiten fordern, sonst greift eine
    Sondergenotyp-Empfehlung bei einem Gen ohne Ergebnis.
+12. **Die Ampel aus dem Freitext ableiten stuft massenhaft hoch** — naheliegender
+   Reflex bei der Fluvastatin-Korrektur (v59) war, `alternateDrugAvailable` als
+   Ampelquelle durch den Implikationstext zu ersetzen. Gegen die Daten gerechnet:
+   das stuft **39 von 94** Wirkstoffen **hoch** — Clopidogrel von OK auf ACHTUNG,
+   Acenocoumarol auf ALARM — weil der Text über Wirkung und Risiko meistens gar
+   nichts sagt und jede Lücke als Auffälligkeit durchschlägt. Die Variante
+   „jede Abweichung ist ALARM" ergibt 82 ALARM statt 27. Der Freitext taugt zum
+   **Entkräften** eines Alarms, nicht zum Auslösen. Deshalb ist der Deckel ein
+   Deckel und keine Neuableitung. Rechenskript: `tools/patch_pharmcat8.py`
+   dokumentiert die Zahlen im Kopfkommentar.
+13. **„Nicht angegeben" ist kein Normalbefund** — beim Deckel wäre es bequem,
+   fehlende Aussagen als „normal" zu zählen; dann verschwänden zwölf weitere
+   ALARM-Karten. Das wäre aber genau die verbotene Erfindung, nur in die andere
+   Richtung: aus fehlender Information würde ein Entwarnungssignal.
 
 ---
 
@@ -457,6 +474,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v55 | Echtes PharmCAT-Genprofil (23 Gene) statt Demo-Genotypen, vierter Status „Offen", Leitlinien-Matrix mit Mehr-Gen-Logik, Abdeckungsblock im Arztbericht |
 | v56 | Umstellung auf Hristos PharmCAT-3.2.0-Lauf (40 Proben), Reporter-Stufe mit 168 CPIC/DPWG/FDA-Empfehlungen, Ampel aus PharmCATs eigenen Flags, Probe NA17454 |
 | v57 | Liste alphabetisch, Sub-Bewertungen aus dem Implikationstext statt aus dem Prodrug-Schalter, alle 611 gelesenen Varianten unter „Deine Gene" |
+| v59 | Ampel-Deckel: belegt normale Wirkung bei normalem Risiko kann nicht ALARM sein. Fluvastatin und Rosuvastatin ALARM → ACHTUNG, Verteilung 2.500/172/25 |
 
 
 ---
@@ -642,6 +660,8 @@ Tafenoquin, Eliglustat, Mavacamten …) stehen nicht in `All Drugs V12`.
 | `dosingInformation` oder `otherPrescribingGuidance` | ACHTUNG | 37 |
 | keins davon | OK | 87 |
 
+Seit v59 liegt darüber ein **Deckel**, siehe „Ampel-Deckel" weiter unten.
+
 Wichtig: **`classification` taugt nicht als Ampel.** 25 der 38 mit *Strong*
 klassifizierten Annotationen sind Strong-Empfehlungen, *nichts* zu tun
 („No reason to avoid based on G6PD status", „Initiate therapy with recommended
@@ -703,9 +723,55 @@ Nebenbefund: bei ultraschnellem Abbau stand vorher generell „Wirkung: Verstär
 Das gilt nur für Prodrugs — ein normaler Wirkstoff ist dann zu schnell weg und wirkt
 **zu schwach**. War ein alter Fehler in `metrics()`.
 
-Offene Feinheit: `alternateDrugAvailable` setzt PharmCAT auch bei bedingten Formulierungen
-(Fluvastatin: „≤40 mg/Tag; *falls* mehr nötig, Alternative erwägen"). Die Karte zeigt
-dann ALARM, obwohl Wirkung und Risiko normal sind. Der Wortlaut steht darunter.
+### Ampel-Deckel (ab v59)
+
+`alternateDrugAvailable` setzt PharmCAT auch bei bedingten Formulierungen —
+Fluvastatin heißt „≤40 mg/Tag als Startdosis; *falls* mehr nötig, eine
+Alternative erwägen". Die Karte stand dadurch auf ALARM, während darunter
+„Wirkung: Normal" und „Toxizität: Normales Risiko" zu lesen war.
+
+**Entscheidung Daniel, 2026-08-04:** dass es eine Alternative gibt, ist keine
+Eigenschaft des Patienten und darf die Ampel nicht allein tragen. Wo Wirkung
+**und** Risiko belegt normal sind, kann keine Karte ALARM zeigen.
+
+Umgesetzt als Deckel, nicht als Neuableitung — die Flag-Regel bleibt, was sie
+ist, und wird nur nach unten begrenzt (`pDeckel` in `index.html`):
+
+```
+crit + Wirkung belegt normal + Risiko belegt normal
+   -> ACHTUNG, wenn dosingInformation/otherPrescribingGuidance gesetzt ist
+   -> sonst OK
+```
+
+Maßgeblich ist derselbe Implikationstext, den auch die Boxen auswerten
+(`pImpOf`) — 13 der 94 Wirkstoffe haben in der maßgeblichen Zeile keine
+Implikation, und wenn Deckel und Boxen auf verschiedenen Texten rechnen,
+stehen sie wieder im Widerspruch. Die Wortgruppen liegen deshalb seit v59 in
+gemeinsamen Konstanten (`PW_*`, `PT_*`), nicht mehr inline in `pharmMetrics`.
+
+**„Nicht angegeben" zählt ausdrücklich nicht als normal.** Eine Lücke ist kein
+Freispruch.
+
+Wirkung, an den 94 Wirkstoffen mit PharmCAT-Empfehlung gemessen — genau zwei
+bewegen sich, beide nach unten, nichts wird hochgestuft:
+
+| Wirkstoff | vorher | nachher | warum |
+|---|---|---|---|
+| Fluvastatin | ALARM | ACHTUNG | Wirkung normal, Risiko normal, `dosingInformation` |
+| Rosuvastatin | ALARM | ACHTUNG | dito |
+
+Verteilung über die 2.697 Karten: **2.500 OK, 172 Achtung, 25 Alarm**
+(vorher 2.500 / 170 / 27).
+
+Codein und Tramadol (Wirkung verstärkt, Risiko hoch), die Trizyklika,
+Ondansetron und Paroxetin (Wirkung zu schwach) bleiben ALARM — sie stehen auf
+einem Befund, nicht auf der Alternative. Bei zwölf Wirkstoffen sagt der Text
+weder zu Wirkung noch zu Risiko etwas; dort trägt weiterhin allein das Flag
+den ALARM, siehe §0 Punkt 5.
+
+Der Wortlaut der Empfehlung steht unverändert unter der Karte, und die Box
+**Handlung** nennt weiterhin „Anderer Wirkstoff" — nur in der Farbe der
+gedeckelten Karte, damit kein roter Kasten auf einer ACHTUNG-Karte steht.
 
 ### Reihenfolge in der Liste
 

@@ -1478,6 +1478,41 @@ const PDRUGBY={};
     });
   });
 })();
+/* Wortgruppen, an denen sich Wirkung und Risiko ablesen lassen. Sie stehen
+   hier oben, weil sowohl die Ampel als auch die Boxen sie brauchen; zwei
+   Kopien wuerden mit der Zeit auseinanderlaufen. Kein /g - .test() waere
+   sonst zustandsbehaftet und liefert bei jedem zweiten Aufruf false. */
+const PW_SCHWACH=/less active|lower plasma|lower systemic|decreased plasma|decreased systemic|ineffectiveness|therapeutic failure|lack of efficacy|reduced efficacy|decreased concentration|decreased exposure/;
+const PW_STARK=/increased formation|higher systemic|higher plasma|increased plasma|increased systemic|increased exposure|higher dose-adjusted|increased concentration/;
+const PW_NORMAL=/normal metabolism|normal .*activity|typical |low risk|normal risk|normal .*formation/;
+const PT_HOCH=/higher risk|increased risk|risk .*is increased|death has|serious toxicity|increased .*side effects|increased .*adverse/;
+const PT_NORMAL=/low risk|normal risk|typical .*risk|does not appear to translate/;
+/* Genau der Text, den auch die Boxen auswerten: erst die massgebliche Zeile,
+   sonst die erste Quelle, die ueberhaupt etwas sagt. 13 der 94 Wirkstoffe
+   haben in der massgeblichen Zeile keine Implikation - rechnete der Deckel
+   auf einem anderen String als die Boxen, stuenden sie wieder im
+   Widerspruch. */
+function pImpOf(pr){return pr.haupt.imp || (pr.alle.find(x=>x.imp)||{}).imp || '';}
+/* Belegt normale Wirkung UND belegt normales Risiko. "Nicht angegeben" zaehlt
+   ausdruecklich nicht als normal - eine Luecke ist kein Freispruch. */
+function pImplNormal(imp){
+  const t=(imp||'').toLowerCase();
+  if(!t)return false;
+  const w=!PW_SCHWACH.test(t)&&!PW_STARK.test(t)&&PW_NORMAL.test(t);
+  const x=!PT_HOCH.test(t)&&PT_NORMAL.test(t);
+  return w&&x;
+}
+/* Der Deckel. Dass ein anderer Wirkstoff verfuegbar waere, ist kein Befund am
+   Patienten: PharmCAT setzt alternateDrugAvailable auch bei "falls mehr
+   noetig, Alternative erwaegen". Sind Wirkung und Risiko normal, bleibt als
+   Grund fuer ALARM nur die Alternative uebrig - und die traegt ihn nicht.
+   Uebrig bleibt, was die Quelle sonst noch verlangt: Dosis anpassen oder
+   ueberwachen, sonst nichts. */
+function pDeckel(sev,flags,imp){
+  if(sev!=='crit'||!pImplNormal(imp))return sev;
+  return (flags&6)?'warn':'ok';
+}
+function pEffSev(r){return pDeckel(r.sev,r.flags,r.imp);}
 /* Die massgebliche Empfehlung: schaerfste Ampel, bei Gleichstand die
    hoeherwertige Quelle. Alle uebrigen bleiben als Zusatz erhalten. */
 const _pharmCache={};
@@ -1487,7 +1522,7 @@ function pharmRec(id){
   const rs=PDRUGBY[id];
   if(!rs){ _pharmCache[id]=null; return null; }
   const best=rs.slice().sort((a,b)=>
-    PSEV.indexOf(b.sev)-PSEV.indexOf(a.sev) || PQRANG[b.q]-PQRANG[a.q])[0];
+    PSEV.indexOf(pEffSev(b))-PSEV.indexOf(pEffSev(a)) || PQRANG[b.q]-PQRANG[a.q])[0];
   v={haupt:best, alle:rs};
   _pharmCache[id]=v;
   return v;
@@ -1588,12 +1623,15 @@ function statusFor(id){
       const l=PHENO[g].lvl; if(l<0)return;
       if(Math.abs(l-2)>Math.abs(plvl-2))plvl=l;
     });
-    const wirkung=h.sev==='crit'
+    /* Deckel, siehe pDeckel: eine belegt normale Wirkung bei normalem
+       Risiko kann nie ALARM sein. Entscheidung Daniel, 2026-08-04. */
+    const sev=pDeckel(h.sev,h.flags,pImpOf(pr)), gekappt=sev!==h.sev;
+    const wirkung=sev==='crit'
       ? "Fuer dich ist ein anderer Wirkstoff angezeigt."
-      : h.sev==='warn'
+      : sev==='warn'
         ? "Die Dosis muss angepasst oder die Wirkung ueberwacht werden."
         : "Es ist keine Anpassung noetig.";
-    return{sev:h.sev, lvl:plvl, pharm:true, flags:h.flags, gt:h.gt,
+    return{sev:sev, lvl:plvl, pharm:true, gekappt:gekappt, flags:h.flags, gt:h.gt,
       text:"Zu "+d.name+" gibt es eine Empfehlung, die genau auf deinen Genotyp "
         +(h.gt||"")+" passt. "+wirkung+" Der Wortlaut steht unten."};
   }
@@ -1664,20 +1702,16 @@ function pharmMetrics(id,st){
   const pr=pharmRec(id); if(!pr)return null;
   /* Massgeblich ist die Zeile, die auch die Ampel bestimmt. Erst wenn die
      keine Folge nennt, wird die naechste Quelle herangezogen. */
-  const q=pr.haupt.imp || (pr.alle.find(x=>x.imp)||{}).imp || '';
-  const t=q.toLowerCase();
+  const t=pImpOf(pr).toLowerCase();
   const d=DRUGS[id], P=d.prodrug;
   const B=(l,v,sev,sym)=>({l,v,sev,sym});
   const hat=(re)=>re.test(t);
 
-  /* 1. Wirkung */
+  /* 1. Wirkung - dieselben Wortgruppen, die auch den Deckel setzen */
   let wirk;
-  if(hat(/less active|lower plasma|lower systemic|decreased plasma|decreased systemic|ineffectiveness|therapeutic failure|lack of efficacy|reduced efficacy|decreased concentration|decreased exposure/))
-    wirk=B("Wirkung","Zu schwach","warn","s-down");
-  else if(hat(/increased formation|higher systemic|higher plasma|increased plasma|increased systemic|increased exposure|higher dose-adjusted|increased concentration/))
-    wirk=B("Wirkung","Verst&auml;rkt","crit","s-dblup");
-  else if(hat(/normal metabolism|normal .*activity|typical |low risk|normal risk|normal .*formation/))
-    wirk=B("Wirkung","Normal","ok","s-check");
+  if(PW_SCHWACH.test(t))     wirk=B("Wirkung","Zu schwach","warn","s-down");
+  else if(PW_STARK.test(t))  wirk=B("Wirkung","Verst&auml;rkt","crit","s-dblup");
+  else if(PW_NORMAL.test(t)) wirk=B("Wirkung","Normal","ok","s-check");
   else wirk=B("Wirkung","Nicht angegeben","unk","c-search");
 
   /* 2. Umsatz im Koerper */
@@ -1690,17 +1724,15 @@ function pharmMetrics(id,st){
     ums=B(P?"Aktivierung":"Abbau","Normal","ok","s-check");
   else ums=B(P?"Aktivierung":"Abbau","Nicht angegeben","unk","c-search");
 
-  /* 3. Risiko */
+  /* 3. Risiko - dieselben Wortgruppen wie im Deckel */
   let tox;
-  if(hat(/higher risk|increased risk|risk .*is increased|death has|serious toxicity|increased .*side effects|increased .*adverse/))
-    tox=B("Toxizit&auml;t","Erh&ouml;htes Risiko","crit","s-up");
-  else if(hat(/low risk|normal risk|typical .*risk|does not appear to translate/))
-    tox=B("Toxizit&auml;t","Normales Risiko","ok","s-check");
+  if(PT_HOCH.test(t))         tox=B("Toxizit&auml;t","Erh&ouml;htes Risiko","crit","s-up");
+  else if(PT_NORMAL.test(t))  tox=B("Toxizit&auml;t","Normales Risiko","ok","s-check");
   else tox=B("Toxizit&auml;t","Nicht angegeben","unk","c-search");
 
   /* 4. Handlung - aus PharmCATs eigenen Feldern */
   const f=st.flags||0;
-  const akt=(f&1) ? B("Handlung","Anderer Wirkstoff","crit","s-stop")
+  const akt=(f&1) ? B("Handlung","Anderer Wirkstoff",st.gekappt?"warn":"crit","s-stop")
           : (f&2) ? B("Handlung","Dosis anpassen","warn","s-up")
           : (f&4) ? B("Handlung","&Uuml;berwachen","warn","s-up")
           :         B("Handlung","Keine Anpassung","ok","s-check");
