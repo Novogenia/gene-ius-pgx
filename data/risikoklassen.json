@@ -1,0 +1,2861 @@
+{
+ "qt": {
+  "label": "QT-Zeit-Verlaengerung",
+  "quelle": "PRIMAERQUELLE (fuer jeden Eintrag einzeln maschinell geprueft, Stand Label-Datenbank 2026-07-25): openFDA drug/label API, https://api.fda.gov/drug/label.json — es wurden nur die Abschnitte Boxed Warning, Contraindications, Warnings / Warnings and Precautions und (wo ausgewiesen) Adverse Reactions ausgewertet. Portal: https://open.fda.gov/apis/drug/label/\n\nZUSATZQUELLE: EMA-Referral Domperidon (Art.-31-Verfahren, EU-Kommissionsbeschluss 01.09.2014), https://www.ema.europa.eu/en/medicines/human/referrals/domperidone-containing-medicines\n\nMETHODIK / KATEGORIEN-FRAMEWORK (nur die publizierte Einteilungs-Systematik, NICHT die Listeninhalte): Woosley RL, Romero KA. Assessing cardiovascular drug safety for clinical decision-making. Nat Rev Cardiol 2013;10(6):330-337. PMID 23591268, DOI 10.1038/nrcardio.2013.57\n\nEIGENE ZUORDNUNGSREGEL (reproduzierbar, auf jeden Eintrag mechanisch angewandt):\n- \"Bekanntes Risiko\" = Boxed Warning zu QT/TdP ODER Torsade de pointes wird im Label dem Wirkstoff selbst bei bestimmungsgemaesser Anwendung zugeschrieben (\"have been reported with X\", \"occurred in patients treated with X\").\n- \"Moegliches Risiko\" = QT-Verlaengerung im Label belegt, TdP aber nicht zugeschrieben, ausdruecklich nicht beobachtet oder nur als allgemeine Risikofaktor-Passage genannt.\n- \"Bedingtes Risiko\" = QT/TdP nur unter Zusatzbedingung belegt: Ueberdosierung, CYP-Interaktion, Elektrolytstoerung, Bradykardie, Poor-Metabolizer-Status oder Intoxikation.\n\nNICHT VERWENDET: Die AZCERT/CredibleMeds-QTdrugs-Listen selbst wurden weder abgerufen noch abgeschrieben. Uebernommen wurde ausschliesslich die in der o.g. Publikation offengelegte dreistufige Kategorien-Systematik; die konkreten Wirkstoffzuordnungen unten stammen zu 100% aus den zitierten Fachinformationen.\n\nAUSGESCHLOSSEN wegen unzureichender freier Belege (bewusst nicht geraten): Chlorpromazin, Cisaprid, Terfenadin, Astemizol, Sertindol, Halofantrin (nur indirekt belegt, s.u.), Levomethadyl, Dolasetron, Gemifloxacin, Sparfloxacin, Telithromycin, Clofazimin, Saquinavir, Panobinostat, Midostaurin, Cabozantinib, Ketoconazol, Propofol, Metoclopramid, Papaverin — teils vom Markt, teils kein US-Label in openFDA, teils kein QT-Text im Label. Ebenfalls ausgeschlossen: Buprenorphin (Label sagt ausdruecklich QTc-Effekt <=15 ms und \"unlikely to be pro-arrhythmic\"), Belinostat, Atomoxetin, Olanzapin, Risperidon, Aripiprazol, Ofloxacin, Beta-2-Sympathomimetika (Label: \"clinical significance of these findings is unknown\").",
+  "lizenz": "JA — kommerziell uneingeschraenkt nutzbar.\n\nopenFDA (Hauptquelle, >95% der Belege): Public Domain / Creative Commons CC0 1.0 Universal. Wortlaut der openFDA-Lizenzseite: \"the content, data, documentation, code, and related materials on openFDA is public domain and made available with a Creative Commons CC0 1.0 Universal dedication\" sowie \"You can copy, modify, distribute and perform the work, even for commercial purposes, all without asking permission.\" Keine Attributionspflicht; lediglich darf keine Billigung durch die FDA suggeriert werden. (Der GMDN-Anteil der openFDA-Daten ist ausgenommen, betrifft aber nur Medizinprodukte-Datensaetze, nicht drug/label.)\n\nEMA (nur Domperidon-Eintrag): Weiterverwendung mit Quellenangabe zulaessig.\n\nWoosley/Romero 2013 (Nat Rev Cardiol): nur als Methoden-Zitat referenziert, kein Inhalt uebernommen — zitieren ist frei, der Volltext ist kostenpflichtig.\n\nWARNUNG / ABGRENZUNG: Die AZCERT/CredibleMeds-QTdrugs-Liste ist NICHT kommerziell nutzbar. Kommerzielle Nutzung oder Reproduktion der QTdrugs-Liste ist ohne AZCERT-Lizenz untersagt; freie Nutzung ist auf Behoerden, akademische Einrichtungen, Non-Profits und selbstaendige Heilberufler beschraenkt (crediblemeds.org/licenses, crediblemeds.org/terms). Deshalb wurde die Liste hier bewusst nicht als Quelle verwendet. Die Begriffe \"Known / Possible / Conditional Risk\" sind als publizierte Fachterminologie zitierfaehig; um jede Verwechslung mit dem lizenzpflichtigen Datenprodukt zu vermeiden, sind die Stufen hier deutsch benannt und nach eigener, offengelegter Regel vergeben.\n\nHAFTUNG: Fachinformationen sind Momentaufnahmen. Vor produktivem Einsatz in einem klinischen Entscheidungssystem ist ein Re-Check gegen die jeweils aktuelle Fachinformation noetig. Kein Ersatz fuer aerztliche Beurteilung.",
+  "wirkstoffe": [
+   {
+    "name": "Amiodaron",
+    "stufe": "Bekanntes Risiko",
+    "key": "amiodarone",
+    "beleg": "FDA-Label, Warnings and Precautions: kann \"polymorphic ventricular tachycardia associated with QTc prolongation (Torsade de Pointes [TdP])\" ausloesen; Hypokaliaemie/-magnesiaemie/-calciaemie sind vor Therapiebeginn zu korrigieren."
+   },
+   {
+    "name": "Dronedaron",
+    "stufe": "Bekanntes Risiko",
+    "key": "dronedarone",
+    "beleg": "FDA-Label, Contraindications: kontraindiziert bei Komedikation mit Arzneien, \"that prolong the QT interval and might increase the risk of torsade de pointes\"; TdP auch in Warnings and Precautions und Adverse Reactions."
+   },
+   {
+    "name": "Sotalol",
+    "stufe": "Bekanntes Risiko",
+    "key": "sotalol",
+    "beleg": "FDA-Label, Boxed Warning: \"Sotalol can cause life-threatening ventricular tachycardia associated with QT interval prolongation\"; Dosisreduktion ab QT >=500 ms vorgeschrieben; W&P 5.1 nennt Torsade de Pointes explizit."
+   },
+   {
+    "name": "Dofetilid",
+    "stufe": "Bekanntes Risiko",
+    "key": "dofetilide",
+    "beleg": "FDA-Label (TIKOSYN), Warnings: \"can cause serious ventricular arrhythmias, primarily Torsade de Pointes (TdP)\", QT-Verlaengerung direkt konzentrationsabhaengig; Contraindications bei QTc >440 ms und kongenitalem/erworbenem Long-QT."
+   },
+   {
+    "name": "Ibutilid",
+    "stufe": "Bekanntes Risiko",
+    "key": "ibutilide",
+    "beleg": "FDA-Label (CORVERT), Boxed Warning: \"can cause potentially fatal arrhythmias, particularly sustained polymorphic ventricular tachycardia, usually in association with QT prolongation (torsades de pointes)\"."
+   },
+   {
+    "name": "Chinidin",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label, Warnings: \"quinidine prolongs the QTC interval, and this can lead to torsades de pointes, a life-threatening ventricular arrhythmia\"; Risiko erhoeht durch Bradykardie, Hypokaliaemie, Hypomagnesiaemie."
+   },
+   {
+    "name": "Procainamid",
+    "stufe": "Bekanntes Risiko",
+    "key": "procainamide",
+    "beleg": "FDA-Label, Contraindications: eigener Abschnitt \"Torsades de Pointes\" — Kontraindikation bei dieser Arrhythmieform; Klasse-IA-Antiarrhythmikum."
+   },
+   {
+    "name": "Disopyramid",
+    "stufe": "Bekanntes Risiko",
+    "key": "disopyramide",
+    "beleg": "FDA-Label, Warnings: \"As with other Type 1A antiarrhythmics, disopyramide phosphate has been associated with torsade de pointes\"; Abbruch erwaegen bei QT-Verlaengerung >25%."
+   },
+   {
+    "name": "Haloperidol",
+    "stufe": "Bekanntes Risiko",
+    "key": "haloperidol",
+    "beleg": "FDA-Label, Warnings: \"Cases of sudden death, QT-prolongation, and Torsades de pointes have been reported in patients receiving haloperidol\"; hoehere Dosen = hoeheres Risiko. Depot-Label W&P: \"Sudden Death, Torsades de Pointes (TdP), and QTc Interval Prolongation\"."
+   },
+   {
+    "name": "Droperidol",
+    "stufe": "Bekanntes Risiko",
+    "key": "droperidol",
+    "beleg": "FDA-Label, Boxed Warning: \"Cases of QT prolongation and/or torsade de pointes have been reported in patients receiving droperidol at doses at or below recommended doses ... some cases have been fatal\"; Contraindications ab QTc >440 ms (m) / >450 ms (w)."
+   },
+   {
+    "name": "Thioridazin",
+    "stufe": "Bekanntes Risiko",
+    "key": "thioridazine",
+    "beleg": "FDA-Label, Boxed Warning: \"has been shown to prolong the QTc interval in a dose related manner, and drugs with this potential ... have been associated with Torsades de pointes type arrhythmias and sudden death\"."
+   },
+   {
+    "name": "Pimozid",
+    "stufe": "Bekanntes Risiko",
+    "key": "pimozide",
+    "beleg": "FDA-Label, Contraindications: \"Because pimozide prolongs the QT interval ... it is contraindicated in patients with congenital long QT syndrome, patients with a history of cardiac arrhythmias, patients taking other drugs which prolong the QT interval\"; Warnings nennen Todesfaelle, Mechanismus QT-Verlaengerung."
+   },
+   {
+    "name": "Ziprasidon",
+    "stufe": "Bekanntes Risiko",
+    "key": "ziprasidone",
+    "beleg": "FDA-Label, Contraindications 4.1 \"QT Prolongation\": dosisabhaengige QT-Verlaengerung, kontraindiziert bei bekannter QT-Verlaengerung und in Kombination mit anderen QT-verlaengernden Arzneien; TdP in W&P."
+   },
+   {
+    "name": "Clozapin",
+    "stufe": "Bekanntes Risiko",
+    "key": "clozapine",
+    "beleg": "FDA-Label, W&P 5.9: \"QT prolongation, Torsades de Pointes and other life-threatening ventricular arrhythmias, cardiac arrest, and sudden death have occurred with clozapine treatment\"; Kurzfassung: \"QT Interval Prolongation: Can be fatal.\""
+   },
+   {
+    "name": "Citalopram",
+    "stufe": "Bekanntes Risiko",
+    "key": "citalopram",
+    "beleg": "FDA-Label, W&P 5.1: \"Dose-dependent QTc prolongation, Torsade de pointes, ventricular tachycardia, and sudden death have occurred\"; Dosisobergrenzen im Dosierungsabschnitt; Meidung bei kongenitalem Long-QT, Bradykardie, Hypokaliaemie."
+   },
+   {
+    "name": "Fluoxetin",
+    "stufe": "Bekanntes Risiko",
+    "key": "fluoxetine",
+    "beleg": "FDA-Label, W&P 5.11: \"QT prolongation and ventricular arrhythmia including Torsades de Pointes have been reported with fluoxetine use\"; Contraindications mit Pimozid und Thioridazin wegen QT-Risiko."
+   },
+   {
+    "name": "Trazodon",
+    "stufe": "Bekanntes Risiko",
+    "key": "trazodone",
+    "beleg": "FDA-Label, W&P: \"Postmarketing events, including torsade de pointes have been reported at doses of 100 mg or less\" — also im therapeutischen Bereich; W&P-Kurzfassung: \"Cardiac Arrhythmias: Increases the QT interval.\""
+   },
+   {
+    "name": "Methadon",
+    "stufe": "Bekanntes Risiko",
+    "key": "methadone",
+    "beleg": "FDA-Label, Boxed Warning \"Life-Threatening QT Prolongation\": \"QT interval prolongation and serious arrhythmia (torsades de pointes) have occurred during treatment with methadone\"; identisch in W&P 5.3."
+   },
+   {
+    "name": "Erythromycin",
+    "stufe": "Bekanntes Risiko",
+    "key": "erythromycin",
+    "beleg": "FDA-Label, Warnings \"QT Prolongation\": \"Erythromycin has been associated with prolongation of the QT interval ... Cases of torsades de pointes have been spontaneously reported during postmarketing surveillance. Fatalities have been reported.\""
+   },
+   {
+    "name": "Clarithromycin",
+    "stufe": "Bekanntes Risiko",
+    "key": "clarithromycin",
+    "beleg": "FDA-Label, W&P: \"QT Prolongation: Avoid in patients with known QT prolongation or receiving drugs known to prolong the QT interval, ventricular arrhythmia (torsades de pointes), hypokalemia/hypomagnesemia\"; Contraindications mit Cisaprid/Pimozid wegen TdP."
+   },
+   {
+    "name": "Azithromycin",
+    "stufe": "Bekanntes Risiko",
+    "key": "azithromycin",
+    "beleg": "FDA-Label, W&P: \"Prolongation of QT interval and cases of torsades de pointes have been reported. This risk which can be fatal should be considered in patients with certain cardiovascular disorders\"."
+   },
+   {
+    "name": "Moxifloxacin",
+    "stufe": "Bekanntes Risiko",
+    "key": "moxifloxacin",
+    "beleg": "FDA-Label, W&P: \"Prolongation of the QT interval and isolated cases of torsade de pointes has been reported. Avoid use in patients with known prolongation, proarrhythmic conditions ... hypokalemia, hypomagnesemia\". Staerkster QT-Effekt der Fluorchinolone (dient in Thorough-QT-Studien als Positivkontrolle)."
+   },
+   {
+    "name": "Levofloxacin",
+    "stufe": "Bekanntes Risiko",
+    "key": "levofloxacin",
+    "beleg": "FDA-Label, W&P 5.11: \"Prolongation of the QT interval and isolated cases of torsade de pointes have been reported. Avoid use in patients with known prolongation, those with hypokalemia, and with other drugs that prolong the QT interval\"."
+   },
+   {
+    "name": "Ciprofloxacin",
+    "stufe": "Bekanntes Risiko",
+    "key": "ciprofloxacin",
+    "beleg": "FDA-Label, W&P 5.12: \"Prolongation of the QT interval and isolated cases of torsade de pointes have been reported.\" Hinweis: Wortlaut ist die Fluorchinolon-Klassenwarnung; das gemessene QT-Signal ist geringer als bei Moxifloxacin."
+   },
+   {
+    "name": "Voriconazol",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label, W&P 5.2 \"Arrhythmias and QT Prolongation\": seltene Faelle von Arrhythmien einschliesslich \"torsade de pointes\", Herzstillstand und ploetzlichen Todesfaellen; Contraindications mit Pimozid, Chinidin, Ivabradin wegen TdP."
+   },
+   {
+    "name": "Posaconazol",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label, W&P 5.2: \"Posaconazole has been shown to prolong the QTc interval and cause cases of TdP\"; Contraindications mit Pimozid und Chinidin (QTc-Verlaengerung und TdP)."
+   },
+   {
+    "name": "Chloroquin",
+    "stufe": "Bekanntes Risiko",
+    "key": "chloroquine",
+    "beleg": "FDA-Label, Warnings: \"QT interval prolongation, torsades de pointes, and ventricular arrhythmias have been reported\" (im Kontext kardialer Toxizitaet und Reizleitungsstoerungen)."
+   },
+   {
+    "name": "Hydroxychloroquin",
+    "stufe": "Bekanntes Risiko",
+    "key": "hydroxychloroquine",
+    "beleg": "FDA-Label, W&P: \"Hydroxychloroquine sulfate tablets has a potential to prolong the QT interval. Ventricular arrhythmias (including torsades de pointes) have been reported\"."
+   },
+   {
+    "name": "Chinin",
+    "stufe": "Bekanntes Risiko",
+    "key": "chinin",
+    "beleg": "FDA-Label, Contraindications: kontraindiziert bei \"Prolongation of QT interval\"; W&P 5.3: \"QT prolongation and ventricular arrhythmias. Avoid concomitant use with drugs known to prolong QT interval\"."
+   },
+   {
+    "name": "Halofantrin",
+    "stufe": "Bekanntes Risiko",
+    "key": "halofantrine",
+    "beleg": "Indirekter, aber expliziter Beleg aus dem FDA-Mefloquin-Label, Warnings: \"Halofantrine should not be administered with mefloquine or within 15 weeks of the last dose of mefloquine due to the risk of a potentially fatal prolongation of the QTc interval\". Kein eigenes US-Label mehr in openFDA (Marktruecknahme USA)."
+   },
+   {
+    "name": "Ondansetron",
+    "stufe": "Bekanntes Risiko",
+    "key": "ondansetron",
+    "beleg": "FDA-Label, W&P 5.2 \"QT Interval Prolongation and Torsade de Pointes\": Meidung bei kongenitalem Long-QT-Syndrom, EKG-Monitoring bei Elektrolytstoerungen/Herzinsuffizienz/Bradyarrhythmie. i.v.-Einzeldosis bei Erwachsenen auf 16 mg begrenzt."
+   },
+   {
+    "name": "Bedaquilin",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (SIRTURO), Boxed Warning \"QTc PROLONGATION\": \"Use with drugs that prolong the QTc interval may cause additive QTc prolongation. Monitor ECGs. Discontinue SIRTURO if significant ventricular arrhythmia or QTc interval greater than 500 ms develops\"."
+   },
+   {
+    "name": "Arsentrioxid",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (TRISENOX), Boxed Warning: \"can cause QTc interval prolongation, complete atrioventricular block and torsade de pointes, which can be fatal\"; QTc-Bestimmung und Elektrolytkorrektur vor jeder Gabe vorgeschrieben."
+   },
+   {
+    "name": "Vandetanib",
+    "stufe": "Bekanntes Risiko",
+    "key": "vandetanib",
+    "beleg": "FDA-Label (CAPRELSA), Boxed Warning \"QT PROLONGATION, TORSADES DE POINTES, AND SUDDEN DEATH\": \"Do not use in patients with hypocalcemia, hypokalemia, hypomagnesemia, or long QT syndrome\". Nur ueber REMS-Programm verfuegbar."
+   },
+   {
+    "name": "Nilotinib",
+    "stufe": "Bekanntes Risiko",
+    "key": "nilotinib",
+    "beleg": "FDA-Label (TASIGNA), Boxed Warning \"QT PROLONGATION and SUDDEN DEATHS\"; W&P 5.2: \"Prolongation of the QT interval can result in a type of ventricular tachycardia called torsade de pointes, which may result in syncope, seizure, and/or death\". EKG bei Baseline, Tag 7 und periodisch."
+   },
+   {
+    "name": "Toremifen",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (FARESTON), Boxed Warning \"QT PROLONGATION\": \"has been shown to prolong the QTc interval in a dose- and concentration-related manner ... can result in a type of ventricular tachycardia called Torsade de pointes\"."
+   },
+   {
+    "name": "Quizartinib",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (VANFLYTA), Boxed Warning \"QT PROLONGATION, TORSADES DE POINTES, and CARDIAC ARREST\"; Contraindications bei schwerer Hypokaliaemie/Hypomagnesiaemie, Long-QT-Syndrom oder TdP-Anamnese."
+   },
+   {
+    "name": "Sunitinib",
+    "stufe": "Bekanntes Risiko",
+    "key": "sunitinib",
+    "beleg": "FDA-Label, W&P 5.3 mit eigener Ueberschrift \"QT Interval Prolongation and Torsade de Pointes\": Monitoring von EKG und Elektrolyten bei Risikopatienten."
+   },
+   {
+    "name": "Pazopanib",
+    "stufe": "Bekanntes Risiko",
+    "key": "pazopanib",
+    "beleg": "FDA-Label, W&P mit eigener Ueberschrift \"QT Prolongation and Torsades de Pointes\": Monitoring bei Patienten mit signifikantem Risiko fuer QT-Verlaengerung."
+   },
+   {
+    "name": "Ceritinib",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (ZYKADIA), W&P: QTc-Verlaengerung; \"...torsades de pointes) or sudden death, occurred in patients treated with ZYKADIA\"; EKG- und Elektrolytmonitoring."
+   },
+   {
+    "name": "Oxaliplatin",
+    "stufe": "Bekanntes Risiko",
+    "key": "oxaliplatin",
+    "beleg": "FDA-Label, W&P 5.7 \"QT Interval Prolongation and Ventricular Arrhythmias\": \"QT prolongation and ventricular arrhythmias, including fatal torsade de pointes, have been reported with oxaliplatin. Avoid in patients with congenital long QT syndrome\"."
+   },
+   {
+    "name": "Anagrelid",
+    "stufe": "Bekanntes Risiko",
+    "key": "anagrelide",
+    "beleg": "FDA-Label (AGRYLIN), W&P 5.1 \"Cardiovascular Toxicity\": \"Torsades de pointes and ventricular tachycardia have been reported with AGRYLIN\"; EKG vor Therapiebeginn bei allen Patienten."
+   },
+   {
+    "name": "Apomorphin",
+    "stufe": "Bekanntes Risiko",
+    "key": "apomorphine",
+    "beleg": "FDA-Label, W&P 5.10: \"May prolong QTc and cause torsades de pointes or sudden death\"."
+   },
+   {
+    "name": "Tacrolimus",
+    "stufe": "Bekanntes Risiko",
+    "key": "tacrolimus",
+    "beleg": "FDA-Label, W&P 5.11 \"QT Prolongation\": \"may prolong the QT/QTc interval and cause Torsades de pointes. Avoid ... in patients with congenital long QT syndrome\"; EKG und Elektrolyte (Mg, K, Ca) periodisch."
+   },
+   {
+    "name": "Sevofluran",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label, Warnings \"Risk of QT Prolongation\": \"Reports of QT prolongation, associated with torsade de pointes (in exceptional cases, fatal), have been received\"; Vorsicht bei kongenitalem Long-QT und QT-verlaengernder Komedikation."
+   },
+   {
+    "name": "Isofluran",
+    "stufe": "Bekanntes Risiko",
+    "key": null,
+    "beleg": "FDA-Label, W&P 5.6 \"QT Prolongation\": \"QT prolongation, with rare instances of torsade de pointes, have been reported. Monitor QT interval when administering isoflurane to susceptible patients\"."
+   },
+   {
+    "name": "Domperidon",
+    "stufe": "Bekanntes Risiko",
+    "key": "domperidone",
+    "beleg": "EMA-Referral (Art. 31), Beschluss 2014: \"small increased risk of serious cardiac adverse drug reactions ... including QTc prolongation, torsade de pointes, serious ventricular arrhythmia and sudden cardiac death\"; hoeheres Risiko >60 J., >30 mg/Tag oder QT-verlaengernder Komedikation. Folge: Dosis- und Anwendungsbeschraenkung (max. 10 mg 3x tgl., max. 1 Woche). Kein US-Label."
+   },
+   {
+    "name": "Escitalopram",
+    "stufe": "Moegliches Risiko",
+    "key": "escitalopram",
+    "beleg": "FDA-Label: QTc-Ausreisseranalyse (>60 ms Anstieg bzw. >500 ms absolut) im Abschnitt Adverse Reactions/ECG Changes ausgewiesen; TdP nur als Postmarketing-Meldung, nicht in Warnings zugeschrieben. Klinisch als aktiver Enantiomer von Citalopram zu bewerten (dieses: Bekanntes Risiko)."
+   },
+   {
+    "name": "Sertralin",
+    "stufe": "Moegliches Risiko",
+    "key": "sertraline",
+    "beleg": "FDA-Label, W&P 5.10 \"QTc Prolongation\": \"During post-marketing use of sertraline, cases of QTc prolongation and Torsade de Pointes (TdP) have been reported. Most reports were confounded by other risk factors.\" Einstufung wegen der ausdruecklichen Confounding-Einschraenkung."
+   },
+   {
+    "name": "Venlafaxin",
+    "stufe": "Moegliches Risiko",
+    "key": "venlafaxine",
+    "beleg": "FDA-Label, W&P: mittlere QTc-Zunahme gegenueber Placebo dokumentiert (+4,7 ms in MDD-Studien); keine TdP-Zuschreibung in den Kernabschnitten."
+   },
+   {
+    "name": "Mirtazapin",
+    "stufe": "Moegliches Risiko",
+    "key": "mirtazapine",
+    "beleg": "FDA-Label, W&P 5.5 mit Ueberschrift \"QT Prolongation and Torsades de Pointes\", inhaltlich jedoch randomisierte Thorough-QT-Studie mit Moxifloxacin als Positivkontrolle; W&P-Kurzfassung nur: \"Use mirtazapine with caution in patients with risk factors for QTc prolongation\"."
+   },
+   {
+    "name": "Iloperidon",
+    "stufe": "Moegliches Risiko",
+    "key": "iloperidone",
+    "beleg": "FDA-Label (FANAPT), W&P: \"Prolongs QT interval and may be associated with arrhythmia and sudden death\", aber ausdruecklich: \"No cases of torsade de pointes or other severe cardiac arrhythmias were observed during the pre-marketing clinical program\"."
+   },
+   {
+    "name": "Paliperidon",
+    "stufe": "Moegliches Risiko",
+    "key": "paliperidone",
+    "beleg": "FDA-Label, W&P: \"QT Prolongation: Increase in QT interval, avoid use with drugs that also increase QT interval and in patients with risk factors\"; TdP nur in der allgemeinen Risikofaktor-Passage, nicht dem Wirkstoff zugeschrieben."
+   },
+   {
+    "name": "Asenapin",
+    "stufe": "Moegliches Risiko",
+    "key": "asenapine",
+    "beleg": "FDA-Label, W&P 5.10: \"Increases in QT interval; avoid use with drugs that also increase the QT interval\", aber: \"There were no reports of Torsade de Pointes or any other adverse reactions associated with delayed ventricular repolarization\"."
+   },
+   {
+    "name": "Amisulprid (i.v.)",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (BARHEMSYS), W&P 5.1 \"QT Prolongation\": \"causes dose- and concentration-dependent prolongation of the QT interval\"; Vorsicht bei Elektrolytstoerungen, Herzinsuffizienz und QT-verlaengernder Komedikation. Hinweis: geprueft wurde nur das US-Label der i.v.-Antiemetikum-Formulierung; das orale EU-Praeparat (Solian, hoehere Dosen) wird in der EU-SmPC strenger bewertet."
+   },
+   {
+    "name": "Pentamidin",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label: \"torsade de pointes\" ist im Abschnitt Adverse Reactions als berichtete Nebenwirkung gelistet; keine eigene QT-Warnung in den Kernabschnitten des geprueften US-Labels. Hinweis: In der Fachliteratur ueblicherweise strenger eingestuft — vor produktivem Einsatz gezielt nachbelegen."
+   },
+   {
+    "name": "Artemether/Lumefantrin",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (COARTEM), W&P 5.1: \"Avoid use in patients with known QT prolongation, those with hypokalemia or hypomagnesemia, and those taking other drugs that prolong the QT interval\"; Halofantrin nicht innerhalb eines Monats wegen additiver QT-Effekte."
+   },
+   {
+    "name": "Granisetron",
+    "stufe": "Moegliches Risiko",
+    "key": "granisetron",
+    "beleg": "FDA-Label, W&P: QT-Verlaengerung moeglich; \"Patients with cardiac disease, on cardio-toxic chemotherapy, with concomitant electrolyte abnormalities and/or on concomitant medications that prolong the QT interval are particularly at risk\". Geringeres Signal als Ondansetron."
+   },
+   {
+    "name": "Telavancin",
+    "stufe": "Moegliches Risiko",
+    "key": "telavancin",
+    "beleg": "FDA-Label, W&P 5.10 \"QTc prolongation\": \"Avoid use in patients at risk. Use with caution in patients taking drugs known to prolong the QT interval\"."
+   },
+   {
+    "name": "Fexinidazol",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label, W&P: \"Prolongation of the QT interval due to Fexinidazole Tablets occurs in a concentration-dependent manner\"; Anwendung zu meiden bei QTcF >470 ms oder TdP-Anamnese."
+   },
+   {
+    "name": "Efavirenz",
+    "stufe": "Moegliches Risiko",
+    "key": "efavirenz",
+    "beleg": "FDA-Label, W&P 5.2 \"QTc prolongation\": \"Consider alternatives to efavirenz in patients taking other medications with a known risk of Torsade de Pointes or in patients at higher risk of Torsade de Pointes\". QT-Effekt CYP2B6-genotypabhaengig (Poor Metabolizer hoehere Exposition)."
+   },
+   {
+    "name": "Rilpivirin",
+    "stufe": "Moegliches Risiko",
+    "key": "rilpivirine",
+    "beleg": "FDA-Label (EDURANT), W&P: supratherapeutische Dosen (75 mg und 300 mg tgl., 3- bzw. 12-fache Dosis) verlaengerten den QTc; \"Consider alternatives ... when coadministered with a drug that is known to have a risk of torsade de pointes\"."
+   },
+   {
+    "name": "Lopinavir/Ritonavir",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label, W&P: \"QT interval prolongation and isolated cases of torsade de pointes have been reported although causality could not be established. Avoid use in patients with congenital long QT syndrome, those with hypokalemia\"."
+   },
+   {
+    "name": "Ritonavir",
+    "stufe": "Moegliches Risiko",
+    "key": "ritonavir",
+    "beleg": "FDA-Label, W&P: identische Formulierung — \"QT interval prolongation and isolated cases of torsade de pointes have been reported although causality could not be established\". Zusaetzlich klinisch relevant als starker CYP3A4-Inhibitor (Anhebung der Spiegel anderer QT-Substrate)."
+   },
+   {
+    "name": "Nelfinavir",
+    "stufe": "Moegliches Risiko",
+    "key": "nelfinavir",
+    "beleg": "FDA-Label, Adverse Reactions (Postmarketing, Cardiovascular System): \"QTc prolongation, torsades de pointes\"; keine eigene QT-Warnung in den Kernabschnitten."
+   },
+   {
+    "name": "Ranolazin",
+    "stufe": "Moegliches Risiko",
+    "key": "ranolazine",
+    "beleg": "FDA-Label, W&P: \"QT interval prolongation: Can occur with ranolazine. Little data available on high doses, long exposure, use with QT interval-prolonging drugs, potassium channel variants causing prolonged QT interval\"."
+   },
+   {
+    "name": "Ribociclib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (KISQALI), W&P: \"has been shown to prolong the QT interval in a concentration-dependent manner\"; zu meiden bei signifikantem TdP-Risiko (kongenitales Long-QT, unkontrollierte Herzerkrankung, kuerzlicher Myokardinfarkt). EKG- und Elektrolytmonitoring vorgeschrieben."
+   },
+   {
+    "name": "Osimertinib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (TAGRISSO), W&P \"QTc Interval Prolongation\": EKG- und Elektrolytmonitoring bei Patienten mit entsprechender Anamnese; Dosisanpassungsregeln im Dosierungsabschnitt."
+   },
+   {
+    "name": "Crizotinib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (XALKORI), W&P \"QT Interval Prolongation\": EKG- und Elektrolytmonitoring; Dosisunterbrechung/-reduktion nach Schweregrad."
+   },
+   {
+    "name": "Vemurafenib",
+    "stufe": "Moegliches Risiko",
+    "key": "vemurafenib",
+    "beleg": "FDA-Label (ZELBORAF), W&P: \"QT prolongation may lead to an increased risk of ventricular arrhythmias, including Torsade de Pointes\"; Therapie nicht beginnen bei QTc >500 ms oder Long-QT-Syndrom; Aussetzen ab QTc >=500 ms."
+   },
+   {
+    "name": "Encorafenib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (BRAFTOVI), W&P 5.7 \"QT Prolongation\": Elektrolyte vor und waehrend Therapie kontrollieren; \"Withhold BRAFTOVI for QTc of 500 ms or greater\"."
+   },
+   {
+    "name": "Entrectinib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (ROZLYTREK), W&P \"QT Interval Prolongation\": Monitoring von Patienten mit bestehendem oder Risiko fuer QT-Verlaengerung; Dosisanpassungsregeln."
+   },
+   {
+    "name": "Gilteritinib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (XOSPATA), W&P 5.3 \"Prolonged QT Interval\": \"Interrupt and reduce XOSPATA dosage in patients who have a QTcF >500 msec. Correct hypokalemia or hypomagnesemia prior to and during administration\"."
+   },
+   {
+    "name": "Glasdegib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (DAURISMO), W&P 5.2 \"QTc Interval Prolongation\": \"Monitor electrocardiograms and electrolytes. If QTc prolongation occurs, interrupt treatment\"."
+   },
+   {
+    "name": "Ivosidenib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (TIBSOVO), W&P 5.2 \"QTc Interval Prolongation\": \"Monitor electrocardiograms and electrolytes. If QTc interval prolongation occurs, dose reduce or withhold, then resume dose or permanently discontinue\"."
+   },
+   {
+    "name": "Selpercatinib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (RETEVMO), W&P \"QT Interval Prolongation\": QT, Elektrolyte und TSH bei Baseline und periodisch; haeufigeres Monitoring bei QT-verlaengernder Komedikation."
+   },
+   {
+    "name": "Sorafenib",
+    "stufe": "Moegliches Risiko",
+    "key": "sorafenib",
+    "beleg": "FDA-Label, W&P 5.9 \"QT Prolongation\": EKG und Elektrolyte bei erhoehtem Risiko fuer ventrikulaere Arrhythmien; \"Interrupt if QTc greater than 500 msec or increases greater than 60 msec from baseline\"."
+   },
+   {
+    "name": "Lapatinib",
+    "stufe": "Moegliches Risiko",
+    "key": "lapatinib",
+    "beleg": "FDA-Label, W&P 5.6: \"Lapatinib may prolong the QT interval in some patients. Consider electrocardiogram (ECG) and electrolyte monitoring\"."
+   },
+   {
+    "name": "Dasatinib",
+    "stufe": "Moegliches Risiko",
+    "key": "dasatinib",
+    "beleg": "FDA-Label, W&P 5.6 \"QT Prolongation\": \"Use dasatinib tablets with caution in patients who have or may develop prolongation of the QT interval\"."
+   },
+   {
+    "name": "Eribulin",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label, W&P 5.4 \"QT Prolongation\": Monitoring bei Herzinsuffizienz, Bradyarrhythmie, QT-verlaengernder Komedikation und Elektrolytstoerungen; \"Avoid in patients with congenital long QT syndrome\"."
+   },
+   {
+    "name": "Inotuzumab Ozogamicin",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (BESPONSA), W&P \"QT interval prolongation\": EKG und Elektrolyte vor Therapiebeginn und nach Gabe QT-verlaengernder Arzneien kontrollieren."
+   },
+   {
+    "name": "Pacritinib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (VONJO), W&P \"Prolonged QT Interval\": \"Avoid use in patients with a baseline QTc of >480 msec\"; ausdruecklich: \"No cases of torsades de pointes were reported\"."
+   },
+   {
+    "name": "Asciminib",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (SCEMBLIX), W&P: \"Arrhythmia, including QTc prolongation, occurred in 35 of 556 (6%) patients receiving SCEMBLIX\"."
+   },
+   {
+    "name": "Leuprorelin",
+    "stufe": "Moegliches Risiko",
+    "key": "leuprorelin",
+    "beleg": "FDA-Label, W&P \"Effect on QT/QTc Interval\": \"Androgen deprivation therapy may prolong the QT interval. Consider risks and benefits\" — Klasseneffekt der Androgendeprivation."
+   },
+   {
+    "name": "Degarelix",
+    "stufe": "Moegliches Risiko",
+    "key": "degarelix",
+    "beleg": "FDA-Label (FIRMAGON), W&P \"QT Interval Prolongation\": \"Androgen deprivation therapy treatment with FIRMAGON may prolong the QT interval\"."
+   },
+   {
+    "name": "Tetrabenazin",
+    "stufe": "Moegliches Risiko",
+    "key": "tetrabenazine",
+    "beleg": "FDA-Label, W&P: \"QTc prolongation: Not recommended in combination with other drugs that prolong QT\"; TdP nur als allgemeiner Mechanismus genannt (\"QT prolongation can lead to development of torsade de pointes-type ventricular tachycardia\")."
+   },
+   {
+    "name": "Deutetrabenazin",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (AUSTEDO), W&P 5.3 \"QT Prolongation\": \"Avoid use in patients with congenital long QT syndrome or with arrhythmias associated with a prolonged QT interval\"; TdP nur in der allgemeinen Risikofaktor-Passage."
+   },
+   {
+    "name": "Valbenazin",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (INGREZZA), W&P 5.4 \"QT Prolongation\": \"May cause an increase in QT interval. Avoid use in patients with congenital long QT syndrome or with arrhythmias associated with a prolonged QT interval\"."
+   },
+   {
+    "name": "Pitolisant",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (WAKIX), W&P 5.1 \"QT Interval Prolongation\": \"Increases in QT interval. Avoid use with drugs that also increase the QT interval and in patients with risk factors\"; verstaerktes Monitoring bei Leber-/Niereninsuffizienz."
+   },
+   {
+    "name": "Lofexidin",
+    "stufe": "Moegliches Risiko",
+    "key": "lofexidine",
+    "beleg": "FDA-Label (LUCEMYRA), W&P \"Risk of QT Prolongation\": \"Lofexidine prolongs the QT interval. Avoid use in patients with congenital long QT syndrome\"."
+   },
+   {
+    "name": "Solifenacin",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label, W&P 5.6: \"not recommended for use in patients at high risk of QT prolongation, including patients with a known history of QT prolongation and patients taking medications known to prolong the QT interval\"."
+   },
+   {
+    "name": "Hydroxyzin",
+    "stufe": "Moegliches Risiko",
+    "key": "hydroxyzine",
+    "beleg": "FDA-Label, Contraindications: \"Hydroxyzine is contraindicated in patients with a prolonged QT interval\"; TdP im Abschnitt Adverse Reactions gelistet, aber keine Zuschreibung bei bestimmungsgemaesser Dosierung in den Warnhinweisen."
+   },
+   {
+    "name": "Mifepriston (Langzeit, Cushing-Indikation)",
+    "stufe": "Moegliches Risiko",
+    "key": null,
+    "beleg": "FDA-Label (KORLYM), W&P 5.4 \"QT interval prolongation\": \"Avoid use with QT interval-prolonging drugs, or in patients with potassium channel variants resulting in a long QT interval\"."
+   },
+   {
+    "name": "Vardenafil",
+    "stufe": "Moegliches Risiko",
+    "key": "vardenafil",
+    "beleg": "FDA-Label, W&P 5.7 \"Congenital or Acquired QT Prolongation\": therapeutische (10 mg) und supratherapeutische (80 mg) Dosen erzeugten QTc-Anstiege vergleichbar der Aktivkontrolle Moxifloxacin 400 mg."
+   },
+   {
+    "name": "Flecainid",
+    "stufe": "Moegliches Risiko",
+    "key": "flecainide",
+    "beleg": "FDA-Label, Warnings: \"There have been rare cases of Torsade de Pointes-type arrhythmia associated with flecainide therapy\"; zugleich dokumentiert das Label, dass die Intervallverlaengerung ueberwiegend ueber PR/QRS (Reizleitungsverzoegerung) laeuft — daher nicht als klassischer IKr-Blocker eingestuft."
+   },
+   {
+    "name": "Propafenon",
+    "stufe": "Moegliches Risiko",
+    "key": "propafenone",
+    "beleg": "FDA-Label, W&P: proarrhythmische Effekte \"include sudden death and life-threatening ventricular arrhythmias such as ventricular fibrillation, ventricular tachycardia, asystole, and torsade de pointes\"; W&P-Kurzfassung: \"Avoid use with other drugs that prolong the QT interval\". Wie Flecainid vorwiegend QRS-vermittelt."
+   },
+   {
+    "name": "Loperamid",
+    "stufe": "Bedingtes Risiko",
+    "key": "loperamide",
+    "beleg": "FDA-Label, Boxed Warning \"TORSADES DE POINTES AND SUDDEN DEATH\": \"Cases of Torsades de Pointes, cardiac arrest, and death have been reported with the use of a higher than recommended dosage\" — Risiko ausdruecklich an Ueberdosierung/Missbrauch gebunden, nicht an die zugelassene Dosis."
+   },
+   {
+    "name": "Itraconazol",
+    "stufe": "Bedingtes Risiko",
+    "key": null,
+    "beleg": "FDA-Label, Boxed Warning und Contraindications: \"increased plasma concentrations of some of these drugs can lead to QT prolongation and ventricular tachyarrhythmias including occurrences of torsade de pointes\" — das Risiko entsteht ueber CYP3A4-Hemmung und Spiegelanhebung der Komedikation, nicht primaer durch Itraconazol selbst."
+   },
+   {
+    "name": "Fluconazol",
+    "stufe": "Bedingtes Risiko",
+    "key": null,
+    "beleg": "FDA-Label, Contraindications: Komedikation mit QT-verlaengernden CYP3A4-Substraten (Erythromycin, Pimozid, Chinidin) ist kontraindiziert; TdP im Abschnitt Adverse Reactions. Eigenes QT-Signal dosisabhaengig, interaktionsvermitteltes Risiko dominiert."
+   },
+   {
+    "name": "Paroxetin",
+    "stufe": "Bedingtes Risiko",
+    "key": "paroxetine",
+    "beleg": "FDA-Label, W&P \"Drug Interactions Leading to QT Prolongation\": \"The CYP2D6 inhibitory properties of paroxetine can elevate plasma levels of thioridazine and pimozide\" — daher Kontraindikation dieser Kombinationen. Risiko rein interaktionsvermittelt."
+   },
+   {
+    "name": "Amitriptylin",
+    "stufe": "Bedingtes Risiko",
+    "key": "amitriptyline",
+    "beleg": "FDA-Label, Contraindications: \"should not be given with cisapride due to the potential for increased QT interval and increased risk for arrhythmia\". TCA-typisch relevant v.a. bei Ueberdosierung und CYP2D6-Poor-Metabolizern."
+   },
+   {
+    "name": "Lithium",
+    "stufe": "Bedingtes Risiko",
+    "key": "lithium",
+    "beleg": "FDA-Label, Warnings/W&P zur Lithiumtoxizitaet: \"Cardiac manifestations involve electrocardiographic changes, such as prolonged QT interval, ST and T-wave changes and myocarditis\" — an Intoxikation/erhoehte Spiegel gebunden."
+   },
+   {
+    "name": "Quetiapin",
+    "stufe": "Bedingtes Risiko",
+    "key": "quetiapine",
+    "beleg": "FDA-Label, W&P 5.12: \"In clinical trials, quetiapine was not associated with a persistent increase in QT intervals. However ... there were cases reported of QT prolongation in patients who overdosed\" bzw. bei kardialer Komorbiditaet/Komedikation."
+   },
+   {
+    "name": "Mefloquin",
+    "stufe": "Bedingtes Risiko",
+    "key": "mefloquine",
+    "beleg": "FDA-Label, Warnings \"QTc Interval Prolongation and Drug Interactions\": Risiko einer \"potentially fatal prolongation of the QTc interval\" konkret bei Kombination mit bzw. innerhalb 15 Wochen nach Halofantrin."
+   },
+   {
+    "name": "Ivabradin",
+    "stufe": "Bedingtes Risiko",
+    "key": "ivabradine",
+    "beleg": "FDA-Label, W&P: \"Bradycardia may increase the risk of QT prolongation which may lead to severe ventricular arrhythmias, including torsade de pointes, especially in patients with risk factors such as use of QTc prolonging drugs\" — Mechanismus bradykardievermittelt, nicht direkte IKr-Blockade."
+   },
+   {
+    "name": "Fingolimod",
+    "stufe": "Bedingtes Risiko",
+    "key": "fingolimod",
+    "beleg": "FDA-Label, Contraindications bei QTc >=500 ms; W&P: Ersteinnahme unter kontinuierlichem EKG-Monitoring bei verlaengertem QTc oder QT-verlaengernder Komedikation. Risiko ueber Frequenzsenkung/Bradykardie vermittelt."
+   },
+   {
+    "name": "Siponimod",
+    "stufe": "Bedingtes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (MAYZENT), W&P: Vorsicht/Kardiologenkonsil bei \"Significant QT prolongation (QTc greater than 500 msec)\" und bei Arrhythmien unter Klasse-Ia-/III-Antiarrhythmika. Bradykardievermittelt."
+   },
+   {
+    "name": "Ozanimod",
+    "stufe": "Bedingtes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (ZEPOSIA), W&P: Kardiologenkonsil vor Therapiebeginn bei verlaengertem QTc bzw. QT-verlaengernder Komedikation; S1P-Modulator-typischer Bradykardieeffekt."
+   },
+   {
+    "name": "Ponesimod",
+    "stufe": "Bedingtes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (PONVORY), W&P: Kardiologenkonsil und Monitoring bei bestehender QTc-Verlaengerung oder Komedikation mit QT-verlaengernden Arzneien; Bradykardie bei Therapieeinleitung."
+   },
+   {
+    "name": "Tolterodin",
+    "stufe": "Bedingtes Risiko",
+    "key": "tolterodine",
+    "beleg": "FDA-Label, W&P 5.9: QT-Effekt \"appeared greater for 8 mg/day (two times the therapeutic dose) ... and was more pronounced in CYP2D6 poor metabolizers (PM) than extensive metabolizers\"; zugleich: \"There has been no association of Torsade de Pointes in the international post-marketing experience\". Risiko an Dosis und CYP2D6-Status gebunden."
+   },
+   {
+    "name": "Eliglustat",
+    "stufe": "Bedingtes Risiko",
+    "key": null,
+    "beleg": "FDA-Label (CERDELGA), Contraindications: kontraindiziert je nach CYP2D6-Metabolisierer-Status und CYP-Inhibitor-Komedikation \"due to the risk of cardiac arrhythmias from prolongation of the PR, QTc, and/or QRS cardiac intervals\". Musterbeispiel einer pharmakogenetisch bedingten QT-Interaktion."
+   },
+   {
+    "name": "Abirateronacetat",
+    "stufe": "Bedingtes Risiko",
+    "key": null,
+    "beleg": "FDA-Label, W&P: \"In postmarketing experience, QT prolongation and Torsades de Pointes have been observed in patients who develop hypokalemia while taking abiraterone acetate\" — an Mineralokortikoid-bedingte Hypokaliaemie gebunden."
+   },
+   {
+    "name": "Tramadol",
+    "stufe": "Bedingtes Risiko",
+    "key": "tramadol",
+    "beleg": "FDA-Label, Adverse Reactions: \"Cases of QT prolongation and/or torsade de pointes have been reported with tramadol use. Many of these cases were reported in patients taking another drug labeled for QT prolongation, in patients with a risk fa[ctor]\"."
+   },
+   {
+    "name": "Donepezil",
+    "stufe": "Bedingtes Risiko",
+    "key": "donepezil",
+    "beleg": "FDA-Label, Adverse Reactions (Postmarketing): \"QTc prolongation, and torsade de pointes\" gelistet, zusammen mit Herzblock aller Grade; keine eigene QT-Warnung in den Kernabschnitten. Cholinerg bedingte Bradykardie als Kofaktor."
+   },
+   {
+    "name": "Cilostazol",
+    "stufe": "Bedingtes Risiko",
+    "key": "cilostazol",
+    "beleg": "FDA-Label, Adverse Reactions (Postmarketing, Cardiac disorders): \"Torsade de pointes and QTc prolongation in patients with cardiac disorders (e.g. complete atrioventricular block, heart failure; and bradyarrythmia)\" — ausdruecklich an kardiale Vorerkrankung gebunden."
+   }
+  ]
+ },
+ "anticholinerg": {
+  "label": "Anticholinerge Last",
+  "quelle": "PRIMÄRQUELLE (verwendet für alle Einstufungen unten): Kiesel EK, Hopf YM, Drey M. \"An anticholinergic burden score for German prescribers: score development.\" BMC Geriatrics 2018;18:239. DOI 10.1186/s12877-018-0929-6, PMID 30305048, PMC6180424. Volltext: https://link.springer.com/article/10.1186/s12877-018-0929-6 und https://pmc.ncbi.nlm.nih.gov/articles/PMC6180424/. Die Liste unten ist Tabelle 4 (\"Overview of all drugs scored\") dieses Papers, 1:1 übernommen: 104 Wirkstoffe ACB=1, 18 ACB=2, 29 ACB=3 (Zählung im Abstract des Papers bestätigt: \"104 drugs were scored as weak, 18 as moderate and 29 as having strong anticholinergic effects\"). Insgesamt wurden 504 Wirkstoffe bewertet, 356 davon mit ACB=0 (Zusatzdatei Tabelle S3). Die Namen sind hier in deutscher INN-Schreibweise wiedergegeben; das im Beleg genannte Stichwort ist der wörtliche Tabelleneintrag.\n\nMETHODIK: Systematische PubMed-Recherche über bereits publizierte ACB-Skalen, Reduktion auf in Deutschland zugelassene Wirkstoffe, Neubewertung durch ein Expertengremium (ein Geriater, zwei klinische Pharmazeuten). Eingeflossene Skalen laut Tabelle 1/2 des Papers: Carnahan 2006 (= Anticholinergic Drug Scale, ADS), Ancelin 2006, Rudolph 2008 (ARS), Han 2008, Ehrt 2010 (modifiziert), Sittironnarit 2011, Boustani 2012 (= ACB Scale), Duran 2013. Der deutsche Score ist damit eine konsolidierte Fassung der genannten Einzelskalen.\n\nWICHTIGE EINSCHRÄNKUNG (wörtlich in Tabelle 4 vermerkt): \"Caution: This list does not contain necessarily all drugs with anticholinergic properties.\" Die Autoren schreiben ausdrücklich, sie erheben keinen Anspruch auf Vollständigkeit – in Deutschland sind über 2000 Wirkstoffe zugelassen. Topische, ophthalmologische, otologische und nasale Zubereitungen wurden nicht bewertet. Die Einstufung beruht auf Expertenkonsens, nicht auf klinischen Endpunkten.\n\nADDITIVITÄT (Beleg im Hintergrundteil des Papers): \"Anticholinergic activity of multiple drugs add up to the so-called anticholinergic burden (ACB).\" Ältere Patienten sind laut Paper anfälliger für anticholinerge Nebenwirkungen wegen verminderter Metabolisierung, verlangsamter Elimination, altersbedingt reduzierter cholinerger Transmission und erhöhter Durchlässigkeit der Blut-Hirn-Schranke. Genannte Folgen: Stürze, kognitiver Abbau, Delir, Tachyarrhythmie, Halluzinationen, Mundtrockenheit, Obstipation, Harnverhalt.\n\nNICHT VERWENDETE, ABER ANGEFRAGTE QUELLEN (Lizenzgründe, siehe Lizenzfeld):\n1) ACB Scale (Anticholinergic Cognitive Burden Scale): Boustani M, Campbell N, Munger S, Maidment I, Fox C. \"Impact of anticholinergics on the aging brain: a review and practical application.\" Aging Health 2008;4(3):311-320; Update: Campbell N et al., \"The 2012 update to the anticholinergic cognitive burden scale\", J Am Geriatr Soc 2013. Skalendokument: http://www.agingbraincare.org/tools/abc-anticholinergic-cognitive-burden-scale\n2) Anticholinergic Drug Scale (ADS): Carnahan RM, Lund BC, Perry PJ, Pollock BG, Culp KR. \"The Anticholinergic Drug Scale as a measure of drug-related anticholinergic burden: associations with serum anticholinergic activity.\" J Clin Pharmacol 2006 Dec;46(12):1481-1486. DOI 10.1177/0091270006292126, PMID 17101747. Kein Open Access.\n\nHINWEIS ZUR ANWENDUNG: Die Liste ersetzt keine ärztliche oder apothekerliche Beurteilung. Absetzen oder Umstellen anticholinerger Medikamente gehört in ärztliche Hand.",
+  "lizenz": "JA – die unten verwendete Quelle ist kommerziell nutzbar.\n\nKiesel et al. 2018 (BMC Geriatrics, deutscher Anticholinergic Burden Score) steht unter Creative Commons Attribution 4.0 International (CC BY 4.0). Wörtlich im Paper: \"This article is distributed under the terms of the Creative Commons Attribution 4.0 International License (http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided you give appropriate credit to the original author(s) and the source, provide a link to the Creative Commons license, and indicate if changes were made.\" Zusätzlich: \"The Creative Commons Public Domain Dedication waiver (http://creativecommons.org/publicdomain/zero/1.0/) applies to the data made available in this article, unless otherwise stated.\" Die Tabellendaten selbst fallen damit unter CC0.\n=> Kommerzielle Nutzung erlaubt, auch Bearbeitung und Weiterverbreitung. Pflicht: Namensnennung (Kiesel EK, Hopf YM, Drey M, BMC Geriatrics 2018;18:239), Link auf die CC-BY-4.0-Lizenz, Kennzeichnung von Änderungen (hier: Übersetzung der Wirkstoffnamen ins Deutsche, Umsortierung).\n\nNICHT KOMMERZIELL FREI NUTZBAR – daher hier bewusst NICHT als Datenquelle verwendet:\n- ACB Scale (Anticholinergic Cognitive Burden Scale): Aufdruck auf dem offiziellen Skalendokument wörtlich: \"Copyright © 2008, 2012. Regenstrief Institute, Inc. All rights reserved. Use of the Anti-Cholinergic Burden (ACB) Scale may only be in accordance with the Terms of Use for the ACB Scale which are available at http://www.agingbraincare.org/tools/abc-anticholinergic-cognitive-burden-scale. To request permission for use, contact us at acb@agingbraincare.org.\" => Für kommerzielle Nutzung ist eine ausdrückliche Genehmigung des Regenstrief Institute erforderlich.\n- Anticholinergic Drug Scale (ADS), Carnahan et al. 2006, Journal of Clinical Pharmacology: klassisches Verlagscopyright (Wiley/ASCPT), kein Open Access, keine offene Lizenz. Nachdruck der Tabelle nur mit Rechteklärung beim Verlag.\n\nPRAKTISCHE EMPFEHLUNG: Für ein kommerzielles Produkt ausschließlich den deutschen ACB-Score (Kiesel 2018, CC BY 4.0) als Datengrundlage verwenden und korrekt zitieren. Er enthält die Inhalte der ACB Scale und der ADS ohnehin in konsolidierter, neu bewerteter Form, ist aber rechtlich frei. ACB Scale und ADS dürfen als Literatur zitiert, ihre Tabellen aber nicht ohne Genehmigung übernommen werden.",
+  "wirkstoffe": [
+   {
+    "name": "Amitriptylin",
+    "stufe": "3",
+    "key": "amitriptyline",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Amitriptyline\"; zusätzlich Tab. 1 mit ATC N06AA09, konkordant von 7 Vorskalen als 3 bewertet"
+   },
+   {
+    "name": "Atropin",
+    "stufe": "3",
+    "key": "atropine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Atropine\"; Tab. 1, ATC A03BA01"
+   },
+   {
+    "name": "Chlorphenamin",
+    "stufe": "3",
+    "key": "chlorphenamine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Chlorpheniramine\"; Tab. 1, ATC R06AB04"
+   },
+   {
+    "name": "Clemastin",
+    "stufe": "3",
+    "key": "clemastine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Clemastine\"; Tab. 1, ATC R06AA04"
+   },
+   {
+    "name": "Clomipramin",
+    "stufe": "3",
+    "key": "clomipramine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Clomipramine\"; Tab. 1, ATC N06AA04"
+   },
+   {
+    "name": "Clozapin",
+    "stufe": "3",
+    "key": "clozapine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Clozapine\"; Tab. 1, ATC N05AH02"
+   },
+   {
+    "name": "Cyproheptadin",
+    "stufe": "3",
+    "key": "cyproheptadin",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Cyproheptadine\"; Tab. 1, ATC R06AX02"
+   },
+   {
+    "name": "Darifenacin",
+    "stufe": "3",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Darifenacin\"; Tab. 1, ATC G04BD10"
+   },
+   {
+    "name": "Dimenhydrinat",
+    "stufe": "3",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Dimenhydrinate\"; Tab. 1, ATC A04AB02 (rezeptfrei erhältlich - im Alter besonders beachten)"
+   },
+   {
+    "name": "Diphenhydramin",
+    "stufe": "3",
+    "key": "diphenhydramin",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Diphenhydramine\"; Tab. 1, ATC A04AB05 (rezeptfrei erhältlich)"
+   },
+   {
+    "name": "Doxepin",
+    "stufe": "3",
+    "key": "doxepin",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Doxepin\"; Tab. 1, ATC N06AA12"
+   },
+   {
+    "name": "Fesoterodin",
+    "stufe": "3",
+    "key": "fesoterodine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Fesoterodine\"; Tab. 2 (nur von einer Vorskala bewertet), ATC G04BD11"
+   },
+   {
+    "name": "Flavoxat",
+    "stufe": "3",
+    "key": "flavoxate",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Flavoxate\"; Tab. 1, ATC G04BD02"
+   },
+   {
+    "name": "Hydroxyzin",
+    "stufe": "3",
+    "key": "hydroxyzine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Hydroxyzine\"; Tab. 1, ATC N05BB01"
+   },
+   {
+    "name": "Imipramin",
+    "stufe": "3",
+    "key": "imipramine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Imipramine\"; Tab. 1, ATC N06AA02"
+   },
+   {
+    "name": "Levomepromazin",
+    "stufe": "3",
+    "key": "levomepromazine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Levomepromazine\"; Tab. 1, ATC N05AA02"
+   },
+   {
+    "name": "Nortriptylin",
+    "stufe": "3",
+    "key": "nortriptyline",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Nortriptyline\"; Tab. 1, ATC N06AA10"
+   },
+   {
+    "name": "Orphenadrin",
+    "stufe": "3",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Orphenadrine\"; Tab. 1, ATC N04AB02"
+   },
+   {
+    "name": "Oxybutynin",
+    "stufe": "3",
+    "key": "oxybutynin",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Oxybutynin\"; Tab. 1, ATC G04BD04"
+   },
+   {
+    "name": "Procyclidin",
+    "stufe": "3",
+    "key": "procyclidine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Procyclidine\"; Tab. 1, ATC N04AA04"
+   },
+   {
+    "name": "Propiverin",
+    "stufe": "3",
+    "key": "propiverine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Propiverine\"; Tab. 2 (nur von einer Vorskala bewertet), ATC G04BD06"
+   },
+   {
+    "name": "Scopolamin",
+    "stufe": "3",
+    "key": "scopolamine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Scopolamine\"; Tab. 1, ATC A04AD01"
+   },
+   {
+    "name": "Solifenacin",
+    "stufe": "3",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Solifenacin\"; Tab. 2 (diskrepante Vorbewertung, vom Expertengremium auf 3 festgelegt), ATC G04BD08"
+   },
+   {
+    "name": "Thioridazin",
+    "stufe": "3",
+    "key": "thioridazine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Thioridazine\"; Tab. 1, ATC N05AC02"
+   },
+   {
+    "name": "Tizanidin",
+    "stufe": "3",
+    "key": "tizanidine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Tizanidine\"; Tab. 1, ATC M03BX02"
+   },
+   {
+    "name": "Tolterodin",
+    "stufe": "3",
+    "key": "tolterodine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Tolterodine\"; Tab. 1, ATC G04BD07"
+   },
+   {
+    "name": "Trihexyphenidyl",
+    "stufe": "3",
+    "key": "trihexyphenidyl",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Trihexyphenidyl\"; Tab. 1, ATC N04AA01"
+   },
+   {
+    "name": "Trimipramin",
+    "stufe": "3",
+    "key": "trimipramine",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Trimipramine\"; Tab. 1, ATC N06AA06"
+   },
+   {
+    "name": "Trospium",
+    "stufe": "3",
+    "key": "trospium",
+    "beleg": "GABS Tab. 4, ACB score = 3, Quelleintrag \"Trospium\"; Tab. 2 (nur von einer Vorskala bewertet), ATC G04BD09"
+   },
+   {
+    "name": "Amantadin",
+    "stufe": "2",
+    "key": "amantadin",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Amantadine\""
+   },
+   {
+    "name": "Carbamazepin",
+    "stufe": "2",
+    "key": "carbamazepine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Carbamazepine\"; Tab. 2 (diskrepante Vorbewertungen, Expertengremium: 2), ATC N03AF01"
+   },
+   {
+    "name": "Cimetidin",
+    "stufe": "2",
+    "key": "cimetidine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Cimetidine\""
+   },
+   {
+    "name": "Haloperidol",
+    "stufe": "2",
+    "key": "haloperidol",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Haloperidol\"; Tab. 2 (diskrepante Vorbewertungen, Expertengremium: 2), ATC N05AD01"
+   },
+   {
+    "name": "Loperamid",
+    "stufe": "2",
+    "key": "loperamide",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Loperamide\" (rezeptfrei erhältlich)"
+   },
+   {
+    "name": "Loxapin",
+    "stufe": "2",
+    "key": "loxapine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Loxapine\""
+   },
+   {
+    "name": "Maprotilin",
+    "stufe": "2",
+    "key": "maprotiline",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Maprotiline\"; Tab. 2 (Vorskala bewertete 3, Expertengremium reduzierte auf 2), ATC N06AA21"
+   },
+   {
+    "name": "Methadon",
+    "stufe": "2",
+    "key": "methadone",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Methadone\""
+   },
+   {
+    "name": "Olanzapin",
+    "stufe": "2",
+    "key": "olanzapine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Olanzapine\"; Tab. 2 (Vorbewertungen 1-3, Expertengremium: 2), ATC N05AH03"
+   },
+   {
+    "name": "Opipramol",
+    "stufe": "2",
+    "key": "opipramol",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Opipramol\"; Tab. 2 (Vorskala bewertete 3, Expertengremium: 2), ATC N06AA05"
+   },
+   {
+    "name": "Oxcarbazepin",
+    "stufe": "2",
+    "key": "oxcarbazepine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Oxcarbazepine\""
+   },
+   {
+    "name": "Paroxetin",
+    "stufe": "2",
+    "key": "paroxetine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Paroxetine\"; Tab. 2 (Vorbewertungen 1-3, Expertengremium: 2), ATC N06AB05"
+   },
+   {
+    "name": "Pethidin",
+    "stufe": "2",
+    "key": "pethidine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Pethidine\"; Tab. 2, ATC N02AB02"
+   },
+   {
+    "name": "Pimozid",
+    "stufe": "2",
+    "key": "pimozide",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Pimozide\""
+   },
+   {
+    "name": "Quetiapin",
+    "stufe": "2",
+    "key": "quetiapine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Quetiapine\"; Tab. 2 (Vorbewertungen 0-3, Expertengremium: 2), ATC N05AH04"
+   },
+   {
+    "name": "Ranitidin",
+    "stufe": "2",
+    "key": "ranitidine",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Ranitidine\" (Anmerkung: Ranitidin wurde nach Erscheinen des Papers 2018 wegen NDMA-Verunreinigung weitgehend vom Markt genommen - Status vor Verwendung prüfen)"
+   },
+   {
+    "name": "Theophyllin",
+    "stufe": "2",
+    "key": "theophylline",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Theophylline\""
+   },
+   {
+    "name": "Tramadol",
+    "stufe": "2",
+    "key": "tramadol",
+    "beleg": "GABS Tab. 4, ACB score = 2, Quelleintrag \"Tramadol\"; Tab. 1, ATC N02AX02"
+   },
+   {
+    "name": "Aclidinium (inhalativ)",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Aclidinium(inh)\"; Tab. 3 (in der Routineauswertung ergänzt), ATC R03BB05"
+   },
+   {
+    "name": "Alprazolam",
+    "stufe": "1",
+    "key": "alprazolam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Alprazolam\"; Tab. 2 (diskrepante Vorbewertungen), ATC N05BA12"
+   },
+   {
+    "name": "Ampicillin",
+    "stufe": "1",
+    "key": "ampicillin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Ampicillin\""
+   },
+   {
+    "name": "Aripiprazol",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Aripiprazole\""
+   },
+   {
+    "name": "Asenapin",
+    "stufe": "1",
+    "key": "asenapine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Asenapine\"; Tab. 2 (nur von einer Vorskala bewertet), ATC N05AH05"
+   },
+   {
+    "name": "Atenolol",
+    "stufe": "1",
+    "key": "atenolol",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Atenolol\""
+   },
+   {
+    "name": "Azathioprin",
+    "stufe": "1",
+    "key": "azathioprine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Azathioprine\""
+   },
+   {
+    "name": "Baclofen",
+    "stufe": "1",
+    "key": "baclofen",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Baclofen\"; Tab. 2, ATC M03BX01"
+   },
+   {
+    "name": "Benazepril",
+    "stufe": "1",
+    "key": "benazepril",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Benazepril\""
+   },
+   {
+    "name": "Betaxolol",
+    "stufe": "1",
+    "key": "betaxolol",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Betaxolol\""
+   },
+   {
+    "name": "Bisacodyl",
+    "stufe": "1",
+    "key": "bisacodyl",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Bisacodyl\" (rezeptfrei erhältlich)"
+   },
+   {
+    "name": "Bromocriptin",
+    "stufe": "1",
+    "key": "bromocriptine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Bromocriptine\""
+   },
+   {
+    "name": "Bupropion",
+    "stufe": "1",
+    "key": "bupropion",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Bupropion\""
+   },
+   {
+    "name": "Captopril",
+    "stufe": "1",
+    "key": "captopril",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Captopril\""
+   },
+   {
+    "name": "Celecoxib",
+    "stufe": "1",
+    "key": "celecoxib",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Celecoxib\""
+   },
+   {
+    "name": "Cetirizin",
+    "stufe": "1",
+    "key": "cetirizine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Cetirizine\"; Tab. 2, ATC R06AE07 (rezeptfrei erhältlich)"
+   },
+   {
+    "name": "Chlordiazepoxid",
+    "stufe": "1",
+    "key": "chlordiazepoxide",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Chlordiazepoxide\""
+   },
+   {
+    "name": "Chlortalidon",
+    "stufe": "1",
+    "key": "chlortalidone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Chlorthalidone\""
+   },
+   {
+    "name": "Ciclosporin",
+    "stufe": "1",
+    "key": "ciclosporin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Ciclosporin\""
+   },
+   {
+    "name": "Citalopram",
+    "stufe": "1",
+    "key": "citalopram",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Citalopram\""
+   },
+   {
+    "name": "Clindamycin",
+    "stufe": "1",
+    "key": "clindamycin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Clindamycin\""
+   },
+   {
+    "name": "Clonazepam",
+    "stufe": "1",
+    "key": "clonazepam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Clonazepam\""
+   },
+   {
+    "name": "Clorazepat",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Clorazepate\"; Tab. 2 (diskrepante Vorbewertungen), ATC N05BA05"
+   },
+   {
+    "name": "Codein",
+    "stufe": "1",
+    "key": "codeine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Codeine\"; Tab. 2, ATC R05DA04"
+   },
+   {
+    "name": "Desloratadin",
+    "stufe": "1",
+    "key": "desloratadine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Desloratadine\"; Tab. 2 (nur von einer Vorskala bewertet), ATC R06AX27"
+   },
+   {
+    "name": "Dexamethason",
+    "stufe": "1",
+    "key": "dexamethasone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Dexamethasone\""
+   },
+   {
+    "name": "Dextromethorphan",
+    "stufe": "1",
+    "key": "dextromethorphan",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Dextromethorphan\" (rezeptfrei erhältlich)"
+   },
+   {
+    "name": "Diazepam",
+    "stufe": "1",
+    "key": "diazepam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Diazepam\""
+   },
+   {
+    "name": "Digitoxin",
+    "stufe": "1",
+    "key": "digitoxin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Digitoxin\""
+   },
+   {
+    "name": "Digoxin",
+    "stufe": "1",
+    "key": "digoxin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Digoxin\"; Tab. 2 (diskrepante Vorbewertungen), ATC C01AA05"
+   },
+   {
+    "name": "Diltiazem",
+    "stufe": "1",
+    "key": "diltiazem",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Diltiazem\""
+   },
+   {
+    "name": "Dimetinden",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Dimetindene\"; Tab. 3 (in der Routineauswertung ergänzt), ATC R06AB03"
+   },
+   {
+    "name": "Dipyridamol",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Dipyridamole\""
+   },
+   {
+    "name": "Domperidon",
+    "stufe": "1",
+    "key": "domperidone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Domperidone\""
+   },
+   {
+    "name": "Doxylamin",
+    "stufe": "1",
+    "key": "doxylamin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Doxylamine\"; Tab. 2, ATC R06AA09 (rezeptfreies Schlafmittel - relevante Quelle unbemerkter Last)"
+   },
+   {
+    "name": "Entacapon",
+    "stufe": "1",
+    "key": "entacapone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Entacapone\""
+   },
+   {
+    "name": "Escitalopram",
+    "stufe": "1",
+    "key": "escitalopram",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Escitalopram\""
+   },
+   {
+    "name": "Etoricoxib",
+    "stufe": "1",
+    "key": "etoricoxib",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Etoricoxib\"; Tab. 3 (in der Routineauswertung ergänzt), ATC M01AH05"
+   },
+   {
+    "name": "Famotidin",
+    "stufe": "1",
+    "key": "famotidine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Famotidine\""
+   },
+   {
+    "name": "Fentanyl",
+    "stufe": "1",
+    "key": "fentanyl",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Fentanyl\""
+   },
+   {
+    "name": "Fexofenadin",
+    "stufe": "1",
+    "key": "fexofenadine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Fexofenadine\"; Tab. 2, ATC R06AX26"
+   },
+   {
+    "name": "Flunitrazepam",
+    "stufe": "1",
+    "key": "flunitrazepam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Flunitrazepam\""
+   },
+   {
+    "name": "Fluoxetin",
+    "stufe": "1",
+    "key": "fluoxetine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Fluoxetine\""
+   },
+   {
+    "name": "Fluphenazin",
+    "stufe": "1",
+    "key": "fluphenazine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Fluphenazine\"; Tab. 2 (Vorbewertungen 1-3, Expertengremium: 1), ATC N05AB02"
+   },
+   {
+    "name": "Flurazepam",
+    "stufe": "1",
+    "key": "flurazepam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Flurazepam\""
+   },
+   {
+    "name": "Fluvoxamin",
+    "stufe": "1",
+    "key": "fluvoxamine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Fluvoxamine\""
+   },
+   {
+    "name": "Furosemid",
+    "stufe": "1",
+    "key": "furosemide",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Furosemide\"; Tab. 2 (diskrepante Vorbewertungen), ATC C03CA01"
+   },
+   {
+    "name": "Gentamicin",
+    "stufe": "1",
+    "key": "gentamicin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Gentamicin\""
+   },
+   {
+    "name": "Glycopyrronium (inhalativ)",
+    "stufe": "1",
+    "key": "glycopyrronium",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Glycopyrronium(inh)\"; Tab. 3 (in der Routineauswertung ergänzt), ATC R03BB06"
+   },
+   {
+    "name": "Guaifenesin",
+    "stufe": "1",
+    "key": "guaifenesin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Guaifenesin\""
+   },
+   {
+    "name": "Hydralazin",
+    "stufe": "1",
+    "key": "hydralazine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Hydralazine\""
+   },
+   {
+    "name": "Hydrocortison",
+    "stufe": "1",
+    "key": "hydrocortisone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Hydrocortisone\""
+   },
+   {
+    "name": "Ipratropium (inhalativ)",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Ipratropium(inh)\"; Tab. 2, ATC R03BB01"
+   },
+   {
+    "name": "Isosorbiddinitrat",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Isosorbide dinitrate\""
+   },
+   {
+    "name": "Isosorbidmononitrat",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Isosorbide mononitrate\""
+   },
+   {
+    "name": "Ketorolac",
+    "stufe": "1",
+    "key": "ketorolac",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Ketorolac\""
+   },
+   {
+    "name": "Lansoprazol",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Lansoprazole\""
+   },
+   {
+    "name": "Levocetirizin",
+    "stufe": "1",
+    "key": "levocetirizine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Levocetirizine\"; Tab. 2 (nur von einer Vorskala bewertet), ATC R06AE09"
+   },
+   {
+    "name": "Levodopa",
+    "stufe": "1",
+    "key": "levodopa",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Levodopa\""
+   },
+   {
+    "name": "Lithium",
+    "stufe": "1",
+    "key": "lithium",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Lithium\""
+   },
+   {
+    "name": "Loratadin",
+    "stufe": "1",
+    "key": "loratadine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Loratadine\"; Tab. 2, ATC R06AX13 (rezeptfrei erhältlich)"
+   },
+   {
+    "name": "Lorazepam",
+    "stufe": "1",
+    "key": "lorazepam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Lorazepam\""
+   },
+   {
+    "name": "Metformin",
+    "stufe": "1",
+    "key": "metformin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Metformin\""
+   },
+   {
+    "name": "Methocarbamol",
+    "stufe": "1",
+    "key": "methocarbamol",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Methocarbamol\"; Tab. 2, ATC M03BA03"
+   },
+   {
+    "name": "Methotrexat",
+    "stufe": "1",
+    "key": "methotrexate",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Methotrexate\""
+   },
+   {
+    "name": "Methylprednisolon",
+    "stufe": "1",
+    "key": "methylprednisolone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Methylprednisolone\""
+   },
+   {
+    "name": "Metoclopramid",
+    "stufe": "1",
+    "key": "metoclopramide",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Metoclopramide\"; Tab. 2 (diskrepante Vorbewertungen), ATC A03FA01"
+   },
+   {
+    "name": "Metoprolol",
+    "stufe": "1",
+    "key": "metoprolol",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Metoprolol\""
+   },
+   {
+    "name": "Midazolam",
+    "stufe": "1",
+    "key": "midazolam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Midazolam\""
+   },
+   {
+    "name": "Mirtazapin",
+    "stufe": "1",
+    "key": "mirtazapine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Mirtazapine\""
+   },
+   {
+    "name": "Morphin",
+    "stufe": "1",
+    "key": "morphine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Morphine\""
+   },
+   {
+    "name": "Naratriptan",
+    "stufe": "1",
+    "key": "naratriptan",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Naratriptan\""
+   },
+   {
+    "name": "Nifedipin",
+    "stufe": "1",
+    "key": "nifedipine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Nifedipine\""
+   },
+   {
+    "name": "Oxazepam",
+    "stufe": "1",
+    "key": "oxazepam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Oxazepam\""
+   },
+   {
+    "name": "Oxycodon",
+    "stufe": "1",
+    "key": "oxycodone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Oxycodone\""
+   },
+   {
+    "name": "Paliperidon",
+    "stufe": "1",
+    "key": "paliperidone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Paliperidone\"; Tab. 2 (nur von einer Vorskala bewertet), ATC N05AX13"
+   },
+   {
+    "name": "Pancuronium",
+    "stufe": "1",
+    "key": "pancuronium",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Pancuronium\""
+   },
+   {
+    "name": "Perphenazin",
+    "stufe": "1",
+    "key": "perphenazine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Perphenazine\"; Tab. 2 (diskrepante Vorbewertungen 0-3), ATC N05AB03"
+   },
+   {
+    "name": "Phenobarbital",
+    "stufe": "1",
+    "key": "phenobarbital",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Phenobarbital\""
+   },
+   {
+    "name": "Piperacillin",
+    "stufe": "1",
+    "key": "piperacillin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Piperacillin\""
+   },
+   {
+    "name": "Pramipexol",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Pramipexole\""
+   },
+   {
+    "name": "Prednisolon",
+    "stufe": "1",
+    "key": "prednisolone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Prednisolone\""
+   },
+   {
+    "name": "Prednison",
+    "stufe": "1",
+    "key": "prednisone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Prednisone\""
+   },
+   {
+    "name": "Promethazin",
+    "stufe": "1",
+    "key": "promethazine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Promethazine\"; Tab. 2, ATC R06AD02 (Vorskalen bewerteten überwiegend 3, deutsches Expertengremium stufte auf 1 herab - Diskrepanz beachten)"
+   },
+   {
+    "name": "Pseudoephedrin",
+    "stufe": "1",
+    "key": "pseudoephedrine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Pseudoephedrine\"; Tab. 2, ATC R01BA02"
+   },
+   {
+    "name": "Chinidin",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Quinidine\""
+   },
+   {
+    "name": "Risperidon",
+    "stufe": "1",
+    "key": "risperidone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Risperidone\""
+   },
+   {
+    "name": "Rotigotin (transdermales Pflaster)",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Rotigotine patch\"; Tab. 3 (in der Routineauswertung ergänzt), ATC N04BC09"
+   },
+   {
+    "name": "Selegilin",
+    "stufe": "1",
+    "key": "selegiline",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Selegiline\""
+   },
+   {
+    "name": "Sertralin",
+    "stufe": "1",
+    "key": "sertraline",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Sertraline\""
+   },
+   {
+    "name": "Sumatriptan",
+    "stufe": "1",
+    "key": "sumatriptan",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Sumatriptan\""
+   },
+   {
+    "name": "Temazepam",
+    "stufe": "1",
+    "key": "temazepam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Temazepam\""
+   },
+   {
+    "name": "Tiotropium (inhalativ)",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Tiotropium(inh)\"; Tab. 2, ATC R03BB04"
+   },
+   {
+    "name": "Trandolapril",
+    "stufe": "1",
+    "key": "trandolapril",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Trandolapril\""
+   },
+   {
+    "name": "Trazodon",
+    "stufe": "1",
+    "key": "trazodone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Trazodone\""
+   },
+   {
+    "name": "Triamcinolon",
+    "stufe": "1",
+    "key": "triamcinolone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Triamcinolone\""
+   },
+   {
+    "name": "Triamteren",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Triamterene\""
+   },
+   {
+    "name": "Triazolam",
+    "stufe": "1",
+    "key": "triazolam",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Triazolam\""
+   },
+   {
+    "name": "Valproinsäure",
+    "stufe": "1",
+    "key": null,
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Valproic acid\""
+   },
+   {
+    "name": "Vancomycin",
+    "stufe": "1",
+    "key": "vancomycin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Vancomycin\""
+   },
+   {
+    "name": "Venlafaxin",
+    "stufe": "1",
+    "key": "venlafaxine",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Venlafaxine\""
+   },
+   {
+    "name": "Warfarin",
+    "stufe": "1",
+    "key": "warfarin",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Warfarin\""
+   },
+   {
+    "name": "Ziprasidon",
+    "stufe": "1",
+    "key": "ziprasidone",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Ziprasidone\""
+   },
+   {
+    "name": "Zolmitriptan",
+    "stufe": "1",
+    "key": "zolmitriptan",
+    "beleg": "GABS Tab. 4, ACB score = 1, Quelleintrag \"Zolmitriptan\""
+   }
+  ]
+ },
+ "hepatotox": {
+  "label": "Lebertoxizitaet",
+  "quelle": "LiverTox: Clinical and Research Information on Drug-Induced Liver Injury. Bethesda (MD): National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK), National Institutes of Health. NCBI Bookshelf, NBK547852. Startseite: https://www.ncbi.nlm.nih.gov/books/NBK547852/ · Definition der Likelihood Scores: \"Categorization of the Likelihood of Drug Induced Liver Injury\", https://www.ncbi.nlm.nih.gov/books/NBK548392/ · Glossar-Eintrag \"Likelihood score\": https://www.ncbi.nlm.nih.gov/books/NBK548773/def-item/glossary.likelihood-score/ · Master List of LiverTox Drugs: https://www.ncbi.nlm.nih.gov/books/NBK571102/ · Einzelbelege: jede Substanz unten mit ihrer eigenen LiverTox-Monographie-URL, aus der der Score wörtlich entnommen wurde. Methodik: am 28.07.2026 wurden alle 1344 Monographien des LiverTox-Inhaltsverzeichnisses abgerufen und die Zeile \"Likelihood score:\" maschinell ausgelesen — kein Eintrag stammt aus Modellwissen.",
+  "lizenz": "JA, kommerziell nutzbar. LiverTox ist eine Publikation des US-Bundesbehörde NIDDK/NIH; die Titelei der Publikation (NBK547852) sagt wörtlich: \"This publication is in the public domain.\" Public-Domain-Werke der US-Regierung unterliegen keinem Copyright und dürfen ohne Erlaubnis, Lizenzgebühr oder Nutzungsbeschränkung reproduziert, verändert und kommerziell verwertet werden. Auflagen/Hinweise: (1) NCBI bittet um angemessene Quellenangabe — \"It is requested that use of LiverTox data in publications be given appropriate acknowledgment\"; Attribution ist bei US-Behördeninhalten auf NCBI Bookshelf ausdrücklich gefordert, auch wenn kein Copyright besteht. (2) Achtung Einzelfall: In US-Behördenpublikationen können einzelne fremde Elemente (Abbildungen, Tabellen mit \"Reprinted with permission from…\") enthalten sein, die weiterhin urheberrechtlich geschützt sind — die reinen Wirkstoff-Score-Daten sind davon nicht betroffen. (3) Kein Novogenia-relevantes Problem, aber wichtig: LiverTox ist ein Fachinformationssystem, keine offizielle US-Regierungspolitik (\"does not represent official policy of the U.S. Government\") und ersetzt keine ärztliche Beurteilung — bei Weiterverwendung in Kunden-/Patientenmaterial ist ein medizinischer Disclaimer nötig.",
+  "wirkstoffe": [
+   {
+    "name": "Paracetamol (Acetaminophen)",
+    "stufe": "A[HD]",
+    "key": "paracetamol",
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well established cause of liver injury, but severe cases occur only with high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Acetaminophen/"
+   },
+   {
+    "name": "Allopurinol",
+    "stufe": "A",
+    "key": "allopurinol",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Allopurinol/"
+   },
+   {
+    "name": "Alpha-Interferon / Peginterferon alfa",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Alpha_Peginterferon/"
+   },
+   {
+    "name": "Amiodaron",
+    "stufe": "A",
+    "key": "amiodarone",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Amiodarone/"
+   },
+   {
+    "name": "Amodiaquin",
+    "stufe": "A",
+    "key": "amodiaquine",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Amodiaquine/"
+   },
+   {
+    "name": "Amoxicillin/Clavulansäure",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/AmoxicillinClavulana/"
+   },
+   {
+    "name": "Amphetamine",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well established cause of liver injury, but severe cases occur only with high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Amphetamines/"
+   },
+   {
+    "name": "Arsen",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well known cause of chronic liver injury when given in high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Arsenic/"
+   },
+   {
+    "name": "Asparaginase",
+    "stufe": "A",
+    "key": "asparaginase",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Asparaginase/"
+   },
+   {
+    "name": "Acetylsalicylsäure (Aspirin)",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well known cause of clinically apparent liver injury when given in high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Aspirin/"
+   },
+   {
+    "name": "Atorvastatin",
+    "stufe": "A",
+    "key": "atorvastatin",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Atorvastatin/"
+   },
+   {
+    "name": "Azathioprin",
+    "stufe": "A",
+    "key": "azathioprine",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Azathioprine/"
+   },
+   {
+    "name": "Azithromycin",
+    "stufe": "A",
+    "key": "azithromycin",
+    "beleg": "LiverTox: 'Likelihood score: A (well known but rare cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Azithromycin/"
+   },
+   {
+    "name": "Traubensilberkerze (Black Cohosh, Cimicifuga racemosa)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (products sold as black cohosh are well established causes of clinically apparent liver injury...).' https://www.ncbi.nlm.nih.gov/books/n/livertox/BlackCohosh/"
+   },
+   {
+    "name": "Busulfan",
+    "stufe": "A",
+    "key": "busulfan",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury, generally as a result of direct toxicity from high doses...).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Busulfan/"
+   },
+   {
+    "name": "Carbamazepin",
+    "stufe": "A",
+    "key": "carbamazepine",
+    "beleg": "LiverTox: 'Likelihood score: A (Well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Carbamazepine/"
+   },
+   {
+    "name": "Chlorpromazin",
+    "stufe": "A",
+    "key": "chlorpromazine",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Chlorpromazine/"
+   },
+   {
+    "name": "Ciprofloxacin",
+    "stufe": "A",
+    "key": "ciprofloxacin",
+    "beleg": "LiverTox: 'Likelihood score: A (well established but uncommon cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Ciprofloxacin/"
+   },
+   {
+    "name": "Clozapin",
+    "stufe": "A",
+    "key": "clozapine",
+    "beleg": "LiverTox: 'Likelihood score: A (a rare, but well-known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Clozapine/"
+   },
+   {
+    "name": "Kokain",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well known cause of acute liver injury, but only when taken as an overdose).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Cocaine/"
+   },
+   {
+    "name": "Kupfer",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well known cause of acute and chronic liver injury but only when taken in high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Copper/"
+   },
+   {
+    "name": "Kortikosteroide",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well established cause of liver injury when given in high doses...).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Corticosteroids/"
+   },
+   {
+    "name": "Dantrolen",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (Well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Dantrolene/"
+   },
+   {
+    "name": "Dapson",
+    "stufe": "A",
+    "key": "dapsone",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Dapsone/"
+   },
+   {
+    "name": "Diclofenac",
+    "stufe": "A",
+    "key": "diclofenac",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Diclofenac/"
+   },
+   {
+    "name": "Didanosin",
+    "stufe": "A",
+    "key": "didanosine",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of both acute and chronic forms of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Didanosine/"
+   },
+   {
+    "name": "Disulfiram",
+    "stufe": "A",
+    "key": "disulfiram",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Disulfiram/"
+   },
+   {
+    "name": "Efavirenz",
+    "stufe": "A",
+    "key": "efavirenz",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Efavirenz/"
+   },
+   {
+    "name": "Erythromycin",
+    "stufe": "A",
+    "key": "erythromycin",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Erythromycin/"
+   },
+   {
+    "name": "Östrogene / orale Kontrazeptiva",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox 'Estrogens and Oral Contraceptives': 'Likelihood score: A (well known cause of various forms of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Estrogens/"
+   },
+   {
+    "name": "Floxuridin",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver and biliary injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Floxuridine/"
+   },
+   {
+    "name": "Fluorouracil (5-FU)",
+    "stufe": "A",
+    "key": "fluorouracil",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Fluorouracil/"
+   },
+   {
+    "name": "Flutamid",
+    "stufe": "A",
+    "key": "flutamide",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Flutamide/"
+   },
+   {
+    "name": "Fosphenytoin",
+    "stufe": "A",
+    "key": "fosphenytoin",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Fosphenytoin/"
+   },
+   {
+    "name": "Gemtuzumab Ozogamicin",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically significant liver injury, typically the result of sinusoidal obstruction syndrome).' https://www.ncbi.nlm.nih.gov/books/n/livertox/GemtuzumabOzogamicin/"
+   },
+   {
+    "name": "Gamander (Germander, Teucrium chamaedrys)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Germander/"
+   },
+   {
+    "name": "Grüntee-Extrakt (Green Tea)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/GreenTea/"
+   },
+   {
+    "name": "Halothan",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Halothane/"
+   },
+   {
+    "name": "Herbalife (Produktreihe, Nahrungsergänzung)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Herbalife/"
+   },
+   {
+    "name": "Hydralazin",
+    "stufe": "A",
+    "key": "hydralazine",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Hydralazine/"
+   },
+   {
+    "name": "Ibuprofen",
+    "stufe": "A",
+    "key": "ibuprofen",
+    "beleg": "LiverTox: 'Likelihood score: A (well defined but very rare cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Ibuprofen/"
+   },
+   {
+    "name": "Imatinib",
+    "stufe": "A",
+    "key": "imatinib",
+    "beleg": "LiverTox: 'Likelihood score: A (well documented cause of clinically apparent liver injury as well as reactivation of hepatitis B).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Imatinib/"
+   },
+   {
+    "name": "Infliximab",
+    "stufe": "A",
+    "key": "infliximab",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury as well as reactivation of hepatitis B).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Infliximab/"
+   },
+   {
+    "name": "Inotuzumab Ozogamicin",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury, generally due to sinusoidal obstruction syndrome).' https://www.ncbi.nlm.nih.gov/books/n/livertox/InotuzumabOzogamicin/"
+   },
+   {
+    "name": "Insulin",
+    "stufe": "A[H]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[H] (known cause of liver injury, but only when administered in high or intermittent doses and in the presence of hyperglycemia).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Insulin/"
+   },
+   {
+    "name": "Beta-Interferon",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox 'Beta Interferon': 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Interferon/"
+   },
+   {
+    "name": "Ipilimumab",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury and likely cause of reactivation of hepatitis B).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Ipilimumab/"
+   },
+   {
+    "name": "Eisen",
+    "stufe": "A[H]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[H] (well established cause of clinically apparent acute and chronic liver injury when given in high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Iron/"
+   },
+   {
+    "name": "Isoniazid",
+    "stufe": "A",
+    "key": "isoniazid",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Isoniazid/"
+   },
+   {
+    "name": "Kava Kava (Piper methysticum)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/KavaKava/"
+   },
+   {
+    "name": "Ketoconazol",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Ketoconazole/"
+   },
+   {
+    "name": "Lamotrigin",
+    "stufe": "A",
+    "key": "lamotrigine",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Lamotrigine/"
+   },
+   {
+    "name": "Levofloxacin",
+    "stufe": "A",
+    "key": "levofloxacin",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Levofloxacin/"
+   },
+   {
+    "name": "Linezolid",
+    "stufe": "A",
+    "key": "linezolid",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury usually in association with lactic acidosis).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Linezolid/"
+   },
+   {
+    "name": "Mercaptopurin (6-MP)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Mercaptopurine/"
+   },
+   {
+    "name": "Metamizol",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well described although rare cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Metamizole/"
+   },
+   {
+    "name": "Thiamazol (Methimazol)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known but rare cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Methimazole/"
+   },
+   {
+    "name": "Methotrexat",
+    "stufe": "A",
+    "key": "methotrexate",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of chronic, clinically significant liver injury, portal hypertension and cirrhosis).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Methotrexate/"
+   },
+   {
+    "name": "Methyldopa",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Methyldopa/"
+   },
+   {
+    "name": "Minocyclin",
+    "stufe": "A",
+    "key": "minocycline",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Minocycline/"
+   },
+   {
+    "name": "Nefazodon",
+    "stufe": "A",
+    "key": "nefazodone",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Nefazodone/"
+   },
+   {
+    "name": "Nevirapin",
+    "stufe": "A",
+    "key": "nevirapine",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Nevirapine/"
+   },
+   {
+    "name": "Niacin (Nicotinsäure)",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well known cause of clinically apparent liver injury when given in high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Niacin/"
+   },
+   {
+    "name": "Nimesulid",
+    "stufe": "A",
+    "key": "nimesulide",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Nimesulide/"
+   },
+   {
+    "name": "Nitrofurantoin",
+    "stufe": "A",
+    "key": "nitrofurantoin",
+    "beleg": "LiverTox: 'Likelihood score: A (well-known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Nitrofurantoin/"
+   },
+   {
+    "name": "Nivolumab",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of immune mediated liver injury and likely cause of reactivation of hepatitis B).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Nivolumab/"
+   },
+   {
+    "name": "Ofloxacin",
+    "stufe": "A",
+    "key": "ofloxacin",
+    "beleg": "LiverTox: 'Likelihood score: A (well established but rare cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Ofloxacin/"
+   },
+   {
+    "name": "Olanzapin",
+    "stufe": "A",
+    "key": "olanzapine",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Olanzapine/"
+   },
+   {
+    "name": "Oxaliplatin",
+    "stufe": "A",
+    "key": "oxaliplatin",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Oxaliplatin/"
+   },
+   {
+    "name": "OxyELITE Pro (Nahrungsergänzung)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well documented cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/OxyELITEPro/"
+   },
+   {
+    "name": "Cephalosporine, parenteral",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox 'Cephalosporins, Parenteral': 'Likelihood score: A (cephalosporins as a class are well known and characterized, although uncommon, causes of clinically apparent liver injury...).' https://www.ncbi.nlm.nih.gov/books/n/livertox/ParenteralCephalospo/"
+   },
+   {
+    "name": "Pembrolizumab",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury and likely cause of reactivation of hepatitis B).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Pembrolizumab/"
+   },
+   {
+    "name": "Penicillamin",
+    "stufe": "A",
+    "key": "penicillamine",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Penicillamine/"
+   },
+   {
+    "name": "Phenytoin",
+    "stufe": "A",
+    "key": "phenytoin",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Phenytoin/"
+   },
+   {
+    "name": "Plicamycin (Mithramycin)",
+    "stufe": "A[HD]",
+    "key": "plicamycin",
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well known cause of clinically apparent liver injury with high dose intravenous treatment).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Plicamycin/"
+   },
+   {
+    "name": "Gestagene (Progestine)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox 'Progestins': 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Progestins/"
+   },
+   {
+    "name": "Propofol",
+    "stufe": "A[H]",
+    "key": "propofol",
+    "beleg": "LiverTox: 'Likelihood score: A[H] (well established cause of fatty liver injury when given in high doses over several days as a part of the propofol infusion syndrome).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Propofol/"
+   },
+   {
+    "name": "Propylthiouracil",
+    "stufe": "A",
+    "key": "propylthiouracil",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury including acute liver failure).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Propylthiouracil/"
+   },
+   {
+    "name": "Pyrazinamid",
+    "stufe": "A",
+    "key": "pyrazinamide",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Pyrazinamide/"
+   },
+   {
+    "name": "Chinidin",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Quinidine/"
+   },
+   {
+    "name": "Rifampicin",
+    "stufe": "A",
+    "key": "rifampicin",
+    "beleg": "LiverTox 'Rifampin': 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Rifampin/"
+   },
+   {
+    "name": "Rituximab",
+    "stufe": "A",
+    "key": "rituximab",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of reactivation of hepatitis B and rare cause of immune mediated, clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Rituximab/"
+   },
+   {
+    "name": "Rivaroxaban",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Rivaroxaban/"
+   },
+   {
+    "name": "Rosuvastatin",
+    "stufe": "A",
+    "key": "rosuvastatin",
+    "beleg": "LiverTox: 'Likelihood score: A (likely cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Rosuvastatin/"
+   },
+   {
+    "name": "Cotrimoxazol (Trimethoprim/Sulfamethoxazol)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox 'Trimethoprim-Sulfamethoxazole': 'Likelihood score: A (well established cause of clinically apparent acute liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/SMZ-TMP/"
+   },
+   {
+    "name": "Salsalat",
+    "stufe": "A[HD]",
+    "key": "salsalate",
+    "beleg": "LiverTox: 'Likelihood score: A[HD] (well established cause of liver injury if given in high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Salsalate/"
+   },
+   {
+    "name": "Polygonum multiflorum (Shou Wu Pian, He Shou Wu)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox 'Polygonum Multiflorum': 'Likelihood score: A (well established cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/ShouWuPian/"
+   },
+   {
+    "name": "Simvastatin",
+    "stufe": "A",
+    "key": "simvastatin",
+    "beleg": "LiverTox: 'Likelihood score: A (well known but rare cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Simvastatin/"
+   },
+   {
+    "name": "Sofosbuvir",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of hepatic decompensation in patients with hepatitis C and cirrhosis and a rare cause of reactivation of hepatitis B...).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Sofosbuvir/"
+   },
+   {
+    "name": "Stavudin",
+    "stufe": "A",
+    "key": "stavudine",
+    "beleg": "LiverTox: 'Likelihood score: A (uncommon well established cause of acute and chronic forms of liver disease).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Stavudine/"
+   },
+   {
+    "name": "Sulindac",
+    "stufe": "A",
+    "key": "sulindac",
+    "beleg": "LiverTox: 'Likelihood score: A (well established, although rare cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Sulindac/"
+   },
+   {
+    "name": "Telithromycin",
+    "stufe": "A",
+    "key": "telithromycin",
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Telithromycin/"
+   },
+   {
+    "name": "Tetracyclin / Oxytetracyclin",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox 'Tetracycline': 'Likelihood score: A[HD] (well known cause of clinically apparent liver injury when given in high doses intravenously).' https://www.ncbi.nlm.nih.gov/books/n/livertox/TetracyclineAndOxyte/"
+   },
+   {
+    "name": "Cholinmagnesiumtrisalicylat (Trisalicylate)",
+    "stufe": "A[HD]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[HD]: (well established cause of clinically apparent liver injury when given in high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Trisalicylate/"
+   },
+   {
+    "name": "Troglitazon",
+    "stufe": "A",
+    "key": "troglitazone",
+    "beleg": "LiverTox: 'Likelihood score: A (well recognized cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Troglitazone/"
+   },
+   {
+    "name": "Kurkuma / Curcumin (Turmeric)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (recently established as a well-documented cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Turmeric/"
+   },
+   {
+    "name": "Valproat (Valproinsäure)",
+    "stufe": "A",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A (well known cause of several forms of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Valproate/"
+   },
+   {
+    "name": "Vancomycin",
+    "stufe": "A",
+    "key": "vancomycin",
+    "beleg": "LiverTox: 'Likelihood score: A (well established cause of clinically apparent liver injury usually in association with prolonged intravenous therapy and presenting with DRESS syndrome).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Vancomycin/"
+   },
+   {
+    "name": "Vitamin A (Retinol)",
+    "stufe": "A[H]",
+    "key": null,
+    "beleg": "LiverTox: 'Likelihood score: A[H] (well established cause of liver injury when used in high doses).' https://www.ncbi.nlm.nih.gov/books/n/livertox/VitaminA/"
+   },
+   {
+    "name": "Acarbose",
+    "stufe": "B",
+    "key": "acarbose",
+    "beleg": "LiverTox: 'Likelihood score: B (rare but likely cause of clinically apparent liver injury).' https://www.ncbi.nlm.nih.gov/books/n/livertox/Acarbose/"
+   },
+   {
+    "name": "Adalimumab",
+    "stufe": "B",
+    "key": "adalimumab",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Adalimumab/"
+   },
+   {
+    "name": "Albendazol",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Albendazole/"
+   },
+   {
+    "name": "Alemtuzumab",
+    "stufe": "B",
+    "key": "alemtuzumab",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Alemtuzumab/"
+   },
+   {
+    "name": "Aloe vera",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/AloeVera/"
+   },
+   {
+    "name": "Amitriptylin",
+    "stufe": "B",
+    "key": "amitriptyline",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Amitriptyline/"
+   },
+   {
+    "name": "Amoxicillin (ohne Clavulansäure)",
+    "stufe": "B",
+    "key": "amoxicillin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Amoxicillin/"
+   },
+   {
+    "name": "Apixaban",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Apixaban/"
+   },
+   {
+    "name": "Ashwagandha (Withania somnifera)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Ashwagandha/"
+   },
+   {
+    "name": "Atezolizumab",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Atezolizumab/"
+   },
+   {
+    "name": "Avelumab",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Avelumab/"
+   },
+   {
+    "name": "Ba Jiao Lian (Dysosma pleiantha)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/BaJiaoLian/"
+   },
+   {
+    "name": "Benzbromaron",
+    "stufe": "B",
+    "key": "benzbromarone",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Benzbromarone/"
+   },
+   {
+    "name": "Bicalutamid",
+    "stufe": "B",
+    "key": "bicalutamide",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Bicalutamide/"
+   },
+   {
+    "name": "Brentuximab Vedotin",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Brentuximab_vedotin/"
+   },
+   {
+    "name": "Buprenorphin",
+    "stufe": "B[HD]",
+    "key": "buprenorphine",
+    "beleg": "LiverTox-Monographie, Likelihood score B[HD] (Leberschaden vor allem bei hoher/parenteraler Dosis). https://www.ncbi.nlm.nih.gov/books/n/livertox/Buprenorphine/"
+   },
+   {
+    "name": "Captopril",
+    "stufe": "B",
+    "key": "captopril",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Captopril/"
+   },
+   {
+    "name": "Ceftriaxon",
+    "stufe": "B",
+    "key": "ceftriaxone",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Ceftriaxone/"
+   },
+   {
+    "name": "Celecoxib",
+    "stufe": "B",
+    "key": "celecoxib",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Celecoxib/"
+   },
+   {
+    "name": "Chaparral (Larrea tridentata)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Chaparral/"
+   },
+   {
+    "name": "Chloramphenicol",
+    "stufe": "B",
+    "key": "chloramphenicol",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Chloramphenicol/"
+   },
+   {
+    "name": "Chlorzoxazon",
+    "stufe": "B",
+    "key": "chlorzoxazone",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Chlorzoxazone/"
+   },
+   {
+    "name": "Cimetidin",
+    "stufe": "B",
+    "key": "cimetidine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Cimetidine/"
+   },
+   {
+    "name": "Clarithromycin",
+    "stufe": "B",
+    "key": "clarithromycin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Clarithromycin/"
+   },
+   {
+    "name": "Clindamycin",
+    "stufe": "B",
+    "key": "clindamycin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Clindamycin/"
+   },
+   {
+    "name": "Clopidogrel",
+    "stufe": "B",
+    "key": "clopidogrel",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Clopidogrel/"
+   },
+   {
+    "name": "Cyclophosphamid",
+    "stufe": "B",
+    "key": "cyclophosphamide",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Cyclophosphamide/"
+   },
+   {
+    "name": "Cyproteronacetat",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Cyproterone/"
+   },
+   {
+    "name": "Dacarbazin",
+    "stufe": "B",
+    "key": "dacarbazine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Dacarbazine/"
+   },
+   {
+    "name": "Daclizumab",
+    "stufe": "B",
+    "key": "daclizumab",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Daclizumab/"
+   },
+   {
+    "name": "Dicloxacillin",
+    "stufe": "B",
+    "key": "dicloxacillin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Dicloxacillin/"
+   },
+   {
+    "name": "Disopyramid",
+    "stufe": "B",
+    "key": "disopyramide",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Disopyramide/"
+   },
+   {
+    "name": "Doxycyclin",
+    "stufe": "B",
+    "key": "doxycycline",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Doxycycline/"
+   },
+   {
+    "name": "Dronedaron",
+    "stufe": "B",
+    "key": "dronedarone",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Dronedarone/"
+   },
+   {
+    "name": "Duloxetin",
+    "stufe": "B",
+    "key": "duloxetine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Duloxetine/"
+   },
+   {
+    "name": "Durvalumab",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Durvalumab/"
+   },
+   {
+    "name": "Enalapril",
+    "stufe": "B",
+    "key": "enalapril",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Enalapril/"
+   },
+   {
+    "name": "Enfluran",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Enflurane/"
+   },
+   {
+    "name": "Erlotinib",
+    "stufe": "B",
+    "key": "erlotinib",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Erlotinib/"
+   },
+   {
+    "name": "Etanercept",
+    "stufe": "B",
+    "key": "etanercept",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Etanercept/"
+   },
+   {
+    "name": "Ethionamid",
+    "stufe": "B",
+    "key": "ethionamide",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Ethionamide/"
+   },
+   {
+    "name": "Felbamat",
+    "stufe": "B",
+    "key": "felbamate",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Felbamate/"
+   },
+   {
+    "name": "Fenofibrat",
+    "stufe": "B",
+    "key": "fenofibrate",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Fenofibrate/"
+   },
+   {
+    "name": "Fluconazol",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Fluconazole/"
+   },
+   {
+    "name": "Fluvastatin",
+    "stufe": "B",
+    "key": "fluvastatin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Fluvastatin/"
+   },
+   {
+    "name": "Garcinia cambogia (Hydroxyzitronensäure)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/GarciniaCambogia/"
+   },
+   {
+    "name": "Gefitinib",
+    "stufe": "B",
+    "key": "gefitinib",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Gefitinib/"
+   },
+   {
+    "name": "Glatirameracetat",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/GlatiramerAcetate/"
+   },
+   {
+    "name": "Haloperidol",
+    "stufe": "B",
+    "key": "haloperidol",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Haloperidol/"
+   },
+   {
+    "name": "Hydroxycut (Nahrungsergänzung)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Hydroxycut/"
+   },
+   {
+    "name": "Imipramin",
+    "stufe": "B",
+    "key": "imipramine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Imipramine/"
+   },
+   {
+    "name": "Isofluran",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Isoflurane/"
+   },
+   {
+    "name": "Itraconazol",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Itraconazole/"
+   },
+   {
+    "name": "Ketamin",
+    "stufe": "B",
+    "key": "ketamine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Ketamine/"
+   },
+   {
+    "name": "Khat (Catha edulis)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Khat/"
+   },
+   {
+    "name": "Lapatinib",
+    "stufe": "B",
+    "key": "lapatinib",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Lapatinib/"
+   },
+   {
+    "name": "Leflunomid",
+    "stufe": "B",
+    "key": "leflunomide",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Leflunomide/"
+   },
+   {
+    "name": "Lisinopril",
+    "stufe": "B",
+    "key": "lisinopril",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Lisinopril/"
+   },
+   {
+    "name": "Lovastatin",
+    "stufe": "B",
+    "key": "lovastatin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Lovastatin/"
+   },
+   {
+    "name": "Meloxicam",
+    "stufe": "B",
+    "key": "meloxicam",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Meloxicam/"
+   },
+   {
+    "name": "Melphalan",
+    "stufe": "B[H]",
+    "key": "melphalan",
+    "beleg": "LiverTox-Monographie, Likelihood score B[H] (v. a. bei hoher Dosis). https://www.ncbi.nlm.nih.gov/books/n/livertox/Melphalan/"
+   },
+   {
+    "name": "Metformin",
+    "stufe": "B",
+    "key": "metformin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Metformin/"
+   },
+   {
+    "name": "Mitomycin",
+    "stufe": "B[H]",
+    "key": "mitomycin",
+    "beleg": "LiverTox-Monographie, Likelihood score B[H] (v. a. bei hoher Dosis). https://www.ncbi.nlm.nih.gov/books/n/livertox/Mitomycin/"
+   },
+   {
+    "name": "Montelukast",
+    "stufe": "B",
+    "key": "montelukast",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Montelukast/"
+   },
+   {
+    "name": "Moxifloxacin",
+    "stufe": "B",
+    "key": "moxifloxacin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Moxifloxacin/"
+   },
+   {
+    "name": "Naproxen",
+    "stufe": "B",
+    "key": "naproxen",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Naproxen/"
+   },
+   {
+    "name": "Natalizumab",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Natalizumab/"
+   },
+   {
+    "name": "Nifedipin",
+    "stufe": "B",
+    "key": "nifedipine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Nifedipine/"
+   },
+   {
+    "name": "Obeticholsäure",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/ObeticholicAcid/"
+   },
+   {
+    "name": "Omeprazol",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Omeprazole/"
+   },
+   {
+    "name": "Cephalosporine, oral",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox 'Cephalosporins, Oral', Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/OralCephalosporins/"
+   },
+   {
+    "name": "Oxacillin",
+    "stufe": "B",
+    "key": "oxacillin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Oxacillin/"
+   },
+   {
+    "name": "Paroxetin",
+    "stufe": "B",
+    "key": "paroxetine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Paroxetine/"
+   },
+   {
+    "name": "Poleiminze (Pennyroyal, Mentha pulegium)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Pennyroyal/"
+   },
+   {
+    "name": "Pexidartinib",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Pexidartinib/"
+   },
+   {
+    "name": "Phenobarbital",
+    "stufe": "B",
+    "key": "phenobarbital",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Phenobarbital/"
+   },
+   {
+    "name": "Piperacillin",
+    "stufe": "B",
+    "key": "piperacillin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Piperacillin/"
+   },
+   {
+    "name": "Piperacillin/Tazobactam",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/PiperacillinTazob/"
+   },
+   {
+    "name": "Piroxicam",
+    "stufe": "B",
+    "key": "piroxicam",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Piroxicam/"
+   },
+   {
+    "name": "Pravastatin",
+    "stufe": "B",
+    "key": "pravastatin",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Pravastatin/"
+   },
+   {
+    "name": "Prochlorperazin",
+    "stufe": "B",
+    "key": "prochlorperazine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Prochlorperazine/"
+   },
+   {
+    "name": "Propafenon",
+    "stufe": "B",
+    "key": "propafenone",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Propafenone/"
+   },
+   {
+    "name": "Quetiapin",
+    "stufe": "B",
+    "key": "quetiapine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Quetiapine/"
+   },
+   {
+    "name": "Chinin",
+    "stufe": "B",
+    "key": "chinin",
+    "beleg": "LiverTox 'Quinine', Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Quinine/"
+   },
+   {
+    "name": "Ranitidin",
+    "stufe": "B",
+    "key": "ranitidine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Ranitidine/"
+   },
+   {
+    "name": "Regorafenib",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Regorafenib/"
+   },
+   {
+    "name": "Risperidon",
+    "stufe": "B",
+    "key": "risperidone",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Risperidone/"
+   },
+   {
+    "name": "SARMs (selektive Androgenrezeptor-Modulatoren)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox 'Selective Androgen Receptor Modulators', Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/SARMs/"
+   },
+   {
+    "name": "Sertralin",
+    "stufe": "B",
+    "key": "sertraline",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Sertraline/"
+   },
+   {
+    "name": "Sevofluran",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Sevoflurane/"
+   },
+   {
+    "name": "Sho Saiko To (Xiao Chai Hu Tang)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/ShoSaikoTo/"
+   },
+   {
+    "name": "Helmkraut (Skullcap, Scutellaria)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Skullcap/"
+   },
+   {
+    "name": "Sorafenib",
+    "stufe": "B",
+    "key": "sorafenib",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Sorafenib/"
+   },
+   {
+    "name": "Sunitinib",
+    "stufe": "B",
+    "key": "sunitinib",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Sunitinib/"
+   },
+   {
+    "name": "Tamoxifen",
+    "stufe": "B",
+    "key": "tamoxifen",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Tamoxifen/"
+   },
+   {
+    "name": "Taramehl (Tara Flour)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox 'Tara Flour', Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/TaraFlour/"
+   },
+   {
+    "name": "Temozolomid",
+    "stufe": "B",
+    "key": "temozolomide",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Temozolomide/"
+   },
+   {
+    "name": "Thalidomid",
+    "stufe": "B",
+    "key": "thalidomide",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Thalidomide/"
+   },
+   {
+    "name": "Thiabendazol",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Thiabendazole/"
+   },
+   {
+    "name": "Thioridazin",
+    "stufe": "B",
+    "key": "thioridazine",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Thioridazine/"
+   },
+   {
+    "name": "Tigecyclin",
+    "stufe": "B",
+    "key": "tigecycline",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Tigecycline/"
+   },
+   {
+    "name": "Trastuzumab Emtansin (T-DM1)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/TrastuzumabEmtansine/"
+   },
+   {
+    "name": "Trazodon",
+    "stufe": "B",
+    "key": "trazodone",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Trazodone/"
+   },
+   {
+    "name": "Verapamil",
+    "stufe": "B",
+    "key": "verapamil",
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Verapamil/"
+   },
+   {
+    "name": "Viekira Pak (Ombitasvir/Paritaprevir/Ritonavir + Dasabuvir)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox 'Viekira Pak', Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/ViekiraPak/"
+   },
+   {
+    "name": "Vismodegib",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Vismodegib/"
+   },
+   {
+    "name": "Voriconazol",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Voriconazole/"
+   },
+   {
+    "name": "Zidovudin (AZT)",
+    "stufe": "B",
+    "key": null,
+    "beleg": "LiverTox-Monographie, Likelihood score B. https://www.ncbi.nlm.nih.gov/books/n/livertox/Zidovudine/"
+   }
+  ]
+ }
+}

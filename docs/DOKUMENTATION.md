@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-07-30 · **Version:** v57 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-07-30 · **Version:** v58 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -10,6 +10,132 @@ bespielt weiterhin die öffentliche Testseite; es wird **nicht** automatisch mit
 Diese Datei ist die Übergabe- und Arbeitsdoku. Sie wird bei jeder größeren Änderung
 fortgeschrieben. Wenn etwas hier steht, ist es geprüft — Vermutungen sind als solche
 gekennzeichnet.
+
+---
+
+## 0. Schnellstart auf einem neuen Rechner
+
+**Lies zuerst diesen Abschnitt, dann §6 (Fallstricke) und §11 (PharmCAT).**
+Der Rest ist Nachschlagewerk.
+
+### Was das ist, in drei Sätzen
+
+GENE-IUS PGx ist ein Clickdummy für eine Pharmakogenetik-App: eine einzige
+HTML-Datei ohne Build-Schritt, die 2.697 Wirkstoffe gegen ein echtes Genprofil
+bewertet. Das Genprofil kommt aus einem PharmCAT-3.2.0-Lauf, die
+Wirkstoff-Empfehlungen aus PharmCATs Reporter (CPIC/DPWG/FDA) plus Novogenias
+eigener Leitlinienmatrix. Es ist ein Prototyp zur Abstimmung mit Daniel, kein
+Produkt.
+
+### Repository
+
+```
+git clone https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics C:\dev\gene-ius-pgx
+```
+
+`origin` = **Azure DevOps** (verbindlich, Vorgabe von Nick Wassermann/IT).
+`github` = `github.com/evolutionnext696-prog/gene-ius-pgx` — speist nur die
+öffentliche Testseite [evolutionnext696-prog.github.io/gene-ius-pgx](https://evolutionnext696-prog.github.io/gene-ius-pgx/).
+Beim Pushen **beide** bedienen, sonst friert der Testlink ein:
+
+```
+git push origin main
+git push github main
+```
+
+Git-Operationen über **cmd-Batchdateien**, nicht PowerShell — PowerShell kehrt
+bei git zu früh zurück und schlägt still fehl.
+
+### Was im Repo liegt
+
+| Pfad | Inhalt |
+|---|---|
+| `index.html` | die komplette App, 685 kB, rein ASCII, kein Build |
+| `docs/DOKUMENTATION.md` | diese Datei |
+| `docs/DATENQUELLEN_RECHERCHE.md` | 52-Agenten-Recherche zu Alternativ- und Interaktionsquellen |
+| `tools/build_pharmcat.py` | erzeugt `pharmcat_profil.js` aus einem PharmCAT-Lauf |
+| `tools/build_pgx_data.py` | erzeugt `pgx_data.js` aus den Novogenia-Excels |
+| `tools/resplice.py` | tauscht den Datenblock zwischen den Markern in `index.html` |
+| `tools/patch_pharmcat*.py` | die angewandten Umbauten, chronologisch — dokumentieren das Wie |
+| `tools/01_*.py` … `07_*.py` | Datenpipeline (RxNorm, MED-RT, Lückenanalyse, Risikoklassen) |
+| `data/*.json` | die Ergebnisse dieser Pipeline, **noch nicht in der App verdrahtet** |
+
+### App ansehen
+
+`index.html` ist eine einzelne Datei ohne Abhängigkeiten — im Browser öffnen
+genügt. Für die Prüfroutine (§7) einen statischen Server auf dem Ordner starten.
+
+### Daten neu erzeugen
+
+Nur nötig, wenn eine andere Probe oder aktualisierte Quelldaten hinein sollen.
+
+```
+python tools/20_entpacken.py            # PharmCAT-Archiv entpacken + Kohortenübersicht
+python tools/build_pharmcat.py NA17454  # -> pharmcat_profil.js
+python tools/resplice.py                # in index.html einsetzen
+```
+
+Voraussetzungen auf dem neuen Rechner:
+
+1. **PharmCAT-Validierungsdaten.** SharePoint `sites/IT` in OneDrive
+   synchronisieren, dann liegt der Ordner unter
+   `Novogenia GmbH\IT - Dokumente\General\PharmCAT Validation 20260730\`.
+   **Nur so** — Browser-Downloads, Blob-Downloads und POST an `localhost`
+   werden alle unterdrückt, Graph lehnt `application/x-gzip` ab, und
+   Konsolenausgaben werden bei ~1 kB abgeschnitten.
+2. **Novogenia-Quellexcels** unter
+   `AI RESOURCES - Dokumente\PHARMACOGENETICS\` (All Drugs V12,
+   Pharmgkb drug recommendations V4, drugs_master.csv, drug_pharmacogenetics.csv,
+   drug_interactions.csv).
+3. `pip install openpyxl`
+
+### Die drei Regeln, die nicht verhandelbar sind
+
+1. **Nichts erfinden.** Kein geratener Genotyp, keine erfundene Zahl. Was
+   PharmCAT nicht ruft, bleibt sichtbar „nicht bestimmbar". Eine sichtbare
+   Lücke ist harmlos, eine erfundene Variante nicht — darauf würde eine
+   Dosierung aufgebaut.
+2. **Die Datei bleibt rein ASCII.** Umlaute als HTML-Entities. Jedes
+   Generator- und Patch-Skript prüft das am Ende.
+3. **Ersetzungen mit Zusicherung.** Nie `s.replace()` ohne zu prüfen, dass der
+   Anker genau einmal vorkommt **und im richtigen Bereich liegt** (`<style>`
+   vs. `<script>`). Beide Fehler sind hier schon passiert, siehe §6.
+
+### Demo-Proben: was öffentlich darf
+
+Von den 40 Proben der Kohorte sind `HG*` und `NA*` öffentliche GIAB/Coriell-
+Referenzgenome — für Clickdummys und den öffentlichen Testlink unbedenklich.
+`N8A*`, `XA25*`, `XH1M*`, `XT2M*` sind **echte Kunden** und gehören nie in eine
+Demo oder ein öffentliches Repo. Aktuell eingebaut: **NA17454** (Coriell).
+
+### Stand und was als Nächstes ansteht
+
+Fertig und live: echtes Genprofil, PharmCAT-Empfehlungen als erste
+Bewertungsquelle, vierter Status „Offen", Arztbericht mit Abdeckungsnachweis,
+alphabetische Liste, Sub-Bewertungen aus dem Implikationstext, alle 611
+gelesenen Varianten.
+
+Offen, in dieser Reihenfolge sinnvoll:
+
+1. **Bedingte Alternativen herunterstufen.** PharmCAT setzt
+   `alternateDrugAvailable` auch bei „…*falls* mehr nötig, Alternative erwägen"
+   (Fluvastatin). Die Karte zeigt dann ALARM bei normaler Wirkung und normalem
+   Risiko. Daniel wurde darauf hingewiesen, Entscheidung steht aus.
+2. **CYP3A5-Lücke in der Novogenia-Matrix.** Für `POOR` fehlt die Zeile,
+   obwohl das der häufigste europäische Genotyp ist (30 von 40 in der Kohorte)
+   und CPIC eine Empfehlung hat.
+3. **`data/*.json` verdrahten** — Handelsnamen (1.216), Alternativen (1.533),
+   Interaktionen (1.852), Risikoklassen (QT 115, anticholinerg 151,
+   hepatotox 207). Alles gebaut, nichts davon in der App. Für die Risikoklassen
+   gilt: QT paarweise ist zulässig, anticholinerge Last und Hepatotoxizität
+   müssen **kumulativ** modelliert werden, nicht als 19.171 Paare.
+4. **Warfarin-Dosisformel.** Die Matrix hat dafür Dosisbereiche statt
+   Phänotypen (`0.5-2`, `3-4`, `5-7` mg/Tag) — eine Formel aus CYP2C9 und
+   VKORC1, noch nicht umgesetzt.
+5. **198 Lückenwirkstoffe** aus `data/luecke_prio.json` recherchieren. Beim
+   ersten Versuch nur 22 bearbeitet, weil eine gekürzte Liste hartkodiert war;
+   außerdem war die Gegenprüfung zu streng und hat 21 von 22 an Kleinigkeiten
+   verworfen. Beides beim nächsten Lauf anders machen.
 
 ---
 
@@ -335,6 +461,74 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 
 ---
 
+## 10. Datenquellen — Rechercheergebnis 2026-07-28
+
+Vollständiger Bericht: `PGx_Datenquellen_Recherche_2026-07-28.md`
+(52 Agenten, 115 Quellen, 25 nach Gegenprüfung bestätigt, 15 korrigiert).
+
+### Was die Alternativen-Frage löst
+
+**MED-RT** (Bulk-XML, 2,56 MB, monatlich, 0 EUR) bzw. dieselben Daten live über
+**RxClass/RxNav**. Die Relationen `may_treat` + `may_prevent` gruppieren nach *Indikation*
+statt nach Substanzklasse. Selbst geprüft: Aspirin bekommt dort 4 ATC-Codes, und die
+Rückfrage „wer verhindert Hirninfarkt" liefert exakt Aspirin, Clopidogrel, Prasugrel.
+**Beide Relationen zusammen auswerten** — Clopidogrel hat `may_treat` = 0, aber 3× `may_prevent`.
+
+> Achtung: RxClass ist **nicht** lizenzfrei. Es ist die eine Ausnahme in den
+> NLM-Nutzungsbedingungen (SNOMED-Affiliate-Lizenz), Attributionssatz Pflicht, 20 req/s.
+
+Ergänzend: **DrugCentral** (CC BY-SA 4.0, kommerziell erlaubt) für SNOMED-kodierte Indikationen
+und Kontraindikationen als Negativfilter; **Open Targets** (CC0, einzige Quelle ohne
+ShareAlike-Risiko) für die EFO/MONDO-Krankheitshierarchie.
+
+Nicht brauchbar: FDA Orange Book Therapeutic Equivalence (per Definition nur wirkstoffgleich),
+aut idem / § 129 SGB V (dito), DrugBank (CC BY-NC), KEGG (kommerziell gesperrt).
+
+**DACH-Lücke:** Metamizol, Piritramid, Flupirtin, Tilidin, Benzbromaron, Molsidomin und
+Trimetazidin haben in MED-RT einen ATC-Code, aber **null** Indikationsrelationen.
+Für die braucht es einen Fallback.
+
+### Was die Rohdaten-Frage löst
+
+- `api.pharmgkb.org` ist **abgeschaltet** (DNS NXDOMAIN). Alles läuft über `api.clinpgx.org/v1`.
+- `clinicalAnnotations.zip` ist seit 2025-07-05 eingefroren, Nachfolger `summaryAnnotations.zip`.
+  Deckt sich mit der eigenen Messung: alle anderen ZIPs tragen 2026-07-05.
+- Change-Detection: `GET https://api.clinpgx.org/v1/data/file/data/?view=min` liefert
+  fileName / lastModified / size für alle 118 Dateien. Releases erscheinen monatlich am 5.
+- **CPIC ist die bessere Quelle als ClinPGx**: CC0 statt CC BY-SA plus Verkaufsverbot, und
+  besser strukturiert. SQL-Dump `https://files.cpicpgx.org/data/database/cpic_db_dump.sql.gz`
+  (3,8 MB). API nur zum Entwickeln, im Verkaufsprodukt den Dump verwenden.
+- **Lizenz-Blocker ClinPGx**: *„Under no circumstances can ClinPGx data be sold for other's
+  private or commercial use"* — wörtlich in der LICENSE.txt jedes ZIP.
+- **`drug_interactions.csv` ist nicht nachbaubar.** Quelle DrugBank, CC BY-NC, akademische
+  Downloads derzeit komplett pausiert. Kein gleichwertiger freier Ersatz gefunden.
+  Einzig sauberer Eigenbau: openFDA `drug/label`, Feld `drug_interactions` (CC0) — Fließtext,
+  Extraktion wäre ein eigenes Teilprojekt.
+
+### Fallstricke für die Pipeline (alle konkret aufgetreten)
+
+- `byRxcui` filtert mit **`relas`** (Plural), nicht `rela` — sonst still falsche Ergebnisse.
+- Cloudflare blockt den Standard-User-Agent von Python `urllib` mit HTTP 403. Echten UA setzen.
+- ClinPGx-Wirkstoffnamen sind case-sensitiv: `name=Aspirin` → 404, `name=aspirin` → 200.
+- DrugCentral-API macht Substring-Matching: `indication` trifft auch `contraindication`.
+  Deshalb Dump statt API.
+- ChEMBL und Open Targets mischen Studienindikationen unter die zugelassenen — auf Phase 4 filtern.
+- `api.pharmgkb.org` stirbt mit DNS-Fehler, nicht mit HTTP-Status — fällt in Cronjobs stumm aus.
+
+### Anzufragen (bei keinem kommerziellen Anbieter ist ein Preis öffentlich)
+
+ABDATA / Avoxa (info@abdata.de) · WHOCC Oslo (whocc@fhi.no, wegen ATC-Anzeige in einer
+kommerziellen App) · WIdO (ai@wido.bv.aok.de) · ClinPGx Non-Academic License (api@clinpgx.org) ·
+KNMP · BASG · DrugBank Sales.
+
+### Juristisch zu bewerten
+
+ShareAlike-Verträglichkeit bei Quellenmischung (DrugCentral CC BY-SA 4.0 und ChEMBL
+CC BY-SA 3.0 Unported sind **nicht** aufwärtskompatibel) · ATC-Ausgabe in der App generell ·
+CPIC-ToU „research purposes" gegen CC0.
+
+---
+
 ## 11. PharmCAT als Quelle der Gendaten (ab v56)
 
 ### Woher die Daten kommen
@@ -547,69 +741,3 @@ Zugriff lehnt `application/x-gzip` ab. Funktioniert hat: den SharePoint-Ordner i
 OneDrive synchronisieren und lokal lesen.
 
 ---
-
-## 10. Datenquellen — Rechercheergebnis 2026-07-28
-
-Vollständiger Bericht: `PGx_Datenquellen_Recherche_2026-07-28.md`
-(52 Agenten, 115 Quellen, 25 nach Gegenprüfung bestätigt, 15 korrigiert).
-
-### Was die Alternativen-Frage löst
-
-**MED-RT** (Bulk-XML, 2,56 MB, monatlich, 0 EUR) bzw. dieselben Daten live über
-**RxClass/RxNav**. Die Relationen `may_treat` + `may_prevent` gruppieren nach *Indikation*
-statt nach Substanzklasse. Selbst geprüft: Aspirin bekommt dort 4 ATC-Codes, und die
-Rückfrage „wer verhindert Hirninfarkt" liefert exakt Aspirin, Clopidogrel, Prasugrel.
-**Beide Relationen zusammen auswerten** — Clopidogrel hat `may_treat` = 0, aber 3× `may_prevent`.
-
-> Achtung: RxClass ist **nicht** lizenzfrei. Es ist die eine Ausnahme in den
-> NLM-Nutzungsbedingungen (SNOMED-Affiliate-Lizenz), Attributionssatz Pflicht, 20 req/s.
-
-Ergänzend: **DrugCentral** (CC BY-SA 4.0, kommerziell erlaubt) für SNOMED-kodierte Indikationen
-und Kontraindikationen als Negativfilter; **Open Targets** (CC0, einzige Quelle ohne
-ShareAlike-Risiko) für die EFO/MONDO-Krankheitshierarchie.
-
-Nicht brauchbar: FDA Orange Book Therapeutic Equivalence (per Definition nur wirkstoffgleich),
-aut idem / § 129 SGB V (dito), DrugBank (CC BY-NC), KEGG (kommerziell gesperrt).
-
-**DACH-Lücke:** Metamizol, Piritramid, Flupirtin, Tilidin, Benzbromaron, Molsidomin und
-Trimetazidin haben in MED-RT einen ATC-Code, aber **null** Indikationsrelationen.
-Für die braucht es einen Fallback.
-
-### Was die Rohdaten-Frage löst
-
-- `api.pharmgkb.org` ist **abgeschaltet** (DNS NXDOMAIN). Alles läuft über `api.clinpgx.org/v1`.
-- `clinicalAnnotations.zip` ist seit 2025-07-05 eingefroren, Nachfolger `summaryAnnotations.zip`.
-  Deckt sich mit der eigenen Messung: alle anderen ZIPs tragen 2026-07-05.
-- Change-Detection: `GET https://api.clinpgx.org/v1/data/file/data/?view=min` liefert
-  fileName / lastModified / size für alle 118 Dateien. Releases erscheinen monatlich am 5.
-- **CPIC ist die bessere Quelle als ClinPGx**: CC0 statt CC BY-SA plus Verkaufsverbot, und
-  besser strukturiert. SQL-Dump `https://files.cpicpgx.org/data/database/cpic_db_dump.sql.gz`
-  (3,8 MB). API nur zum Entwickeln, im Verkaufsprodukt den Dump verwenden.
-- **Lizenz-Blocker ClinPGx**: *„Under no circumstances can ClinPGx data be sold for other's
-  private or commercial use"* — wörtlich in der LICENSE.txt jedes ZIP.
-- **`drug_interactions.csv` ist nicht nachbaubar.** Quelle DrugBank, CC BY-NC, akademische
-  Downloads derzeit komplett pausiert. Kein gleichwertiger freier Ersatz gefunden.
-  Einzig sauberer Eigenbau: openFDA `drug/label`, Feld `drug_interactions` (CC0) — Fließtext,
-  Extraktion wäre ein eigenes Teilprojekt.
-
-### Fallstricke für die Pipeline (alle konkret aufgetreten)
-
-- `byRxcui` filtert mit **`relas`** (Plural), nicht `rela` — sonst still falsche Ergebnisse.
-- Cloudflare blockt den Standard-User-Agent von Python `urllib` mit HTTP 403. Echten UA setzen.
-- ClinPGx-Wirkstoffnamen sind case-sensitiv: `name=Aspirin` → 404, `name=aspirin` → 200.
-- DrugCentral-API macht Substring-Matching: `indication` trifft auch `contraindication`.
-  Deshalb Dump statt API.
-- ChEMBL und Open Targets mischen Studienindikationen unter die zugelassenen — auf Phase 4 filtern.
-- `api.pharmgkb.org` stirbt mit DNS-Fehler, nicht mit HTTP-Status — fällt in Cronjobs stumm aus.
-
-### Anzufragen (bei keinem kommerziellen Anbieter ist ein Preis öffentlich)
-
-ABDATA / Avoxa (info@abdata.de) · WHOCC Oslo (whocc@fhi.no, wegen ATC-Anzeige in einer
-kommerziellen App) · WIdO (ai@wido.bv.aok.de) · ClinPGx Non-Academic License (api@clinpgx.org) ·
-KNMP · BASG · DrugBank Sales.
-
-### Juristisch zu bewerten
-
-ShareAlike-Verträglichkeit bei Quellenmischung (DrugCentral CC BY-SA 4.0 und ChEMBL
-CC BY-SA 3.0 Unported sind **nicht** aufwärtskompatibel) · ATC-Ausgabe in der App generell ·
-CPIC-ToU „research purposes" gegen CC0.
