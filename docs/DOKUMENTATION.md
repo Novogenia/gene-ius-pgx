@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-04 · **Version:** v59 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-04 · **Version:** v60 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -113,7 +113,7 @@ Demo oder ein öffentliches Repo. Aktuell eingebaut: **NA17454** (Coriell).
 Fertig und live: echtes Genprofil, PharmCAT-Empfehlungen als erste
 Bewertungsquelle, vierter Status „Offen", Arztbericht mit Abdeckungsnachweis,
 alphabetische Liste, Sub-Bewertungen aus dem Implikationstext, alle 611
-gelesenen Varianten, Ampel-Deckel bei normaler Wirkung (v59).
+gelesenen Varianten, Ampel aus dem Genotyp statt aus den PharmCAT-Flags (v60).
 
 Offen, in dieser Reihenfolge sinnvoll:
 
@@ -132,13 +132,24 @@ Offen, in dieser Reihenfolge sinnvoll:
    ersten Versuch nur 22 bearbeitet, weil eine gekürzte Liste hartkodiert war;
    außerdem war die Gegenprüfung zu streng und hat 21 von 22 an Kleinigkeiten
    verworfen. Beides beim nächsten Lauf anders machen.
-5. **Die zwölf ALARM-Karten ohne Befund** (siehe §11, Ampel-Deckel). Bei
-   Metoprolol, Flecainid, Haloperidol, Risperidon, Propafenon, Ivacaftor,
-   Eliglustat, Succinylcholin, den drei Inhalationsnarkotika und dem
-   Dihydrocodein-Kombipräparat sagt der Implikationstext weder etwas über
-   Wirkung noch über Risiko. Dort trägt weiterhin allein das Flag den ALARM.
-   Ohne Beleg wird nicht heruntergestuft — zu klären wäre, ob CPIC/DPWG die
-   Implikation an anderer Stelle liefern.
+5. **Ziel- und Risikogene: Ampelregel fehlt** (siehe §11, „Ampel aus dem
+   Genotyp"). Seit v60 kommt die Ampel aus dem Genotyp — das gilt aber nur
+   für Stoffwechsel- und Transportgene. Bei CFTR, RYR1, CACNA1S und VKORC1
+   wird nichts verstoffwechselt, die Metabolisierer-Skala trifft nicht zu,
+   dort gilt weiter die alte Flag-Regel. Konkret offen:
+   - **Desfluran, Isofluran, Sevofluran** (und ohne Karte Succinylcholin)
+     stehen auf ALARM, obwohl RYR1 und CACNA1S **keine Risikovariante**
+     gefunden haben. Nach Daniels Regel dürften sie das nicht. Dagegen
+     spricht nur, dass das Panel bei CACNA1S 2 und bei RYR1 90 Positionen
+     liest — PharmCATs Wortlaut sagt entsprechend, ein Restrisiko für
+     maligne Hyperthermie sei damit nicht ausgeschlossen. OK oder ACHTUNG?
+   - **Ivacaftor** (keine Karte in dieser Datenbank): CFTR meldet
+     „ivacaftor non-responsive", also einen **positiven** Befund, dass das
+     Medikament nicht wirkt. Auf der Metabolisierer-Skala steht das aber als
+     `lvl 2` = normal — ein reiner Genotyp-Vergleich würde daraus fälschlich
+     OK machen. Braucht eine eigene Regel für Zielgene.
+   - **VKORC1** (Acenocoumarol, Phenprocoumon) ist dosisrelevant, aber kein
+     Metabolisierer. Hängt an der Warfarin-Dosisformel, Punkt 3.
 
 ---
 
@@ -475,6 +486,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v56 | Umstellung auf Hristos PharmCAT-3.2.0-Lauf (40 Proben), Reporter-Stufe mit 168 CPIC/DPWG/FDA-Empfehlungen, Ampel aus PharmCATs eigenen Flags, Probe NA17454 |
 | v57 | Liste alphabetisch, Sub-Bewertungen aus dem Implikationstext statt aus dem Prodrug-Schalter, alle 611 gelesenen Varianten unter „Deine Gene" |
 | v59 | Ampel-Deckel: belegt normale Wirkung bei normalem Risiko kann nicht ALARM sein. Fluvastatin und Rosuvastatin ALARM → ACHTUNG, Verteilung 2.500/172/25 |
+| v60 | Ampel kommt aus dem Genotyp, nicht mehr aus `alternateDrugAvailable`. Verteilung 2.489/200/6 plus 2 „Offen"; Ziel- und Risikogene noch offen |
 
 
 ---
@@ -652,7 +664,8 @@ Für NA17454: **168 Annotationen zu 94 Wirkstoffen**, davon 75 CPIC, 57 DPWG,
 Wirkstoffdatenbank zuordnen.** Die 14 übrigen (Ivacaftor, Rasburicase, Succinylcholin,
 Tafenoquin, Eliglustat, Mavacamten …) stehen nicht in `All Drugs V12`.
 
-**Die Ampelstufe kommt aus PharmCATs eigenen Feldern, nicht aus einer Textdeutung:**
+**Bis v59 kam die Ampelstufe aus PharmCATs eigenen Feldern** — historisch,
+seit v60 nicht mehr die Ampelquelle:
 
 | Feld | Stufe | Anzahl bei NA17454 |
 |---|---|---|
@@ -660,7 +673,8 @@ Tafenoquin, Eliglustat, Mavacamten …) stehen nicht in `All Drugs V12`.
 | `dosingInformation` oder `otherPrescribingGuidance` | ACHTUNG | 37 |
 | keins davon | OK | 87 |
 
-Seit v59 liegt darüber ein **Deckel**, siehe „Ampel-Deckel" weiter unten.
+Diese Felder füllen weiterhin die Box **Handlung**, färben die Karte aber
+nicht mehr. Die Ampel kommt seit v60 aus dem Genotyp, siehe unten.
 
 Wichtig: **`classification` taugt nicht als Ampel.** 25 der 38 mit *Strong*
 klassifizierten Annotationen sind Strong-Empfehlungen, *nichts* zu tun
@@ -723,55 +737,74 @@ Nebenbefund: bei ultraschnellem Abbau stand vorher generell „Wirkung: Verstär
 Das gilt nur für Prodrugs — ein normaler Wirkstoff ist dann zu schnell weg und wirkt
 **zu schwach**. War ein alter Fehler in `metrics()`.
 
-### Ampel-Deckel (ab v59)
+### Ampel aus dem Genotyp (ab v60)
 
-`alternateDrugAvailable` setzt PharmCAT auch bei bedingten Formulierungen —
-Fluvastatin heißt „≤40 mg/Tag als Startdosis; *falls* mehr nötig, eine
-Alternative erwägen". Die Karte stand dadurch auf ALARM, während darunter
-„Wirkung: Normal" und „Toxizität: Normales Risiko" zu lesen war.
+**Vorgabe Daniel, 2026-08-04:** „Ob die Genetik, die wir bekommen, ein
+Anzeichen dafür gibt, dass wir eine nicht optimale Verstoffwechslung des
+Medikamentes haben. Das sollte die Bewertung sein. Eine Alternative des
+Medikaments zu haben, spielt darin nicht ein."
 
-**Entscheidung Daniel, 2026-08-04:** dass es eine Alternative gibt, ist keine
-Eigenschaft des Patienten und darf die Ampel nicht allein tragen. Wo Wirkung
-**und** Risiko belegt normal sind, kann keine Karte ALARM zeigen.
+Auslöser war Fluvastatin: `alternateDrugAvailable` setzt PharmCAT auch bei
+bedingten Formulierungen („≤40 mg/Tag als Startdosis; *falls* mehr nötig, eine
+Alternative erwägen"). Die Karte stand auf ALARM, darunter „Wirkung: Normal"
+und „Toxizität: Normales Risiko". v59 hatte das nur gedeckelt; seit v60 ist
+das Flag als Ampelquelle ganz weg. Es füllt weiter die Box **Handlung** — die
+Leitlinie nennt die Alternative, das wird nicht verschwiegen —, färbt aber die
+Karte nicht mehr.
 
-Umgesetzt als Deckel, nicht als Neuableitung — die Flag-Regel bleibt, was sie
-ist, und wird nur nach unten begrenzt (`pDeckel` in `index.html`):
+Die Regel (`pGenSev` in `index.html`):
 
-```
-crit + Wirkung belegt normal + Risiko belegt normal
-   -> ACHTUNG, wenn dosingInformation/otherPrescribingGuidance gesetzt ist
-   -> sonst OK
-```
+| Genotyp | Stufe | Bedingung |
+|---|---|---|
+| normal (`lvl 2`) | **OK** | |
+| intermediär (`lvl 1`) | **ACHTUNG** | |
+| poor (`lvl 0`) | **ALARM** | außer die Leitlinie nennt die Folge ausdrücklich typisch/normal → ACHTUNG |
+| ultraschnell (`lvl 3`) | **ALARM** | wenn mehr Wirkstoff oder höheres Risiko entsteht; sonst ACHTUNG |
+| nicht bestimmbar | **Offen** | |
 
-Maßgeblich ist derselbe Implikationstext, den auch die Boxen auswerten
-(`pImpOf`) — 13 der 94 Wirkstoffe haben in der maßgeblichen Zeile keine
-Implikation, und wenn Deckel und Boxen auf verschiedenen Texten rechnen,
-stehen sie wieder im Widerspruch. Die Wortgruppen liegen deshalb seit v59 in
-gemeinsamen Konstanten (`PW_*`, `PT_*`), nicht mehr inline in `pharmMetrics`.
+**Warum die Leitlinie bei `lvl 0` noch begrenzt.** Der reine Genotyp allein
+stellt die Ausgangsbeschwerde wieder her: Rosuvastatin hängt an ABCG2 *Poor
+Function* und stünde ohne diese Schranke wieder auf ALARM, obwohl CPIC
+„Typical myopathy risk" schreibt. Allopurinol am selben Gen hat diese
+Entwarnung nicht und steht deshalb zu Recht auf ALARM. Die Genetik sagt,
+**dass** abgewichen wird; die Leitlinie sagt, **wie schlimm** das für diesen
+Wirkstoff ist. Beides steht in den Daten, erfunden wird nichts.
 
-**„Nicht angegeben" zählt ausdrücklich nicht als normal.** Eine Lücke ist kein
-Freispruch.
+**Warum die Richtung bei `lvl 3` aus dem Text kommt.** Codein und Amitriptylin
+sind beide CYP2D6-ultraschnell. Bei Codein entsteht mehr Morphin (Vergiftung),
+bei Amitriptylin weniger Wirkstoff (Wirkverlust). Das steht nur im
+Implikationstext — dieselbe Unterscheidung wie bei den Sub-Bewertungen, und
+dieselben Wortgruppen (`PW_STARK`, `PT_HOCH`).
 
-Wirkung, an den 94 Wirkstoffen mit PharmCAT-Empfehlung gemessen — genau zwei
-bewegen sich, beide nach unten, nichts wird hochgestuft:
+Wirkung über die 94 Wirkstoffe mit PharmCAT-Empfehlung: **28 runter, 16 hoch,
+10 unberührt** (Ziel-/Risikogene).
 
-| Wirkstoff | vorher | nachher | warum |
-|---|---|---|---|
-| Fluvastatin | ALARM | ACHTUNG | Wirkung normal, Risiko normal, `dosingInformation` |
-| Rosuvastatin | ALARM | ACHTUNG | dito |
+Runter, weil die Genetik keinen entsprechenden Befund hergibt: die Trizyklika,
+Ondansetron, Paroxetin, Metoprolol, Flecainid, Haloperidol, Risperidon
+(CYP2D6 ultraschnell = Wirkverlust, keine Vergiftung), Fluvastatin, Phenytoin,
+Siponimod (CYP2C9 intermediär), Rosuvastatin (ABCG2 poor, Folge typisch), vier
+Protonenpumpenhemmer (CYP2C19 normal → OK).
 
-Verteilung über die 2.697 Karten: **2.500 OK, 172 Achtung, 25 Alarm**
-(vorher 2.500 / 170 / 27).
+Hoch, weil die Genetik abweicht, obwohl die Leitlinie nichts verlangt:
+Ibuprofen, Celecoxib, Meloxicam, Flurbiprofen, Lornoxicam, Tenoxicam,
+Avatrombopag (CYP2C9 intermediär); Venlafaxin, Aripiprazol, Brexpiprazol,
+Amoxapin, Donepezil, Fluvoxamin, Hydrocodon, Pimozid (CYP2D6 ultraschnell).
 
-Codein und Tramadol (Wirkung verstärkt, Risiko hoch), die Trizyklika,
-Ondansetron und Paroxetin (Wirkung zu schwach) bleiben ALARM — sie stehen auf
-einem Befund, nicht auf der Alternative. Bei zwölf Wirkstoffen sagt der Text
-weder zu Wirkung noch zu Risiko etwas; dort trägt weiterhin allein das Flag
-den ALARM, siehe §0 Punkt 5.
+Verteilung über die 2.697 Karten: **2.489 OK, 200 Achtung, 6 Alarm, 2 Offen**
+(v59: 2.500 / 172 / 25 / 0).
 
-Der Wortlaut der Empfehlung steht unverändert unter der Karte, und die Box
-**Handlung** nennt weiterhin „Anderer Wirkstoff" — nur in der Farbe der
-gedeckelten Karte, damit kein roter Kasten auf einer ACHTUNG-Karte steht.
+Die verbleibenden sechs ALARM: **Codein** und **Tramadol** (CYP2D6
+ultraschnell *und* „increased formation of morphine leading to higher risk of
+toxicity"), **Allopurinol** (ABCG2 poor ohne Entwarnung) sowie **Desfluran,
+Isofluran, Sevofluran** — letztere drei noch auf der alten Flag-Regel, siehe
+§0 Punkt 5.
+
+**Nebenbefund, erwünscht:** Atazanavir und Irinotecan stehen jetzt auf
+„Offen" statt OK. Beide hängen an UGT1A1, das bei NA17454 *Indeterminate* ist.
+Vorher hat das Flag diese Lücke verdeckt.
+
+Die alte Deckelfunktion `pDeckel` bleibt als Rückfall für Ziel- und
+Risikogene in Kraft, wo die Metabolisierer-Skala nicht zutrifft.
 
 ### Reihenfolge in der Liste
 

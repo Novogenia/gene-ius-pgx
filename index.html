@@ -1513,6 +1513,29 @@ function pDeckel(sev,flags,imp){
   return (flags&6)?'warn':'ok';
 }
 function pEffSev(r){return pDeckel(r.sev,r.flags,r.imp);}
+/* Wo die Leitlinie die Folge ausdruecklich als typisch bezeichnet, ist eine
+   Abweichung im Genotyp noch kein Alarm. Ohne diese Schranke stuende
+   Rosuvastatin ueber ABCG2 Poor Function wieder auf ALARM, obwohl CPIC
+   "Typical myopathy risk" schreibt. */
+const PMILD=/low risk|normal risk|typical .*risk|does not appear to translate|typical /;
+/* Die Ampel aus dem Genotyp: gibt die Genetik ein Anzeichen dafuer, dass
+   dieser Wirkstoff nicht optimal verstoffwechselt wird? Dass eine Alternative
+   verfuegbar waere, geht nicht ein - das ist eine Eigenschaft des Marktes,
+   keine des Patienten. Vorgabe Daniel, 2026-08-04.
+   stoff=false bei Ziel- und Risikogenen (CFTR, RYR1, CACNA1S, VKORC1): dort
+   wird nichts verstoffwechselt, die Skala trifft nicht zu, dort bleibt es
+   vorerst bei der Flag-Regel mit Deckel. */
+function pGenSev(lvl,stoff,bestimmt,h,imp){
+  if(!stoff)return pDeckel(h.sev,h.flags,imp);
+  if(!bestimmt)return 'unk';
+  const t=(imp||'').toLowerCase();
+  if(lvl===2)return 'ok';
+  if(lvl===1)return 'warn';
+  if(lvl===0)return PMILD.test(t)?'warn':'crit';
+  /* ultraschnell: die Richtung steht nur im Text. Codein bildet MEHR Morphin
+     (Vergiftung), Amitriptylin WENIGER Wirkstoff (Wirkverlust). */
+  return (PW_STARK.test(t)||PT_HOCH.test(t))?'crit':'warn';
+}
 /* Die massgebliche Empfehlung: schaerfste Ampel, bei Gleichstand die
    hoeherwertige Quelle. Alle uebrigen bleiben als Zusatz erhalten. */
 const _pharmCache={};
@@ -1617,20 +1640,27 @@ function statusFor(id){
     /* Die Stufe muss zum Genotyp passen, auf den sich die Empfehlung bezieht -
        sonst zeigen die Sub-Bewertungen "Normal", waehrend oben ALARM steht.
        Bei mehreren Genen zaehlt das am staerksten abweichende. */
-    let plvl=2;
+    let plvl=2, stoff=true, gefunden=0, bestimmt=0;
     Object.keys(PHENO).forEach(g=>{
       if((h.gt||'').indexOf(g)<0)return;
+      gefunden++;
+      const a=PHENO[g].art;
+      if(a!=='enz'&&a!=='trans')stoff=false;
       const l=PHENO[g].lvl; if(l<0)return;
+      bestimmt++;
       if(Math.abs(l-2)>Math.abs(plvl-2))plvl=l;
     });
-    /* Deckel, siehe pDeckel: eine belegt normale Wirkung bei normalem
-       Risiko kann nie ALARM sein. Entscheidung Daniel, 2026-08-04. */
-    const sev=pDeckel(h.sev,h.flags,pImpOf(pr)), gekappt=sev!==h.sev;
+    /* Die Ampel kommt aus dem Genotyp, siehe pGenSev. Das Alt-Flag faerbt die
+       Karte nicht mehr; es fuellt nur noch die Box "Handlung". */
+    const sev=pGenSev(plvl,gefunden&&stoff,bestimmt,h,pImpOf(pr));
+    const gekappt=PSEV.indexOf(sev)<PSEV.indexOf(h.sev);
     const wirkung=sev==='crit'
       ? "Fuer dich ist ein anderer Wirkstoff angezeigt."
       : sev==='warn'
         ? "Die Dosis muss angepasst oder die Wirkung ueberwacht werden."
-        : "Es ist keine Anpassung noetig.";
+        : sev==='unk'
+          ? "Das dafuer noetige Gen konnte nicht bestimmt werden."
+          : "Es ist keine Anpassung noetig.";
     return{sev:sev, lvl:plvl, pharm:true, gekappt:gekappt, flags:h.flags, gt:h.gt,
       text:"Zu "+d.name+" gibt es eine Empfehlung, die genau auf deinen Genotyp "
         +(h.gt||"")+" passt. "+wirkung+" Der Wortlaut steht unten."};
