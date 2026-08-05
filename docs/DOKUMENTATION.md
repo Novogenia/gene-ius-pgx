@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-04 · **Version:** v60 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-05 · **Version:** v61 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -91,10 +91,16 @@ Voraussetzungen auf dem neuen Rechner:
 
 ### Die drei Regeln, die nicht verhandelbar sind
 
-1. **Nichts erfinden.** Kein geratener Genotyp, keine erfundene Zahl. Was
-   PharmCAT nicht ruft, bleibt sichtbar „nicht bestimmbar". Eine sichtbare
-   Lücke ist harmlos, eine erfundene Variante nicht — darauf würde eine
-   Dosierung aufgebaut.
+1. **Nichts erfinden.** Kein geratener Genotyp, keine erfundene Zahl. Eine
+   erfundene Variante ist gefährlich — darauf würde eine Dosierung
+   aufgebaut.
+   *Präzisiert am 2026-08-05 (v61):* Was PharmCAT nicht ruft, wird in den
+   Patientenansichten **nicht mehr angezeigt** (Vorgabe Daniel) — statt
+   sichtbar „nicht bestimmbar" zu bleiben. Das Verbot zu erfinden gilt
+   unverändert; es wird nur nicht mehr über die Lücke gesprochen. Der
+   **Abdeckungsnachweis im Arztbericht bleibt vollständig** und führt alle
+   23 Panel-Gene mit Status — dort ist die Lücke weiterhin belegt, und ohne
+   ihn trägt keine Aussage darüber.
 2. **Die Datei bleibt rein ASCII.** Umlaute als HTML-Entities. Jedes
    Generator- und Patch-Skript prüft das am Ende.
 3. **Ersetzungen mit Zusicherung.** Nie `s.replace()` ohne zu prüfen, dass der
@@ -487,6 +493,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v57 | Liste alphabetisch, Sub-Bewertungen aus dem Implikationstext statt aus dem Prodrug-Schalter, alle 611 gelesenen Varianten unter „Deine Gene" |
 | v59 | Ampel-Deckel: belegt normale Wirkung bei normalem Risiko kann nicht ALARM sein. Fluvastatin und Rosuvastatin ALARM → ACHTUNG, Verteilung 2.500/172/25 |
 | v60 | Ampel kommt aus dem Genotyp, nicht mehr aus `alternateDrugAvailable`. Verteilung 2.489/200/6 plus 2 „Offen"; Ziel- und Risikogene noch offen |
+| v61 | Offene Gene (6) und offene Wirkstoffe (2) ausgeblendet, Liste unter „Deine Medikamente" mehrspaltig, Genansicht mit rollenabhängiger Skala statt fester Metabolisierer-Matrix |
 
 
 ---
@@ -821,14 +828,66 @@ sie belegen, was geprüft wurde. Verteilung: G6PD 146, RYR1 90, DPYD 78, CFTR 61
 CYP2C9 52, TPMT 38, CYP2C19 29, SLCO1B1 25, CYP2B6 24, NAT2 24, CYP3A4 23, CYP3A5 5,
 CYP4F2 4, UGT1A1 4, NUDT15 3, CACNA1S 2, ABCG2 1, IFNL3 1, VKORC1 1.
 
+### Ausblenden statt Ausweisen (ab v61)
+
+Vorgabe Daniel, 2026-08-05: Gene, die wir nicht analysieren können, und
+Wirkstoffe, die wir mangels Gen nicht bewerten können, sollen nicht mehr
+angezeigt werden.
+
+Betroffen bei NA17454: **6 der 23 Gene** — CYP4F2 (mehrdeutig), HLA-A, HLA-B,
+IFNL3, MT-RNR1, UGT1A1 (kein Ergebnis) — und **2 der 2.697 Wirkstoffe**,
+Atazanavir und Irinotecan, beide über UGT1A1. Die Datenbank zeigt seither
+2.695 Wirkstoffe.
+
+Gefiltert wird an zwei Stellen: `sortedGenes()` für die Genansichten und
+`filtered()` für die Wirkstoffliste. Die Filterkachel „Offen" und der
+gleichnamige Ampelfilter sind entfallen.
+
+**`covBlock()` ist bewusst nicht gefiltert.** Der Abdeckungsnachweis im
+Arztbericht rechnet direkt auf `P_GENES` und führt weiterhin alle 23 Gene mit
+Diplotyp, Score, gelesenen Stellen und Status. Er ist der Beleg dafür, was der
+Test lesen konnte; ohne ihn trägt keine Aussage darüber. Die Genkarten im
+Bericht folgen dagegen `sortedGenes()` und zeigen 17.
+
 ### Vierter Zustand „Offen"
 
 Bleibt unverändert in Kraft (`unk`, grau, `RANK` zwischen OK und Achtung) — er greift
 jetzt seltener, weil mehr Gene bestimmt sind, ist aber für CYP4F2, HLA-A/B, IFNL3,
 MT-RNR1 und UGT1A1 weiterhin nötig.
 
-Grundregel: **kein geratener Genotyp.** Eine sichtbare Lücke ist harmlos, eine
-erfundene Variante nicht — darauf würde eine Dosierung aufgebaut.
+Grundregel: **kein geratener Genotyp.** Seit v61 werden solche Karten
+ausgeblendet statt als „Offen" geführt (siehe oben) — die Bewertung wird
+weiterhin nicht geraten.
+
+### Genansicht: Skala hängt an der Rolle des Gens (ab v61)
+
+Die „Empfehlungsmatrix" war eine fest verdrahtete Metabolisierer-Skala,
+unabhängig davon, was das Gen tut. Aufgefallen an **ABCG2** — ein Transporter,
+der nichts metabolisiert, für den dort trotzdem „Langsamer Metabolisierer"
+stand. Gleiches galt für die Risikogene RYR1/CACNA1S und das Zielgen CFTR.
+
+Drei Korrekturen:
+
+- **Skala nach `PHENO[g].art`.** `enz` behält die Metabolisierer-Stufen,
+  `trans` bekommt Transportfunktion-Stufen. `ziel` und `risiko` bekommen
+  **keine Skala**, sondern ihren tatsächlichen Befund — CACNA1S zeigt jetzt
+  „Keine Risikovariante gefunden", CFTR „Spricht nicht auf Ivacaftor an".
+- **Prozentzahlen raus.** Die Angaben 100 % / ca. 50 % / ca. 200 % / ca. 0 %
+  standen in keiner Quelle — erfundene Zahlen in einem Kasten, der wie ein
+  Datenauszug aussieht. Ersetzt durch Klartext.
+- **Spalte „Empfehlung" raus.** Sie behauptete pauschal „Anderes Medikament"
+  für jede Poor-Stufe — derselbe unbegründete Alarm, der in v60 aus der Ampel
+  geflogen ist, nur eine Ebene tiefer. Was zu tun ist, steht auf der
+  Wirkstoffkarte.
+
+Dazu ein Zählfehler: **„Beeinflusst 0 Medikamente in der Datenbank"** bei
+ABCG2 war falsch. `GENE_DRUGS` zählte nur das Feld `gene`/`genes` im
+Wirkstoff-Datenblock und kannte die PharmCAT-Genotypen nicht. Ersetzt durch
+`geneDrugCount()`, das beide Wege zählt — ABCG2 zeigt jetzt 2 (Rosuvastatin,
+Allopurinol), CYP2D6 227, SLCO1B1 7.
+
+Die Matrix stand zweimal fast identisch im Code (`geneItemHtml` und
+`geneDetailHtml`); beide rufen jetzt `mxHtml()` und `mxQuellen()`.
 
 ### Datentransport — was nicht funktioniert hat
 
