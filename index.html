@@ -216,11 +216,6 @@
   .rgene.s-unk,.rdrug.s-unk,.grow.s-unk,.mrow.s-unk{border-left-color:var(--unk)}
   .genebox.b-unk .gscale .gs-seg{background:rgba(255,255,255,.82)}
   .gi-unk{background:var(--unk-bg);color:var(--unk-t)}
-  .bf-unk{background:#77717F} .bf-unk[aria-pressed="true"]{background:#5B5664}
-  .sf-unk{background:#77717F}
-  .hbb.unk{background:#8E8896}
-  .hbk.k-unk{border-left-color:var(--unk)} .hbk.k-unk .hbkn,.hbk.k-unk .hbkl{color:var(--unk-t)}
-  .lg-unk .lgbox{background:#77717F} .lg-unk .lgmore{color:var(--unk-t)}
   .wsleg.h-unk .lr1,.wsleg.h-unk .lr1 svg{color:var(--unk-t)} .wsleg.h-unk .n{background:var(--unk)}
 /* Abdeckungsblock im Arztbericht: was der Test wirklich lesen konnte */
   .cov{margin:0 0 18px;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
@@ -614,7 +609,7 @@
     box-shadow:inset 0 1px 2px rgba(30,10,30,.12)}
   .hbb{height:100%} .hbb.ok{background:#12A150} .hbb.warn{background:#E08000} .hbb.crit{background:#D02A2A}
   .hbb+.hbb{box-shadow:-1px 0 0 rgba(255,255,255,.85)}
-  .hb-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+  .hb-keys{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
   @media(max-width:760px){.hb-keys{grid-template-columns:1fr}}
   .hbk{text-align:left;font:inherit;color:var(--ink);background:#fff;border:1.5px solid var(--line2);
     border-radius:13px;padding:11px 13px;cursor:pointer;transition:.14s;border-left-width:5px}
@@ -2088,7 +2083,6 @@ function vDashboard(){
       <div class="hb-bar">
         <div class="hbb ok"   style="width:${pct(D.ok)}%"   title="${nf(D.ok)} unauff&auml;llig"></div>
         <div class="hbb warn" style="width:${pct(D.warn)}%" title="${nf(D.warn)} mit Achtung"></div>
-        <div class="hbb unk"  style="width:${pct(D.unk)}%"  title="${nf(D.unk)} offen"></div>
         <div class="hbb crit" style="width:${pct(D.crit)}%" title="${nf(D.crit)} mit Alarm"></div>
       </div>
       <div class="hb-keys">
@@ -2104,10 +2098,6 @@ function vDashboard(){
           <span class="hbkn">${nf(D.crit)}</span>
           <span class="hbkl">mit Alarm</span>
           <span class="hbkd">hier gibt es eine offizielle Handlungsempfehlung</span></button>
-        <button class="hbk k-unk" onclick="goFilter('unk')">
-          <span class="hbkn">${nf(D.unk)}</span>
-          <span class="hbkl">noch offen</span>
-          <span class="hbkd">ein daf&uuml;r n&ouml;tiges Gen ist nicht bestimmbar</span></button>
       </div>
     </div>
   </div>
@@ -2162,15 +2152,6 @@ function vDashboard(){
           lohnt sich trotzdem.</p>
         <span class="lgmore">In der Datenbank ansehen ${ico('arr','',14)}</span></div>
     </button>
-    <button class="lg lg-unk" onclick="goFilter('unk')">
-      <div class="lgbox"><span class="lgn">${DBSTATS().unk.toLocaleString('de-DE')}</span><span class="lgl">Offen</span></div>
-      <div class="lgtx"><h4>Medikamente, bei denen die Antwort offen bleibt</h4>
-        <p>F&uuml;r diese Wirkstoffe gibt es sehr wohl eine Leitlinie &mdash; sie h&auml;ngt aber an
-          einem Gen, das <b>in dieser Analyse nicht eindeutig bestimmt werden konnte</b>.
-          Statt zu raten wird das offen gelassen. Eine gezielte Nachbestimmung schlie&szlig;t
-          diese L&uuml;cke.${ihelp('offen')}</p>
-        <span class="lgmore">In der Datenbank ansehen ${ico('arr','',14)}</span></div>
-    </button>
     <button class="lg lg-ix" onclick="go('meine')">
       <div class="lgbox"><span class="lgic">${ico('c-ix','',30)}</span><span class="lgl">Interaktion</span></div>
       <div class="lgtx"><h4>Wechselwirkungen</h4>
@@ -2183,10 +2164,14 @@ function vDashboard(){
 /* ================= ARZTBERICHT ("F&uuml;r deinen Arzt") ================= */
 /* Was der Test wirklich lesen konnte. Diese Angaben gehoeren an den Anfang des
    Arztberichts, weil jede Aussage darunter nur so weit tragt wie die Abdeckung. */
-function covBlock(offen){
+function covBlock(){
   const M=P_META, ges=M.posda+M.posfehlt;
   const pct=(100*M.posda/ges).toFixed(0);
-  const rows=P_GENES.slice().sort((a,b)=>(a.ok===b.ok?0:a.ok?1:-1)||a.g.localeCompare(b.g))
+  /* Nur die ausgewerteten Gene, wie ueberall sonst auch (Vorgabe Daniel,
+     2026-08-05). Die Unvollstaendigkeit steht weiter in den Kennzahlen
+     darueber: 611 gelesene Stellen und 58 % Abdeckung. */
+  const zeigbar=P_GENES.filter(g=>g.lvl>=0);
+  const rows=zeigbar.slice().sort((a,b)=>(a.ok===b.ok?0:a.ok?1:-1)||a.g.localeCompare(b.g))
     .map(g=>{
       const zu=g.pos+g.fehlt;
       const st=g.ok?'bestimmt':(g.mehr?g.kand+' Varianten offen':'nicht bestimmbar');
@@ -2202,17 +2187,13 @@ function covBlock(offen){
     <div class="cov-h">${ico('c-pillbox','',17)} Grundlage dieser Auswertung</div>
     <div class="cov-b">
       <div class="cov-g">
-        <div class="cov-k"><span class="n">${P_GENES.length}</span><span class="l">Gene im Panel</span></div>
+        <div class="cov-k"><span class="n">${zeigbar.length}</span><span class="l">Gene ausgewertet</span></div>
         <div class="cov-k"><span class="n">${M.posda.toLocaleString('de-DE')}</span><span class="l">Stellen gelesen</span></div>
         <div class="cov-k"><span class="n">${pct}&thinsp;%</span><span class="l">Abdeckung der ben&ouml;tigten Stellen</span></div>
-        <div class="cov-k"><span class="n">${offen.length}</span><span class="l">Gene ohne eindeutiges Ergebnis</span></div>
       </div>
       <p class="cov-p">Probe <b>${M.probe}</b> &middot; Referenz <b>${M.build}</b> &middot;
         Allel-Definitionen <b>ClinPGx</b> &middot; Auswertung <b>PharmCAT ${M.ver}</b> &middot;
-        Stand <b>${M.stand}</b>.
-        ${offen.length?`Bei <b>${offen.map(g=>g).join(', ')}</b> reichen die gelesenen Stellen
-          nicht f&uuml;r ein eindeutiges Ergebnis. Diese Gene sind unten als offen gekennzeichnet und
-          flie&szlig;en in keine Empfehlung ein.`:''}</p>
+        Stand <b>${M.stand}</b>.</p>
       <table class="cov-tab">
         <thead><tr><th>Gen</th><th>Diplotyp</th><th>Ph&auml;notyp</th><th>Score</th>
           <th>Stellen</th><th>Status</th></tr></thead>
@@ -2220,13 +2201,13 @@ function covBlock(offen){
     </div></div>`;
 }
 /* Reihenfolge der Gene: langsam, intermedi&auml;r, normal, ultraschnell */
-/* schlechteste Gene zuerst, danach die offenen Faelle, zuletzt die normalen */
+/* schlechteste Gene zuerst, zuletzt die normalen */
 const GORDER=[0,1,-1,3,2];
 function sortedGenes(){
-  /* Gene ohne eindeutiges Ergebnis werden nicht mehr angezeigt (Vorgabe
-     Daniel, 2026-08-05). Der Abdeckungsnachweis im Arztbericht (covBlock)
-     rechnet weiter auf P_GENES und bleibt vollstaendig - er ist der Beleg,
-     was der Test lesen konnte. */
+  /* Gene ohne eindeutiges Ergebnis werden nicht angezeigt (Vorgabe Daniel,
+     2026-08-05). Gilt seit dem Nachtrag auch fuer den Abdeckungsblock im
+     Arztbericht; dort belegen jetzt die gelesenen Stellen und die
+     Abdeckung in Prozent, wie weit die Auswertung traegt. */
   return Object.keys(PHENO).filter(g=>PHENO[g].lvl>=0).sort((a,b)=>
     GORDER.indexOf(PHENO[a].lvl)-GORDER.indexOf(PHENO[b].lvl)||a.localeCompare(b));
 }
@@ -2299,9 +2280,8 @@ function vMerk(){
   const auff=genes.filter(g=>PHENO[g].lvl!==2);
   const cnt={ok:0,warn:0,crit:0};workspace.forEach(id=>cnt[overallSev(id,workspace)]++);
   const nIx=DDI.filter(x=>workspace.includes(x.a)&&workspace.includes(x.b)).length;
-  const nOffen=genes.filter(g=>PHENO[g].lvl<0);
   return `<div class="sec-title">F&uuml;r deinen Arzt &mdash; pharmakogenetischer Bericht</div>
-  ${covBlock(nOffen)}
+  ${covBlock()}
   <div class="scope scope-me">${ico('star','',18)}
     <div><b>Dieser Bericht ist zum Mitnehmen gedacht.</b>${ihelp('merk')}
       Er f&uuml;hrt Schritt f&uuml;r Schritt durch dein Genprofil, erkl&auml;rt jedes deiner Medikamente

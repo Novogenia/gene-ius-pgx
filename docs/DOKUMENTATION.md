@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-05 · **Version:** v61 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-05 · **Version:** v62 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -94,13 +94,13 @@ Voraussetzungen auf dem neuen Rechner:
 1. **Nichts erfinden.** Kein geratener Genotyp, keine erfundene Zahl. Eine
    erfundene Variante ist gefährlich — darauf würde eine Dosierung
    aufgebaut.
-   *Präzisiert am 2026-08-05 (v61):* Was PharmCAT nicht ruft, wird in den
-   Patientenansichten **nicht mehr angezeigt** (Vorgabe Daniel) — statt
-   sichtbar „nicht bestimmbar" zu bleiben. Das Verbot zu erfinden gilt
-   unverändert; es wird nur nicht mehr über die Lücke gesprochen. Der
-   **Abdeckungsnachweis im Arztbericht bleibt vollständig** und führt alle
-   23 Panel-Gene mit Status — dort ist die Lücke weiterhin belegt, und ohne
-   ihn trägt keine Aussage darüber.
+   *Präzisiert am 2026-08-05 (v61/v62):* Was PharmCAT nicht ruft, wird
+   **nicht mehr angezeigt** (Vorgabe Daniel) — statt sichtbar „nicht
+   bestimmbar" zu bleiben. Das gilt seit v62 auch für den Arztbericht. Das
+   Verbot zu erfinden gilt unverändert; es wird nur nicht mehr über die
+   Lücke gesprochen. Belegt bleibt sie über die Kennzahlen des
+   Abdeckungsblocks: 17 ausgewertete Gene, 611 gelesene Stellen, 58 %
+   Abdeckung.
 2. **Die Datei bleibt rein ASCII.** Umlaute als HTML-Entities. Jedes
    Generator- und Patch-Skript prüft das am Ende.
 3. **Ersetzungen mit Zusicherung.** Nie `s.replace()` ohne zu prüfen, dass der
@@ -494,6 +494,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v59 | Ampel-Deckel: belegt normale Wirkung bei normalem Risiko kann nicht ALARM sein. Fluvastatin und Rosuvastatin ALARM → ACHTUNG, Verteilung 2.500/172/25 |
 | v60 | Ampel kommt aus dem Genotyp, nicht mehr aus `alternateDrugAvailable`. Verteilung 2.489/200/6 plus 2 „Offen"; Ziel- und Risikogene noch offen |
 | v61 | Offene Gene (6) und offene Wirkstoffe (2) ausgeblendet, Liste unter „Deine Medikamente" mehrspaltig, Genansicht mit rollenabhängiger Skala statt fester Metabolisierer-Matrix |
+| v62 | „Offen" vollständig aus der Oberfläche: Verteilungsbalken, Ampel-Legende und Abdeckungstabelle im Arztbericht |
 
 
 ---
@@ -843,11 +844,30 @@ Gefiltert wird an zwei Stellen: `sortedGenes()` für die Genansichten und
 `filtered()` für die Wirkstoffliste. Die Filterkachel „Offen" und der
 gleichnamige Ampelfilter sind entfallen.
 
-**`covBlock()` ist bewusst nicht gefiltert.** Der Abdeckungsnachweis im
-Arztbericht rechnet direkt auf `P_GENES` und führt weiterhin alle 23 Gene mit
-Diplotyp, Score, gelesenen Stellen und Status. Er ist der Beleg dafür, was der
-Test lesen konnte; ohne ihn trägt keine Aussage darüber. Die Genkarten im
-Bericht folgen dagegen `sortedGenes()` und zeigen 17.
+**Nachtrag v62 — „noch offen sollte weg".** v61 hatte den Zustand aus den
+Listen genommen, aber an drei Stellen stand er weiter im Text. Alle drei sind
+jetzt raus:
+
+- Startseite, Verteilungsbalken: eigenes Segment plus der Knopf „noch offen —
+  ein dafür nötiges Gen ist nicht bestimmbar". Legende jetzt dreispaltig.
+- Startseite, Ampel-Legende: der Block „Medikamente, bei denen die Antwort
+  offen bleibt".
+- Arztbericht, Abdeckungsblock: die Kennzahl „Gene ohne eindeutiges Ergebnis"
+  (zeigte nach v61 ohnehin 0), der Satz, der die offenen Gene aufzählte, und
+  die Tabelle, die alle 23 Panel-Gene führte. `covBlock()` filtert jetzt
+  ebenfalls auf `lvl >= 0` und zeigt 17 Zeilen.
+
+Damit ist die frühere Ausnahme für den Arztbericht aufgehoben. **Was die
+Unvollständigkeit weiterhin belegt:** der Abdeckungsblock nennt unverändert
+`611` gelesene Stellen und `58 %` Abdeckung der benötigten Stellen, und die
+Kennzahl „Gene im Panel (23)" heißt jetzt „Gene ausgewertet (17)" — sonst
+widerspräche sie der Tabelle darunter. Die Lücke steht also als Zahl im
+Bericht, nur nicht mehr als Liste.
+
+Nicht angetastet: die Allel-Funktionsangabe **„Funktion nicht eindeutig"** in
+den Genkarten des Berichts. Das ist die Funktionsannotation eines einzelnen
+Allels aus der Quelle (`unbekannt`), keine Lücke unserer Analyse — das Gen
+selbst ist bestimmt.
 
 ### Vierter Zustand „Offen"
 
