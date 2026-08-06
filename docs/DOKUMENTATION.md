@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-06 · **Version:** v66 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-06 · **Version:** v67 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -500,6 +500,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v64 | *verworfen* — jede Position als eigene Karte (611 Stück), rs-fokussiert statt gen-fokussiert |
 | v65 | rs-Befunde liegen in der Genkarte und färben sie: negativ + Evidenz 1A → rot, negativ + schwächere Evidenz → gelb |
 | v66 | rs-Befunde färben nur noch gelb, nie rot; Kennzeichnung heißt auffällig/unauffällig. Rot vergibt allein der Phänotyp |
+| v67 | Kugelsymbol für den Metabolisierertyp auf der Genkarte statt der DNA-Helix |
 
 
 ---
@@ -947,6 +948,37 @@ weil es dort keinen Metabolisierer-Status gibt:
 Vier Positionen ließen sich notationsbedingt nicht zuordnen und bleiben außen
 vor: zwei hemizygote G6PD-Calls (männliche Probe, ein Allel), ein RYR1-Indel
 und ein CYP3A5-Indel.
+
+### Kugelsymbol für den Metabolisierertyp (ab v67)
+
+Vorgabe Daniel, 2026-08-06: statt der DNA-Helix trägt die Genkarte ein Symbol
+für den Metabolisierertyp — eine farbige Kugel mit weißem Glyph.
+
+| Stufe | Kugel | Glyph |
+|---|---|---|
+| Poor / Langsam (`lvl 0`) | rot `#E12D2D` | X |
+| Vermindert / Intermediär (`lvl 1`) | orange `#F08A00` | Pfeil nach unten |
+| Normal (`lvl 2`) | grün `#12A150` | Häkchen |
+| Schnell / Ultraschnell (`lvl 3`) | dunkelgrün `#0b6b36` | zwei Pluszeichen |
+
+Die Farben sind die bereits vergebenen aus `GCOL`, damit Symbol und Skala
+derselben Karte nicht auseinanderlaufen.
+
+Gezeichnet wird **inline**, nicht als `<symbol>` — die Kugel braucht zwei
+Farben (Füllung nach Stufe, Glyph in Weiß), und ein `<symbol>` kann über
+`currentColor` nur eine transportieren. Verläufe wären ohnehin verboten
+(Fallstrick 1). `helix()` bleibt im Code für die Karte „nicht getestet".
+
+**Gene ohne Metabolisierertyp** — RYR1, CACNA1S, CFTR (`flach`) sowie die
+Gene, die nur an rs-Befunden hängen — bekommen dieselbe Kugelform, aber nach
+der **Kartenstufe**: unauffällig ein grünes Häkchen, auffällig eine orange
+Kugel mit Ausrufezeichen. `mtStufe()` sorgt dafür; ohne diese Weiche hätte
+RYR1 über `lvl 2` das grüne Häkchen bekommen und damit „Normaler
+Metabolisierer" behauptet, was es nicht ist.
+
+**Symbol und Kartenfarbe können auseinanderfallen** — bewusst. CYP2C19 und
+SLCO1B1 zeigen eine grüne Kugel auf gelber Karte: der Typ *ist* normal, die
+gelbe Karte kommt vom rs-Befund. Zwei Aussagen, nicht ein Widerspruch.
 
 ### Befunde in der Genkarte (ab v65)
 

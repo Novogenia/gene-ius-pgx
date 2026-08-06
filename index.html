@@ -501,6 +501,8 @@
   .gb-top{display:flex;align-items:center;gap:11px}
   .gb-ic{flex:none;width:46px;height:46px;border-radius:13px;display:grid;place-items:center}
   .gb-ic svg{width:34px;height:44px}
+  /* Kugelsymbol ist quadratisch, nicht hochkant wie die Helix */
+  .gb-ic svg.mtico{width:40px;height:40px}
   .gi-ok{background:var(--ok-bg);color:var(--ok-t)}.gi-warn{background:var(--warn-bg);color:var(--warn-t)}
   .gi-crit{background:var(--crit-bg);color:var(--crit-t)}.gi-ultra{background:#E8F5EC;color:#0b6b36}
   .gb-tx{flex:1;min-width:0}
@@ -2790,6 +2792,43 @@ const GPCT={0:'0 %',1:'50 %',2:'100 %',3:'200 %','-1':'nicht bestimmbar'};
 const GCOL={0:'#E12D2D',1:'#F08A00',2:'#12A150',3:'#0b6b36','-1':'#8E8896'};
 /* DNA-Helix in Zustandsfarbe: Sprossen zeigen die Funktion,
    gebrochene Sprossen = Funktionsverlust, dichte = gesteigerte Aktivit&auml;t */
+/* Kugelsymbol fuer den Metabolisierertyp (Vorgabe Daniel, 2026-08-06).
+   Inline gezeichnet, weil die Kugel zwei Farben braucht - Fuellung nach
+   Stufe, Glyph in Weiss. Ein <symbol> kann ueber currentColor nur eine
+   Farbe transportieren. */
+const MTCOL={0:'#E12D2D',1:'#F08A00',2:'#12A150',3:'#0b6b36'};
+const MTGLYPH={
+  /* Poor: X */
+  0:'<path d="M15.5 15.5 28.5 28.5M28.5 15.5 15.5 28.5" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/>',
+  /* Vermindert: Pfeil nach unten */
+  1:'<path d="M22 13.5V29M15.8 22.8 22 29.4 28.2 22.8" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>',
+  /* Normal: Haekchen */
+  2:'<path d="M14.2 22.4 19.6 27.8 30 16.6" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>',
+  /* Schnell: zwei Pluszeichen */
+  3:'<path d="M16.4 18.6V25.4M13 22h6.8M27.6 18.6V25.4M24.2 22H31" stroke="#fff" stroke-width="3" stroke-linecap="round"/>'
+};
+/* Ausrufezeichen fuer Gene ohne Metabolisierertyp, die auffaellig sind */
+const MTAUSRUF='<path d="M22 13.6v9.6" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><circle cx="22" cy="29.4" r="2.1" fill="#fff"/>';
+/* Welche Stufe das Symbol zeigen darf. Risiko- und Zielgene (RYR1, CACNA1S,
+   CFTR) tragen zwar lvl 2, haben aber gar keinen Metabolisierertyp - dort
+   waere ein gruenes "Normaler Metabolisierer" eine falsche Behauptung.
+   Sie bekommen null und damit die Kugel nach Kartenstufe. */
+function mtStufe(g,lvl){
+  return (PGENE[g]&&PGENE[g].flach)?null:lvl;
+}
+function mtIcon(lvl, sev){
+  let c, glyph;
+  if(MTGLYPH[lvl]!==undefined){ c=MTCOL[lvl]; glyph=MTGLYPH[lvl]; }
+  else {
+    /* Kein Metabolisierertyp: die Kugel folgt der Kartenstufe, ohne einen
+       Typ zu behaupten. */
+    const auf=(sev==='warn'||sev==='crit');
+    c=auf?(sev==='crit'?MTCOL[0]:MTCOL[1]):MTCOL[2];
+    glyph=auf?MTAUSRUF:MTGLYPH[2];
+  }
+  return `<svg class="mtico" viewBox="0 0 44 44" aria-hidden="true">
+    <circle cx="22" cy="22" r="19" fill="${c}"/>${glyph}</svg>`;
+}
 function helix(lvl){
   const c=GCOL[lvl];
   const rungs=[[7.5,5.4],[12,7.6],[16.5,5.4],[27.5,5.4],[32,7.6],[36.5,5.4]];
@@ -2890,13 +2929,13 @@ function geneCardHtml(g,opts){
     : '';
   const key='gene:'+g+(opts.ctx||''), open=openGenes[key];
   if(opts.flat)return `<div class="genebox flat b-${sv}">
-    <div class="gb-top"><div class="gb-ic gi-${sv}">${helix(lvl)}</div>
+    <div class="gb-top"><div class="gb-ic gi-${sv}">${mtIcon(mtStufe(g,lvl),sv)}</div>
       <div class="gb-tx"><div class="gn">${g}</div><div class="gs" style="color:${colr}">${short}</div></div></div>
     ${skala}
     ${why}${befZeile}</div>`;
   return `<div class="genebox b-${sv} ${open?'open':''}" onclick="toggleGene('${key}')">
     <div class="gb-top">
-      <div class="gb-ic gi-${sv}">${helix(lvl)}</div>
+      <div class="gb-ic gi-${sv}">${mtIcon(mtStufe(g,lvl),sv)}</div>
       <div class="gb-tx"><div class="gn">${g}</div><div class="gs" style="color:${colr}">${short}</div></div>
       ${ico('chev','gchev')}
     </div>
