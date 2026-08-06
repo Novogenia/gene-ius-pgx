@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-05 · **Version:** v62 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-06 · **Version:** v63 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -58,6 +58,7 @@ bei git zu früh zurück und schlägt still fehl.
 | `tools/resplice.py` | tauscht den Datenblock zwischen den Markern in `index.html` |
 | `tools/patch_pharmcat*.py` | die angewandten Umbauten, chronologisch — dokumentieren das Wie |
 | `tools/01_*.py` … `07_*.py` | Datenpipeline (RxNorm, MED-RT, Lückenanalyse, Risikoklassen) |
+| `tools/30_rs_befunde.py` | erzeugt `rs_befunde.js` — rs-Nummern mit Studienhinweis, gegen die gelesenen Positionen geschnitten |
 | `data/*.json` | die Ergebnisse dieser Pipeline, **noch nicht in der App verdrahtet** |
 
 ### App ansehen
@@ -495,6 +496,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v60 | Ampel kommt aus dem Genotyp, nicht mehr aus `alternateDrugAvailable`. Verteilung 2.489/200/6 plus 2 „Offen"; Ziel- und Risikogene noch offen |
 | v61 | Offene Gene (6) und offene Wirkstoffe (2) ausgeblendet, Liste unter „Deine Medikamente" mehrspaltig, Genansicht mit rollenabhängiger Skala statt fester Metabolisierer-Matrix |
 | v62 | „Offen" vollständig aus der Oberfläche: Verteilungsbalken, Ampel-Legende und Abdeckungstabelle im Arztbericht |
+| v63 | Einzelpositionen mit Studienhinweis: 39 rs-Nummern aus PharmGKB gegen die gelesenen Positionen geschnitten, eigene Hinweis-Ebene ohne Ampelfarben |
 
 
 ---
@@ -868,6 +870,80 @@ Nicht angetastet: die Allel-Funktionsangabe **„Funktion nicht eindeutig"** in
 den Genkarten des Berichts. Das ist die Funktionsannotation eines einzelnen
 Allels aus der Quelle (`unbekannt`), keine Lücke unserer Analyse — das Gen
 selbst ist bestimmt.
+
+### Einzelpositionen mit Studienhinweis (ab v63)
+
+Vorgabe Daniel, 2026-08-06: rs-Nummern und Genotypen aus den Quelldaten
+aufnehmen, „auch wenn es dann keinen Metabolizer-Status gibt, einfach als
+Genotyp und ob der positiv oder negativ für die Pharmakogenetik ist" — und
+zwar über **alle** Evidenzstufen.
+
+**Herleitung** (`tools/30_rs_befunde.py` → `data/rs_befunde.js`):
+
+| Schritt | Zahl |
+|---|---|
+| rsIDs mit Genotyp-Annotation in `drug_pharmacogenetics.csv` | 1.213 |
+| davon von PharmCAT bei NA17454 gelesen | 123 |
+| davon Genotyp der Probe in der Annotationsliste | 119 |
+| davon mit einer Richtungsangabe (Rest sagt nichts aus) | **39** |
+
+Die übrigen 1.090 sind nicht gelesen und tauchen nirgends auf — sie zu zeigen
+wäre geraten.
+
+**Der Fallstrick dieser Datei.** Die Spalten `clearance` / `dosage` /
+`efficacy` / `toxicity` sind **relative Vergleiche innerhalb einer
+Annotation**, keine absoluten Befunde:
+
+```
+toxicity DECREASED = geringeres Risiko  -> gutes Ergebnis
+toxicity INCREASED = hoeheres Risiko    -> schlechtes Ergebnis
+efficacy DECREASED = schwaecheres Ansprechen
+efficacy INCREASED = besseres Ansprechen
+clearance/dosage   = veraenderter Abbau, weder gut noch schlecht
+```
+
+Wer „nicht NORMAL = auffällig" liest, macht aus dem DPYD-Wildtyp
+(rs3918290 C/C, `toxicity DECREASED`) einen Toxizitätsbefund — ausgerechnet an
+der sicherheitskritischsten Position des Panels. Beim ersten Durchlauf genau so
+passiert; NUDT15 und SLCO1B1 waren gleich mit betroffen.
+
+**Die Richtung gilt je Wirkstoff, nie je Gen.** SLCO1B1 rs4149056 T/T ist die
+normale Funktion — die Genkarte sagt das zu Recht — und steht trotzdem bei
+Cyclophosphamid und Docetaxel als ungünstiges Signal. Es wird deshalb nirgends
+ein Gen-Verdikt gebildet.
+
+**Wie „möglich, nicht garantiert" transportiert wird** — vier Mittel, die
+zusammenspielen:
+
+1. **Eigene Farbwelt.** Die Ampelfarben sind für die graduierte Bewertung
+   reserviert und tauchen hier nicht auf. Zeilen sind neutral umrandet statt
+   gefüllt, die Richtung trägt ein Pfeil und das Wort. Ein Stufe-3-Befund zu
+   Koffein kann damit gar nicht wie ein ALARM aussehen.
+2. **Beobachtungsmodus im Wortlaut.** „Höheres Risiko **beobachtet bei**
+   Isoniazid" statt „Höheres Risiko bei Isoniazid".
+3. **Evidenzpunkte auf jeder Zeile**, dieselbe `.dots`-Komponente wie bei den
+   Wirkstoffkarten: 1A füllt vier Punkte, Stufe 3 zwei, Stufe 4 einen. Ein
+   schwacher Befund *sieht* schwach aus — deshalb können alle Evidenzstufen
+   mit, ohne dass Rauschen entsteht. Die Stufen 3 und 4 (22 Positionen) stehen
+   zusätzlich hinter einem Aufklapper.
+4. **Strukturelle Zusicherung:** diese Ebene fasst die Ampel nicht an. Kein
+   Befund von hier verändert je eine Wirkstoffkarte. Das ist der Unterschied
+   zwischen Hinweis und Bewertung — und eine Eigenschaft des Codes, nicht der
+   Formulierung.
+
+**Nebeneffekt:** drei seit v61 ausgeblendete Gene haben einen belegten
+Genotyp und erscheinen hier wieder — bewusst **ohne** Genkarte und ohne Skala,
+weil es dort keinen Metabolisierer-Status gibt:
+
+| rsID | Gen | Genotyp | Evidenz | Signal |
+|---|---|---|---|---|
+| rs12979860 | IFNL3 | C/T | 1A | schwächeres Ansprechen auf 7 Hepatitis-C-Wirkstoffe |
+| rs2108622 | CYP4F2 | C/T | 1A | schwächeres Ansprechen auf Aspirin |
+| rs887829 | UGT1A1 | C/T | 3 | höheres Risiko bei Risperidon, besseres Ansprechen auf Deferasirox |
+
+Vier Positionen ließen sich notationsbedingt nicht zuordnen und bleiben außen
+vor: zwei hemizygote G6PD-Calls (männliche Probe, ein Allel), ein RYR1-Indel
+und ein CYP3A5-Indel.
 
 ### Vierter Zustand „Offen"
 
