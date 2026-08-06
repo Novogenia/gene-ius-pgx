@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-06 · **Version:** v67 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-06 · **Version:** v68 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -95,6 +95,14 @@ Voraussetzungen auf dem neuen Rechner:
 1. **Nichts erfinden.** Kein geratener Genotyp, keine erfundene Zahl. Eine
    erfundene Variante ist gefährlich — darauf würde eine Dosierung
    aufgebaut.
+   > ⚠️ **Ausgesetzt seit v68 (2026-08-06), auf Ansage von Daniel.** Der
+   > Clickdummy enthält **842 erfundene Genotypen in 482 Genen**, damit sich
+   > die Ansicht mit vollständigen Rohdaten zeigen lässt. Sie sind an vier
+   > Stellen als Demo gekennzeichnet — siehe §11, „Demo-Genotypen". Die 611
+   > echten PharmCAT-Positionen sind unberührt. **Vor jeder Verwendung außerhalb
+   > der internen Abstimmung müssen die Demo-Daten raus**: `data/dummy_genotypen.js`
+   > löschen und `patch_pharmcat17.py` nicht anwenden, oder `DUMMY_AKTIV`
+   > auf `false` setzen.
    *Präzisiert am 2026-08-05 (v61/v62):* Was PharmCAT nicht ruft, wird
    **nicht mehr angezeigt** (Vorgabe Daniel) — statt sichtbar „nicht
    bestimmbar" zu bleiben. Das gilt seit v62 auch für den Arztbericht. Das
@@ -501,6 +509,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v65 | rs-Befunde liegen in der Genkarte und färben sie: negativ + Evidenz 1A → rot, negativ + schwächere Evidenz → gelb |
 | v66 | rs-Befunde färben nur noch gelb, nie rot; Kennzeichnung heißt auffällig/unauffällig. Rot vergibt allein der Phänotyp |
 | v67 | Kugelsymbol für den Metabolisierertyp auf der Genkarte statt der DNA-Helix |
+| v68 | **Demo-Genotypen**: 842 erfundene Positionen in 482 Genen, 488 Genkarten statt 20. Regel 1 für den Clickdummy ausgesetzt |
 
 
 ---
@@ -948,6 +957,68 @@ weil es dort keinen Metabolisierer-Status gibt:
 Vier Positionen ließen sich notationsbedingt nicht zuordnen und bleiben außen
 vor: zwei hemizygote G6PD-Calls (männliche Probe, ein Allel), ein RYR1-Indel
 und ein CYP3A5-Indel.
+
+### Demo-Genotypen (ab v68) — KEINE MESSWERTE
+
+Vorgabe Daniel, 2026-08-06: „Mal einen Dummy-Genotyp und gehe davon aus, dass
+du diese in Zukunft über als Input für die App bekommst."
+
+**Damit ist Regel 1 für den Clickdummy ausgesetzt.** Warum es überhaupt nötig
+war: die App zeigte 20 Genkarten, weil PharmCAT nur sein eigenes Panel ausgibt.
+Die Annotationsdaten kennen dagegen 547 Gene. Ohne Rohdaten der Probe gibt es
+für die anderen keinen Genotyp — siehe „Warum es keine Positionskarten gibt".
+
+**Erzeugung** (`tools/31_dummy_genotypen.py` → `data/dummy_genotypen.js`):
+
+| Schritt | Zahl |
+|---|---|
+| annotierte rsIDs ohne echten Wert | 922 |
+| davon mit eindeutigem Gen und Evidenzstufe | **842** |
+| verteilt auf | **482 Gene** |
+| davon mit ungünstigem Signal | 349 Positionen in 185 Genen |
+
+Der Genotyp wird **nur aus den annotierten Genotypen** der jeweiligen rsID
+gewählt und **deterministisch** über einen SHA-256-Hash der rsID — derselbe Lauf
+ergibt immer dasselbe Profil, Screenshots bleiben reproduzierbar. Gewichtung
+`ANTEIL_GUENSTIG = 92 %` zugunsten des günstigsten Kandidaten; gemessen:
+
+| Gewicht | auffällige Gene |
+|---|---|
+| 72 % | 247 von 482 (51 %) |
+| 85 % | 206 von 482 (43 %) |
+| **92 %** | **185 von 482 (38 %)** ← eingestellt |
+
+Gene mit vielen Positionen sammeln fast zwangsläufig ein ungünstiges Signal
+ein, deshalb liegt der Genanteil deutlich über dem Positionsanteil.
+
+**Vier Stellen machen die Fiktion sichtbar:**
+
+1. **Daten** — jede Demo-Position trägt ein sechstes Feld `1`, `istDemo()`
+   fragt es ab.
+2. **Genkarte** — Statuszeile „Demo-Genotyp — kein gemessener Wert", und
+   aufgeklappt der Satz „Die N Positionen unten sind **erfunden**".
+3. **Position** — jede erfundene Zeile trägt eine `Demo`-Pille.
+4. **Genansicht** — Hinweisbanner über dem Raster, plus getrennte Zählung
+   „20 gemessene Gene und 468 mit Demo-Genotyp".
+
+**Die 611 echten PharmCAT-Positionen sind unberührt** und tragen keine
+Markierung — sie sind echt. Ein Gen kann beides haben: ABCG2 zeigt 1 gemessene
+und 5 erfundene Positionen, letztere einzeln markiert. Deshalb sitzt die
+Kennzeichnung an der Position, nicht pauschal an der Karte.
+
+**Zusammenführung:** `D_DRUGS` wird an `R_DRUGS` angehängt und die
+Wirkstoffindizes der Demo-Positionen um den Versatz verschoben. Danach sind
+Demo- und Echtpositionen strukturgleich und laufen durch dieselbe Darstellung.
+Rücken echte Werte nach, fällt nur der Generator weg — an der App ändert sich
+nichts.
+
+**Leistung:** 488 Karten, 120 vorab, Nachladeknopf für den Rest
+(Fallstrick 6). Erstes Rendern rund 760 ms.
+
+**Abschalten:** `data/dummy_genotypen.js` löschen und `patch_pharmcat17.py`
+nicht anwenden, oder in der Datei `DUMMY_AKTIV` auf `false` setzen — dann
+verschwindet das Banner, die Demo-Gene bleiben aber in `RS_BY`. Sauber ist der
+erste Weg.
 
 ### Kugelsymbol für den Metabolisierertyp (ab v67)
 
