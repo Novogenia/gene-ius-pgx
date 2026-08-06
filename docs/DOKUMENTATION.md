@@ -1,6 +1,13 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-06 · **Version:** v69 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
+**Stand:** 2026-08-06 · **Version:** v70 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
+
+> ⚠️ **Die Demo-Genotypen sind in der Oberfläche seit v70 nicht mehr als solche
+> gekennzeichnet** (Ansage Daniel, 2026-08-06 — sie sollen wie reale Genotypen
+> wirken). Welche Werte erfunden sind, steht nur noch hier, im Kopf von
+> `data/dummy_genotypen.js` und in der Git-Historie. **Vor jeder Verwendung, bei
+> der jemand die Zahlen für Messwerte halten könnte, müssen sie raus** — siehe
+> §11, „Demo-Genotypen".
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -511,6 +518,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v67 | Kugelsymbol für den Metabolisierertyp auf der Genkarte statt der DNA-Helix |
 | v68 | **Demo-Genotypen**: 842 erfundene Positionen in 482 Genen, 488 Genkarten statt 20. Regel 1 für den Clickdummy ausgesetzt |
 | v69 | Demo-Daten färben kein gemessenes Gen mehr (CYP3A4, DPYD waren betroffen); Demo-Hinweis auch auf der Startseite; Startseite zählt alle 488 Gene |
+| v70 | Demo-Kennzeichnung aus der Oberfläche entfernt; Wirkstoffkarte zeigt Markennamen statt Anwendungsgebiet (`handelsnamen.json` verdrahtet, 1.220 statt 35); links und rechts unter „Deine Medikamente" identisch |
 
 
 ---
@@ -992,15 +1000,31 @@ ergibt immer dasselbe Profil, Screenshots bleiben reproduzierbar. Gewichtung
 Gene mit vielen Positionen sammeln fast zwangsläufig ein ungünstiges Signal
 ein, deshalb liegt der Genanteil deutlich über dem Positionsanteil.
 
-**Vier Stellen machen die Fiktion sichtbar:**
+**Kennzeichnung in der Oberfläche: seit v70 keine.**
 
-1. **Daten** — jede Demo-Position trägt ein sechstes Feld `1`, `istDemo()`
-   fragt es ab.
-2. **Genkarte** — Statuszeile „Demo-Genotyp — kein gemessener Wert", und
-   aufgeklappt der Satz „Die N Positionen unten sind **erfunden**".
-3. **Position** — jede erfundene Zeile trägt eine `Demo`-Pille.
-4. **Genansicht** — Hinweisbanner über dem Raster, plus getrennte Zählung
-   „20 gemessene Gene und 468 mit Demo-Genotyp".
+v68/v69 hatten die Fiktion an vier Stellen sichtbar gemacht — Banner in
+Genansicht und Startseite, `Demo`-Pille an jeder erfundenen Position,
+Statuszeile „Demo-Genotyp — kein gemessener Wert", getrennte Zählung. **Alles
+entfernt auf Ansage Daniel, 2026-08-06:** „Entferne jegliche Referenz, dass es
+ein Demo-Genotyp wäre. Es sollte einfach ein realistischer Genotyp sein, der
+hier dargestellt wird."
+
+Nachvollziehbar bleibt die Herkunft an drei Stellen, die keine Anzeige sind:
+
+1. **Dieser Abschnitt** und der Warnkasten im Kopf der Datei.
+2. **Der Kopfkommentar von `data/dummy_genotypen.js`** — „DEMO-GENOTYPEN,
+   KEINE MESSWERTE".
+3. **Die Git-Historie** — v68 und v70 beschreiben es im Commit.
+
+**Im Code bleibt `istDemo()` in Kraft.** Daran hängt die Regel aus v69, dass
+erfundene Positionen kein gemessenes Gen färben — das ist eine
+Korrektheitseigenschaft, kein Etikett, und sie darf nicht mit der Beschriftung
+verschwinden. Das Patch-Skript prüft mit, dass die Funktion noch existiert.
+
+Was in der Oberfläche stehen bleibt, ist der App-Hinweis in der Fußzeile:
+„Clickdummy · Demo-Daten (fiktive Person „Lisa M.")". Der stammt aus der
+Anfangszeit, meint die Persona und nicht die Genotypen, und wurde nicht
+angefasst.
 
 **Die 611 echten PharmCAT-Positionen sind unberührt** und tragen keine
 Markierung — sie sind echt. Ein Gen kann beides haben: ABCG2 zeigt 1 gemessene
@@ -1057,6 +1081,43 @@ nichts.
 nicht anwenden, oder in der Datei `DUMMY_AKTIV` auf `false` setzen — dann
 verschwindet das Banner, die Demo-Gene bleiben aber in `RS_BY`. Sauber ist der
 erste Weg.
+
+### Wirkstoffkarte: Markennamen statt Anwendungsgebiet (ab v70)
+
+Vorgabe Daniel, 2026-08-06: „Entferne den Text ‚Anwendung' und dann wofür auch
+immer es sein sollte, und liste stattdessen die Markennamen auf, aber entferne
+auch den Text ‚Markennamen'."
+
+Wörtlich umgesetzt wäre die Zeile bei **2.662 von 2.697** Karten leer gewesen —
+im Wirkstoff-Datenblock haben nur 35 Wirkstoffe Markennamen. Deshalb ist
+zugleich `data/handelsnamen.json` verdrahtet worden (offener Punkt 2 in §0):
+1.216 Einträge, seit der Datenpipeline gebaut, nie angeschlossen. Zusammen mit
+dem Datenblock haben jetzt **1.220 von 2.697** Wirkstoffen einen Markennamen,
+1.477 zeigen eine leere Zeile. Die Kartenhöhe bleibt gleich (73 px), das Raster
+springt nicht.
+
+Dubletten der Quelle (`abarelix → Plenaxis, Plenaxis`) werden beim
+Zusammenführen entfernt. `brandsOf()` bevorzugt den Datenblock und fällt auf
+die Zusatzquelle zurück.
+
+> **Es sind überwiegend US-Marken** aus openFDA — Ziagen, ReoPro, Zytiga,
+> Precose. Coumadin, Lopressor und Ultram fehlen dort, für DACH gibt es keine
+> freie Quelle (§8). Sie werden **ohne Kennzeichnung** angezeigt, weil
+> ausdrücklich keine Beschriftung gewünscht war. Bewusste Entscheidung, kein
+> Versehen — bei Bedarf ist es eine Zeile in `brandsOf()`.
+
+### Links wie rechts unter „Deine Medikamente" (ab v70)
+
+Die Karten waren schon formgleich — 352×80, dieselbe `cardHtml`-Komponente. Der
+sichtbare Unterschied war die **Farbe**: rechts rechnet `overallSev()` die
+Wechselwirkungen mit der eigenen Liste ein, links stand nur `listSev()` mit der
+Genetik. Clopidogrel war links grün und rechts rot — dasselbe Medikament, zwei
+Ampeln.
+
+Die linke Spalte rendert in dieser Ansicht jetzt mit demselben `sevPool`.
+Nachgemessen: gleiche Klasse `c-crit`, gleiches Label ALARM, gleiche
+Info-Boxen, gleiche Markennamen. Nebeneffekt und erwünscht — ein Medikament,
+das mit der eigenen Liste kollidiert, zeigt das schon in der Suche.
 
 ### Kugelsymbol für den Metabolisierertyp (ab v67)
 
