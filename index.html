@@ -2505,13 +2505,12 @@ function rsGeneHtml(g,liste){
    Guenstige Befunde und reine Abbau-Hinweise faerben nicht. */
 function rsGeneSev(g){
   const l=RS_BY[g]; if(!l)return null;
-  let sev=null;
-  l.forEach(p=>{
-    if(!p[4].some(x=>x[0]===1||x[0]===3))return;
-    if(RSRANG[p[3]]<=1)sev='crit';
-    else if(sev!=='crit')sev='warn';
-  });
-  return sev;
+  /* Ein rs-Befund faerbt hoechstens gelb, nie rot (Vorgabe Daniel,
+     2026-08-06: "unauffaellig oder auffaellig, in Gruen oder Gelb"). Rot
+     vergibt nur der Phaenotyp selbst. Die Evidenzstufe faellt als Farbgeber
+     weg - sie steht weiter als Punkte an jeder aufgeklappten rs-Zeile, und
+     genau dort gehoert die Abstufung hin. */
+  return l.some(p=>p[4].some(x=>x[0]===1||x[0]===3))?'warn':'ok';
 }
 /* Die Stufe eines Gens: die schaerfere aus Phaenotyp und rs-Befund.
    EINE Stelle, weil Genkarte und Arztbericht sonst auseinanderlaufen -
@@ -2520,7 +2519,12 @@ function rsGeneSev(g){
 const GSEVR={ok:0,ultra:0,none:0,unk:1,warn:2,crit:3};
 function geneSev(g){
   const p=PHENO[g]; if(!p)return 'none';
-  const psv=GSEV[p.lvl]||'unk', rsv=rsGeneSev(g);
+  const rsv=rsGeneSev(g);
+  /* Ohne Metabolisierer-Status traegt der Befund die Karte allein: gruen,
+     wenn nichts Negatives dabei ist, sonst gelb. Kein Grau - das war der
+     "Offen"-Zustand, den v62 entfernt hat. */
+  if(p.lvl<0)return rsv||'ok';
+  const psv=GSEV[p.lvl]||'unk';
   return (rsv&&GSEVR[rsv]>GSEVR[psv])?rsv:psv;
 }
 /* Positionen eines Gens ohne eigenen Befund - der Vollstaendigkeit halber,
@@ -2849,7 +2853,11 @@ function geneCardHtml(g,opts){
      `why` und `skala` stehen, die beide darauf zugreifen - const kennt kein
      Hoisting (Fallstrick 5). */
   const nurPos=lvl<0&&PGENE[g]&&(PGENE[g].var||[]).length;
-  const short=nurPos?'Nur Einzelpositionen':lvlLabel(g).t;
+  /* Ohne Metabolisierer-Status gibt es keine andere Aussage als
+     auffaellig/unauffaellig - genau danach wurde gefragt. */
+  const short=nurPos
+    ? ((RS_BY[g]||[]).some(p=>rsNeg(p[4]))?'Auff&auml;llig':'Unauff&auml;llig')
+    : lvlLabel(g).t;
   const colr=sv==='ultra'?'#0b6b36':sv==='ok'?'var(--ok-t)':sv==='warn'?'var(--warn-t)'
     :sv==='unk'?'var(--unk-t)':'var(--crit-t)';
   /* Bei offenem Ergebnis gehoert der Grund auf die Karte. Ohne den steht dort
@@ -2871,10 +2879,14 @@ function geneCardHtml(g,opts){
      faerbt, ohne die Detailzeilen schon aufzuklappen. */
   const nBef=(RS_BY[g]||[]).filter(p=>rsNeg(p[4])).length;
   const nGes=(RS_BY[g]||[]).length;
+  /* Bei Genen ohne Metabolisierer-Status traegt schon die Statuszeile
+     "Auffaellig"/"Unauffaellig" - dann nur die Zahl, sonst steht es zweimal
+     auf derselben Karte. */
   const befZeile=nGes
     ? `<div class="gbef ${nBef?'neg':''}">${ico(nBef?'st-excl':'st-ok','',15)}
-        ${nBef?`${nBef} Position${nBef===1?'':'en'} mit negativem Befund`
-              :`${nGes} Position${nGes===1?'':'en'} mit Studienhinweis`}</div>`
+        ${nurPos?`${nGes} gepr&uuml;fte Position${nGes===1?'':'en'}${nBef?`, ${nBef} mit Befund`:''}`
+          :nBef?`Auff&auml;llig &mdash; ${nBef} Position${nBef===1?'':'en'} mit Befund`
+               :`Unauff&auml;llig &mdash; ${nGes} gepr&uuml;fte Position${nGes===1?'':'en'}`}</div>`
     : '';
   const key='gene:'+g+(opts.ctx||''), open=openGenes[key];
   if(opts.flat)return `<div class="genebox flat b-${sv}">

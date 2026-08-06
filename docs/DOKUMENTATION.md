@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-06 · **Version:** v65 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-06 · **Version:** v66 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -499,6 +499,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v63 | Einzelpositionen mit Studienhinweis: 39 rs-Nummern aus PharmGKB gegen die gelesenen Positionen geschnitten, eigene Hinweis-Ebene ohne Ampelfarben |
 | v64 | *verworfen* — jede Position als eigene Karte (611 Stück), rs-fokussiert statt gen-fokussiert |
 | v65 | rs-Befunde liegen in der Genkarte und färben sie: negativ + Evidenz 1A → rot, negativ + schwächere Evidenz → gelb |
+| v66 | rs-Befunde färben nur noch gelb, nie rot; Kennzeichnung heißt auffällig/unauffällig. Rot vergibt allein der Phänotyp |
 
 
 ---
@@ -964,47 +965,58 @@ Genotyp. Damit entfallen beide Sonderebenen — das Hinweis-Band aus v63
 (`rsBefundeHtml`) und die aufklappbare Variantenliste (`variantenHtml`).
 Nichts geht verloren, alles sitzt am Gen.
 
-#### Die Farbregel
+#### Die Farbregel (ab v66)
 
 Bis v63 galt: die Hinweis-Ebene fasst die Bewertung nie an. **Diese Zusicherung
-ist ab v65 aufgehoben**, auf ausdrückliche Ansage. Neu:
+ist seit v65 aufgehoben**, auf ausdrückliche Ansage. v66 begrenzt, wie weit sie
+gehen darf — Vorgabe Daniel: „unauffällig oder auffällig, in Grün oder Gelb".
 
 | Befund | Stufe |
 |---|---|
-| negativ, Evidenz 1A/1B | **rot** |
-| negativ, Evidenz 2A–4 | **gelb** |
-| kein negativer Befund | Farbe wie bisher aus dem Phänotyp |
+| mindestens ein negativer Befund | **gelb** — „Auffällig" |
+| nur günstige oder neutrale Befunde | **grün** — „Unauffällig" |
+| kein Befund | Farbe wie bisher aus dem Phänotyp |
 
 Negativ heißt *höheres Risiko* oder *schwächeres Ansprechen*. Günstige Befunde
 und reine Abbau-Hinweise färben nicht. Die Karte nimmt immer die schärfere der
 beiden Stufen — heruntergestuft wird nie.
 
-Die Evidenzstufe entscheidet zwischen Gelb und Rot, weil sie die einzige Größe
-in den Daten ist, die *belegt* von *beobachtet* trennt. Damit bleibt der
-Unterschied erhalten, den in v63 die Punkte getragen haben.
+**Rot vergibt allein der Phänotyp.** Ein rs-Befund kommt nie über Gelb hinaus.
+Bei NA17454 bleibt deshalb genau ein Gen rot: **ABCG2** mit „Stark verminderte
+Transportfunktion" — ein Transporterbefund, keine rs-Assoziation. Wenn auch das
+weg soll, ist es eine Zeile in `geneSev()`.
+
+Die Evidenzstufe fällt damit als Farbgeber weg (v65 hatte 1A auf Rot gesetzt).
+Sie bleibt vollständig erhalten, wo sie hingehört: als Punkte an jeder
+aufgeklappten rs-Zeile. Genau das meint „nur beim Ausklappen sieht man die
+RS-Nummern".
+
+Gene ohne Metabolisierer-Status (CYP4F2, IFNL3, UGT1A1) hängen allein am
+Befund: grün, wenn nichts Negatives dabei ist, sonst gelb. Kein Grau — das war
+der „Offen"-Zustand, den v62 entfernt hat. Ihre Statuszeile heißt entsprechend
+„Auffällig" bzw. „Unauffällig".
 
 `geneSev()` ist die einzige Stelle, an der das gerechnet wird — Genkarte und
 Arztbericht greifen beide darauf zu. In der ersten Fassung tat das nur die
 Karte, dann stand ein gelber Berichtsrahmen um eine rote Karte.
 
-Ergebnis bei NA17454 — **6 rot, 6 gelb, 7 grün, 1 ultraschnell**:
+Ergebnis bei NA17454 — **1 rot, 11 gelb, 7 grün, 1 ultraschnell**:
 
 | | Gene |
 |---|---|
-| rot durch 1A-Befund | ABCG2, CYP2B6, CYP4F2, IFNL3, SLCO1B1, VKORC1 |
-| gelb durch schwächere Evidenz | CYP2C19, CYP3A5, NAT2, RYR1, UGT1A1 |
+| rot (Phänotyp) | ABCG2 |
+| gelb, davon durch rs-Befund | CYP2B6, CYP2C19, CYP3A5, CYP4F2, IFNL3, NAT2, RYR1, SLCO1B1, UGT1A1, VKORC1 |
+| gelb aus dem Phänotyp | CYP2C9 |
 
-**Zwei davon sind erklärungsbedürftig:**
+Damit löst sich der Fall, der in v65 erklärungsbedürftig war: **SLCO1B1** meldet
+„Normale Transportfunktion" und stand trotzdem auf Rot. Jetzt gelb — auffällig,
+aber nicht alarmierend. Die Karte sagt weiterhin beides; das ist kein
+Widerspruch, sondern zwei Aussagen: der Phänotyp beschreibt die
+Transportfunktion, der Befund eine beobachtete Assoziation.
 
-- **SLCO1B1** meldet „Normale Transportfunktion" und wird trotzdem **rot**,
-  weil rs4149056 T/T bei Cyclophosphamid, Docetaxel, Fluorouracil und
-  Mycophenolat als ungünstiges Signal geführt ist (1A). Die Karte sagt beides —
-  das ist kein Widerspruch, sondern zwei verschiedene Aussagen: der Phänotyp
-  beschreibt die Transportfunktion, der Befund eine beobachtete Assoziation.
-- **RYR1** meldet „Keine Risikovariante gefunden" und wird **gelb** wegen
-  rs186983396 C/C — schwächeres Ansprechen auf **Koffein**, Evidenzstufe 3.
-  Formal korrekt, inhaltlich dünn. Wenn das stört, ist die Schwelle eine Zeile:
-  in `rsGeneSev()` die Stufen 3 und 4 nicht mehr färben lassen.
+Offen bleibt **RYR1**: „Keine Risikovariante gefunden" und trotzdem gelb wegen
+rs186983396 C/C — schwächeres Ansprechen auf **Koffein**, Evidenzstufe 3.
+Formal korrekt, inhaltlich dünn. Die Schwelle ist eine Zeile in `rsGeneSev()`.
 
 #### Warum es keine Positionskarten gibt
 
