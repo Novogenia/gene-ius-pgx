@@ -217,6 +217,25 @@
   .genebox.b-unk .gscale .gs-seg{background:rgba(255,255,255,.82)}
   .gi-unk{background:var(--unk-bg);color:var(--unk-t)}
   .wsleg.h-unk .lr1,.wsleg.h-unk .lr1 svg{color:var(--unk-t)} .wsleg.h-unk .n{background:var(--unk)}
+  /* Positionskarte - dieselbe Huelle wie die Genkarte (.genebox), damit
+     rs-Nummern nicht anders gehandhabt aussehen als Gene. */
+  .genebox.b-plain{border-color:var(--line2)}
+  .gi-plain{background:var(--panel);color:var(--muted)}
+  .pc-gen{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;
+    padding:9px 0 0;border-top:1px solid var(--line);margin-top:10px}
+  .pc-gen .pc-gn{font-weight:800;letter-spacing:.01em}
+  .pc-gt{font-family:var(--mono,monospace);background:var(--panel);border:1.5px solid var(--line2);
+    border-radius:7px;padding:1px 7px;font-weight:700;font-size:12px}
+  .pc-rolle{color:var(--faint);font-size:11.5px;width:100%}
+  .pc-sig{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.5;margin-top:9px}
+  .pc-sig .rsi{flex:none;width:16px;height:16px;color:var(--muted);margin-top:1px}
+  .pc-sig.neg .rsi{color:var(--plum)}
+  .pc-sig b{font-weight:750}
+  .pc-sig span{color:var(--muted)}
+  .pc-ev{display:flex;align-items:center;gap:7px;margin-top:10px;font-size:11px;color:var(--faint)}
+  .pc-ev b{font-weight:700;color:var(--muted);font-size:11px}
+  .pc-none{font-size:12.5px;color:var(--faint);margin-top:9px}
+  .genecount{font-size:12.5px;color:var(--muted);font-weight:700;margin:2px 0 12px}
   /* Einzelpositionen mit Studienhinweis. Bewusst OHNE Ampelfarben - das
      ist eine Beobachtung, keine Bewertung, und darf nie wie eine aussehen. */
   .rsband{background:#fff;border-radius:18px;box-shadow:var(--sh);padding:22px 24px;margin-top:22px}
@@ -2475,9 +2494,7 @@ function rsGeneHtml(g,liste){
     <div class="rsg-h"><span class="rsg-n">${g}</span><span class="rsg-sub">${sub}</span></div>
     ${liste.map(rsPosHtml).join('')}</div>`;
 }
-var rsOffen=false;
-function toggleRs(){rsOffen=!rsOffen;render();}
-function rsBefundeHtml(){
+function rsBefundeHtml_UNUSED(){
   const gene=Object.keys(RS_BY);
   if(!gene.length)return '';
   const stark=[], schwach=[];
@@ -2532,12 +2549,96 @@ function variantenHtml(){
       sie, weil sie belegen, was gepr&uuml;ft wurde.${ihelp('offen')}</p>
     <div class="vlist">${bloecke}</div>`;
 }
+/* ---- Positionen als Karten -----------------------------------------
+   Eine gelesene Position ist eine Karte wie jede Genkarte. Der Genotyp
+   steht aus dem PharmCAT-Lauf fest; ob dazu etwas veroeffentlicht ist,
+   entscheidet R_POS. Ist nichts hinterlegt, sagt die Karte genau das -
+   das ist eine Aussage ueber die Literatur, nicht ueber unsere Analyse. */
+const RS_SIG={};
+R_POS.forEach(p=>{RS_SIG[p[0]]=p;});
+const POS_BY={};
+P_GENES.forEach(g=>{(g.var||[]).forEach(v=>{
+  (POS_BY[g.g]=POS_BY[g.g]||[]).push({rs:v[0],gt:v[1],gen:g.g,sig:RS_SIG[v[0]]||null});});});
+function posNeg(p){return !!p.sig&&p.sig[4].some(x=>x[0]===1||x[0]===3);}
+function posSev(p){
+  if(!p.sig)return 'plain';
+  if(posNeg(p))return 'warn';
+  if(p.sig[4].some(x=>x[0]===2||x[0]===4))return 'ok';
+  return 'plain';
+}
+/* Ueberschrift der Karte: das schaerfste Signal im Wortlaut */
+function posKurz(p){
+  if(!p.sig)return 'Genotyp bestimmt';
+  const ord=[1,3,5,4,2];
+  for(const c of ord){ const t=p.sig[4].find(x=>x[0]===c); if(t)return R_RICHT[c][0]; }
+  return 'Genotyp bestimmt';
+}
+function posCardHtml(p){
+  const sv=posSev(p), rs=/^rs\d+$/.test(p.rs);
+  const colr=sv==='ok'?'var(--ok-t)':sv==='warn'?'var(--warn-t)':'var(--muted)';
+  const ph=PHENO[p.gen];
+  const zeilen=p.sig?p.sig[4].slice()
+    .sort((a,b)=>(a[0]===1||a[0]===3?0:1)-(b[0]===1||b[0]===3?0:1))
+    .map(([code,idx])=>{
+      const r=R_RICHT[code]||['ver&auml;ndert','s-up'];
+      return `<div class="pc-sig ${(code===1||code===3)?'neg':''}">${ico(r[1],'rsi',16)}
+        <div><b>${r[0]}</b> <span>beobachtet bei ${idx.map(i=>R_DRUGS[i]).join(', ')}</span></div></div>`;
+    }).join(''):'';
+  return `<div class="genebox b-${sv}">
+    <div class="gb-top">
+      <div class="gb-ic gi-${sv}">${ico('n-dna','',22)}</div>
+      <div class="gb-tx">
+        <div class="gn" style="font-family:var(--mono,monospace)">${rs
+          ?`<a href="https://www.ncbi.nlm.nih.gov/snp/${p.rs}" target="_blank" rel="noopener"
+             onclick="event.stopPropagation()" style="color:inherit">${p.rs}</a>`:p.rs}</div>
+        <div class="gs" style="color:${colr}">${posKurz(p)}</div>
+      </div>
+    </div>
+    <div class="pc-gen"><span class="pc-gn">${p.gen}</span><span class="pc-gt">${p.gt}</span>
+      ${ph&&ph.rolle?`<span class="pc-rolle">Zust&auml;ndig f&uuml;r ${ph.rolle}</span>`:''}</div>
+    ${zeilen}
+    ${p.sig?`<div class="pc-ev">${rsDots(p.sig[3])}</div>`
+           :`<div class="pc-none">Zu dieser Stelle ist keine Ver&ouml;ffentlichung hinterlegt.</div>`}
+  </div>`;
+}
+/* Gene, die eine Karte bekommen: alle mit Ergebnis plus alle mit gelesenen
+   Positionen. Damit sind CYP4F2, IFNL3 und UGT1A1 wieder dabei - sie haben
+   keinen Metabolisierer-Status, aber belegte Positionen. */
+function geneListe(){
+  const mit=Object.keys(POS_BY);
+  const alle=Object.keys(PHENO).filter(g=>PHENO[g].lvl>=0||mit.indexOf(g)>=0);
+  return alle.sort((a,b)=>
+    GORDER.indexOf(PHENO[a].lvl)-GORDER.indexOf(PHENO[b].lvl)||a.localeCompare(b));
+}
+/* Je Gen zuerst die Genkarte, dann ihre Positionen - Befunde zuerst. */
+function genKarten(){
+  const out=[];
+  geneListe().forEach(g=>{
+    out.push(geneCardHtml(g));
+    (POS_BY[g]||[]).slice()
+      .sort((a,b)=>(posNeg(b)?1:0)-(posNeg(a)?1:0)||(b.sig?1:0)-(a.sig?1:0)
+                   ||a.rs.localeCompare(b.rs,'en',{numeric:true}))
+      .forEach(p=>out.push(posCardHtml(p)));
+  });
+  return out;
+}
+let geneLimit=150;
+function moreGene(){geneLimit+=300;render();}
 function vGene(){
   return `<div class="sec-title">Deine Gene</div>
-  <p class="sec-sub">${PATIENT}, das sind die Gene, die dar&uuml;ber entscheiden, wie du Medikamente verarbeitest. Jede Karte zeigt deine zwei Genkopien und was sie zusammen bewirken${ihelp("gene")} &mdash; anklicken f&uuml;r Klartext, Fachdetails und Quellen.${ihelp("metab")}</p>
-  <div class="genegrid">${sortedGenes().map(g=>geneCardHtml(g)).join('')}</div>
-  ${rsBefundeHtml()}
-  ${variantenHtml()}`;
+  <p class="sec-sub">${PATIENT}, das sind die Gene, die dar&uuml;ber entscheiden, wie du Medikamente
+    verarbeitest &mdash; und jede einzelne Stelle, die daf&uuml;r gelesen wurde${ihelp("gene")}. Eine Genkarte
+    zeigt deine zwei Genkopien und was sie zusammen bewirken; die Karten darunter zeigen die
+    Positionen, aus denen sich das zusammensetzt, mit deinem Genotyp und dem, was dazu
+    ver&ouml;ffentlicht ist.${ihelp("metab")}</p>
+  ${(()=>{const k=genKarten(),nG=geneListe().length,nP=k.length-nG;
+    const zeig=k.slice(0,geneLimit);
+    return `<div class="genecount">${nG} Gene und ${nP.toLocaleString('de-DE')} gelesene
+      Positionen${k.length>geneLimit?' &middot; '+geneLimit+' Karten angezeigt':''}</div>
+    <div class="genegrid">${zeig.join('')}</div>
+    ${k.length>geneLimit?`<button class="moreb" onclick="moreGene()">Weitere
+      ${Math.min(300,k.length-geneLimit)} von ${(k.length-geneLimit).toLocaleString('de-DE')}
+      anzeigen ${ico('chev','',16)}</button>`:''}`;})()}`;
 }
 /* ---- Gen-Eintrag (aufklappbar) ---- */
 function geneItemHtml(g,ctx){
@@ -2757,16 +2858,27 @@ function geneCardHtml(g,opts){
   const segs=[0,1,2,3].map(i=>`<div class="gs-seg s${i} ${i===lvl?'on':''}"></div>`).join('');
   const labs=['Langsam','Vermindert','Normal','Schnell'].map((t,i)=>
     `<span class="${i===lvl?'on':''}" title="${['Langsamer Metabolisierer (PM)','Intermedi&auml;rer Metabolisierer (IM)','Normaler Metabolisierer (NM)','Ultraschneller Metabolisierer (UM)'][i]}">${t}</span>`).join('');
-  const short=lvlLabel(g).t;
+  /* Gen ohne Metabolisierer-Status, aber mit gelesenen Positionen. Muss VOR
+     `why` und `skala` stehen, die beide darauf zugreifen - const kennt kein
+     Hoisting (Fallstrick 5). */
+  const nurPos=lvl<0&&POS_BY[g]&&POS_BY[g].length;
+  const short=nurPos?'Nur Einzelpositionen':lvlLabel(g).t;
   const colr=sv==='ultra'?'#0b6b36':sv==='ok'?'var(--ok-t)':sv==='warn'?'var(--warn-t)'
     :sv==='unk'?'var(--unk-t)':'var(--crit-t)';
   /* Bei offenem Ergebnis gehoert der Grund auf die Karte. Ohne den steht dort
      nur "Nicht bestimmbar" und der Nutzer haelt es fuer einen Anzeigefehler. */
-  const why=lvl<0?`<div class="gwhy">${gwhyText(g)}</div>`:'';
+  const why=(lvl<0&&!nurPos)?`<div class="gwhy">${gwhyText(g)}</div>`:'';
   /* Risiko-, Ziel- und HLA-Gene haben keinen Metabolisierertyp. Eine
      Metabolisierer-Skala waere dort schlicht falsch, also steht statt der
      Skala der Befund im Wortlaut. */
-  const skala=(PGENE[g]&&PGENE[g].flach)
+  /* Gene ohne Metabolisierer-Status, aber mit gelesenen Positionen: keine
+     Skala (die gibt es dort nicht) und kein "Kein Ergebnis" - der Genotyp
+     der Positionen steht fest, er ergibt nur keinen Typ. nurPos wird weiter
+     oben deklariert, weil `why` es schon braucht (TDZ, Fallstrick 5). */
+  const skala=nurPos
+    ? `<div class="gflat">${ico('n-dna','',15)} Kein Metabolisierer-Status &mdash;
+        ${POS_BY[g].length} gelesene Position${POS_BY[g].length===1?'':'en'}</div>`
+    : (PGENE[g]&&PGENE[g].flach)
     ? `<div class="gflat">${ico('st-ok','',15)} ${PGENE[g].de}</div>`
     : `<div class="gsrow"><div class="genepair">${genePair(lvl)}</div>
       <div class="gsbar"><div class="gscale">${segs}</div><div class="gs-lab">${labs}</div></div></div>`;

@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-06 · **Version:** v63 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-06 · **Version:** v64 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -497,6 +497,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v61 | Offene Gene (6) und offene Wirkstoffe (2) ausgeblendet, Liste unter „Deine Medikamente" mehrspaltig, Genansicht mit rollenabhängiger Skala statt fester Metabolisierer-Matrix |
 | v62 | „Offen" vollständig aus der Oberfläche: Verteilungsbalken, Ampel-Legende und Abdeckungstabelle im Arztbericht |
 | v63 | Einzelpositionen mit Studienhinweis: 39 rs-Nummern aus PharmGKB gegen die gelesenen Positionen geschnitten, eigene Hinweis-Ebene ohne Ampelfarben |
+| v64 | Jede gelesene Position wird eine Karte im Genkarten-Format; Hinweis-Band und Variantenliste aufgelöst. 20 Gen- und 611 Positionskarten mit Nachladen |
 
 
 ---
@@ -944,6 +945,67 @@ weil es dort keinen Metabolisierer-Status gibt:
 Vier Positionen ließen sich notationsbedingt nicht zuordnen und bleiben außen
 vor: zwei hemizygote G6PD-Calls (männliche Probe, ein Allel), ein RYR1-Indel
 und ein CYP3A5-Indel.
+
+### Positionen als Karten (ab v64)
+
+Vorgabe Daniel, 2026-08-06: „RS-Nummern als Genkarten darstellen. Das
+dazugehörige Gen sollte genauso angezeigt werden, und RS-Nummern sollten hier
+nicht separat anders gehandhabt werden."
+
+Damit fallen beide Sonderbehandlungen weg — das Hinweis-Band aus v63
+(`rsBefundeHtml`) und die aufklappbare Variantenliste (`variantenHtml`). Der
+Inhalt steckt jetzt in den Karten selbst.
+
+**Zur Erwartung „mehrere hundert Gene": Karten ja, Gene nein.** Die 611
+gelesenen Positionen verteilen sich auf **19 Gene**:
+
+| Gen | Pos. | Gen | Pos. | Gen | Pos. |
+|---|---|---|---|---|---|
+| G6PD | 146 | CYP2C19 | 29 | CYP4F2 | 4 |
+| RYR1 | 90 | SLCO1B1 | 25 | UGT1A1 | 4 |
+| DPYD | 78 | CYP2B6 | 24 | NUDT15 | 3 |
+| CFTR | 61 | NAT2 | 24 | CACNA1S | 2 |
+| CYP2C9 | 52 | CYP3A4 | 23 | ABCG2 | 1 |
+| TPMT | 38 | CYP3A5 | 5 | IFNL3 · VKORC1 | je 1 |
+
+Das Panel hat 23 Gene, mehr gibt es nicht. Die Ansicht zeigt **20 Genkarten
+und 611 Positionskarten**, zusammen 631. 94 der 611 tragen keine rs-Nummer,
+sondern eine andere Notation (Indels, HGVS) — sie werden gleich behandelt, nur
+ohne dbSNP-Link.
+
+**Reihenfolge:** je Gen zuerst die Genkarte, dann ihre Positionen, Befunde
+zuerst. So steht das dazugehörige Gen unmittelbar bei seinen Positionen.
+
+**Status einer Positionskarte**, ausschließlich aus den Daten:
+
+| Signal | Stufe |
+|---|---|
+| höheres Risiko / schwächeres Ansprechen | warn |
+| geringeres Risiko / besseres Ansprechen | ok |
+| nur veränderter Abbau | schlicht |
+| keine Annotation (572 von 611) | schlicht, „keine Veröffentlichung hinterlegt" |
+
+Der letzte Fall ist eine Aussage über die **Literatur**, nicht über unsere
+Analyse — der Genotyp steht ja auf der Karte. Deshalb ist das kein Rückfall in
+den „Offen"-Zustand, den v62 entfernt hat.
+
+Die Evidenzpunkte bleiben auf jeder Karte mit Befund. Sie sind der Grund,
+warum alle Evidenzstufen mitkönnen, ohne dass ein Stufe-3-Befund wie ein
+Leitlinienbefund aussieht.
+
+**Drei Gene bekommen wieder eine Karte**, weil sie gelesene Positionen haben:
+CYP4F2, IFNL3, UGT1A1. Ihre Karte zeigt **keine Metabolisierer-Skala** — die
+gibt es dort nicht — und **nicht** den „Kein Ergebnis"-Text aus v62, sondern
+„Nur Einzelpositionen · Kein Metabolisierer-Status — N gelesene Positionen".
+
+**Leistung:** 631 Karten auf einmal sind zu viel (Fallstrick 6). Dieselbe
+Lösung wie in der Wirkstoffliste: 150 Karten vorab, Nachladeknopf für den
+Rest. Aufbau der Kartenliste 14 ms, erstes Rendern rund 730 ms.
+
+Zwei Fallstricke beim Bau, beide schon dokumentiert und trotzdem wieder
+zugeschlagen: die TDZ bei `const` (Fallstrick 5 — `nurPos` stand hinter seiner
+ersten Verwendung, das Skript brach mit „Cannot access before initialization"
+ab) und ein Anker, der im Quelltext anders aussah als in der Anzeige.
 
 ### Vierter Zustand „Offen"
 
