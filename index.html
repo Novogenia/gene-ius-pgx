@@ -2140,8 +2140,12 @@ function vDashboard(){
       </div>`;
   /* auffaellig = weicht vom Normalen ab. Offene Gene sind NICHT auffaellig,
      die zaehlen getrennt - sonst wird eine Wissenslueke als Befund verkauft. */
-  const auff=Object.keys(PHENO).filter(g=>PHENO[g].lvl>=0&&PHENO[g].lvl!==2).length;
-  const nGene=Object.keys(PHENO).filter(g=>PHENO[g].lvl>=0).length;
+  /* Zaehlt, was die Genansicht auch zeigt - sonst stehen auf der Startseite
+     17 Gene und eine Ansicht weiter 488 Karten. auffaellig kommt aus
+     geneSev(), also derselben Stelle wie die Kartenfarbe. */
+  const gAlle=geneListe(), gZ=geneZahlen();
+  const auff=gAlle.filter(g=>{const v=geneSev(g);return v==='warn'||v==='crit';}).length;
+  const nGene=gAlle.length;
   const D=DBSTATS(), pct=n=>Math.max(1.2,(100*n/D.total)).toFixed(1);
   const nf=n=>n.toLocaleString('de-DE');
   return `<div class="hero">
@@ -2151,12 +2155,14 @@ function vDashboard(){
       K&ouml;rper diese Medikamente verarbeitet &mdash; und das gilt f&uuml;r den Rest deines Lebens,
       denn deine Gene &auml;ndern sich nicht mehr.${ihelp('pgx')}</p>
 
+    ${demoBannerHtml(true)}
     <div class="hstats">
       <div class="hstat">
         <div class="hsic">${ico('n-dna','',22)}</div>
-        <div class="hsn">${nGene}</div>
+        <div class="hsn">${nf(nGene)}</div>
         <div class="hsl">Gene ausgewertet</div>
-        <div class="hsd">die pharmakogenetisch entscheidenden Gene</div>
+        <div class="hsd">${gZ.demo?`${gZ.echt} gemessen, ${gZ.demo} mit Demo-Genotyp`
+          :'die pharmakogenetisch entscheidenden Gene'}</div>
       </div>
       <div class="hstat">
         <div class="hsic">${ico('c-search','',22)}</div>
@@ -2555,7 +2561,13 @@ function rsGeneHtml(g,liste){
    einzige Groesse in den Daten ist, die belegt von beobachtet trennt.
    Guenstige Befunde und reine Abbau-Hinweise faerben nicht. */
 function rsGeneSev(g){
-  const l=RS_BY[g]; if(!l)return null;
+  let l=RS_BY[g]; if(!l)return null;
+  /* Hat das Gen einen gemessenen Phaenotyp, zaehlen nur die echten
+     Positionen. Sonst faerbt eine erfundene Position ein gemessenes
+     Ergebnis um - genau so sind CYP3A4 und DPYD in v68 faelschlich auf
+     gelb gesprungen. Die Demo-Zeilen bleiben auf der Karte sichtbar,
+     sie entscheiden nur nichts. */
+  if(PHENO[g]){ l=l.filter(p=>!istDemo(p)); if(!l.length)return null; }
   /* Ein rs-Befund faerbt hoechstens gelb, nie rot (Vorgabe Daniel,
      2026-08-06: "unauffaellig oder auffaellig, in Gruen oder Gelb"). Rot
      vergibt nur der Phaenotyp selbst. Die Evidenzstufe faellt als Farbgeber
@@ -2684,6 +2696,20 @@ function geneListe(){
     (geneSev(b)==='warn'?1:0)-(geneSev(a)==='warn'?1:0)||a.localeCompare(b));
   return echt.concat(demo);
 }
+/* Ein Hinweis, kein Kleingedrucktes. Steht ueberall dort, wo Demo-Zahlen
+   in die Anzeige eingehen - Genansicht und Startseite. */
+function demoBannerHtml(kurz){
+  if(typeof DUMMY_AKTIV==='undefined'||!DUMMY_AKTIV)return '';
+  const z=geneZahlen();
+  return `<div class="demoband">${ico('n-warn','',20)}
+    <div class="dbt"><b>Ein Teil dieser Auswertung beruht auf Demo-Genotypen.</b>
+      Gemessen wurden <b>${z.echt} Gene</b> aus dem PharmCAT-Lauf. Die weiteren
+      <b>${z.demo} Gene</b> tragen <b>erfundene</b> Genotypen &mdash; sie zeigen, wie die
+      Ansicht mit vollst&auml;ndigen Rohdaten aussehen wird. Keine dieser Angaben ist ein
+      Messergebnis.${kurz?'':` Jede erfundene Stelle ist einzeln als
+      <span class="demopill">Demo</span> gekennzeichnet; die gemessenen Gene tragen
+      keine Demo-Werte in ihrer Bewertung.`}</div></div>`;
+}
 function geneZahlen(){
   const alle=geneListe();
   const d=alle.filter(genIstDemo).length;
@@ -2694,14 +2720,7 @@ function moreGene(){geneLimit+=240;render();}
 function vGene(){
   return `<div class="sec-title">Deine Gene</div>
   <p class="sec-sub">${PATIENT}, das sind die Gene, die dar&uuml;ber entscheiden, wie du Medikamente verarbeitest. Jede Karte zeigt deine zwei Genkopien und was sie zusammen bewirken${ihelp("gene")} &mdash; anklicken f&uuml;r Klartext, Fachdetails und Quellen.${ihelp("metab")}</p>
-  ${(typeof DUMMY_AKTIV!=='undefined'&&DUMMY_AKTIV)?`<div class="demoband">
-    ${ico('n-warn','',20)}
-    <div class="dbt"><b>Ein Teil dieser Karten beruht auf Demo-Genotypen.</b>
-      Gemessen wurden ${geneZahlen().echt} Gene aus dem PharmCAT-Lauf. Die weiteren
-      ${geneZahlen().demo} Gene tragen <b>erfundene</b> Genotypen &mdash; sie zeigen, wie die
-      Ansicht mit vollst&auml;ndigen Rohdaten aussehen wird, und sind einzeln als
-      <span class="demopill">Demo</span> gekennzeichnet. Keine dieser Angaben ist ein
-      Messergebnis.</div></div>`:''}
+  ${demoBannerHtml()}
   ${(()=>{const k=geneListe(),z=geneZahlen();
     const zeig=k.slice(0,geneLimit);
     return `<div class="genecount">${z.echt} gemessene Gene${z.demo?' und '+z.demo+' mit Demo-Genotyp':''}${

@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-06 · **Version:** v68 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
+**Stand:** 2026-08-06 · **Version:** v69 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -510,6 +510,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v66 | rs-Befunde färben nur noch gelb, nie rot; Kennzeichnung heißt auffällig/unauffällig. Rot vergibt allein der Phänotyp |
 | v67 | Kugelsymbol für den Metabolisierertyp auf der Genkarte statt der DNA-Helix |
 | v68 | **Demo-Genotypen**: 842 erfundene Positionen in 482 Genen, 488 Genkarten statt 20. Regel 1 für den Clickdummy ausgesetzt |
+| v69 | Demo-Daten färben kein gemessenes Gen mehr (CYP3A4, DPYD waren betroffen); Demo-Hinweis auch auf der Startseite; Startseite zählt alle 488 Gene |
 
 
 ---
@@ -1005,6 +1006,43 @@ ein, deshalb liegt der Genanteil deutlich über dem Positionsanteil.
 Markierung — sie sind echt. Ein Gen kann beides haben: ABCG2 zeigt 1 gemessene
 und 5 erfundene Positionen, letztere einzeln markiert. Deshalb sitzt die
 Kennzeichnung an der Position, nicht pauschal an der Karte.
+
+#### Demo-Daten färben kein gemessenes Gen (Korrektur v69)
+
+v68 hatte eine Lücke: die Stufe eines Gens kam aus **allen** seinen Positionen,
+also auch den erfundenen. Die Gegenprobe fand zwei Fälle, in denen die Fiktion
+ein gemessenes Ergebnis überschrieben hat:
+
+| Gen | echt | mit Demo | Ursache |
+|---|---|---|---|
+| CYP3A4 | grün | gelb | rs2740574 (erfunden) |
+| DPYD | grün | gelb | rs12119882 (erfunden) |
+
+Bei DPYD ist das besonders unangenehm — daran hängen Fluorouracil und
+Capecitabin.
+
+**Neue Regel:** hat ein Gen einen gemessenen Phänotyp, zählen für seine Stufe
+**nur die echten Positionen**. Die Demo-Zeilen bleiben auf der Karte sichtbar
+und einzeln markiert, entscheiden aber nichts. Reine Demo-Gene hängen weiter an
+ihren Demo-Positionen — dort ist es die einzige Aussage, und die Karte sagt das.
+
+Damit gilt: **kein gemessenes Ergebnis wird von erfundenen Daten verändert.**
+Der Arztbericht ist dadurch vollständig demo-frei — seine 17 Genkarten sind die
+gemessenen, und die Wirkstoff-Ampel kommt ohnehin aus PharmCAT und der
+Leitlinienmatrix, nie aus rs-Befunden. Das Patch-Skript prüft mit, dass der
+Bericht keine Positionsblöcke rendert.
+
+#### Wo der Hinweis steht (ab v69)
+
+v68 zeigte ihn nur unter „Deine Gene". Jetzt zusätzlich auf der **Startseite**,
+direkt über den Kennzahlen — dort zählt „Gene ausgewertet" seit v69 alle **488**
+statt 17, mit der Aufteilung „20 gemessen, 468 mit Demo-Genotyp" in der
+Unterzeile, und „Gene arbeiten anders" kommt aus `geneSev()`, also derselben
+Stelle wie die Kartenfarbe.
+
+Kein Banner in **Wirkstoffliste**, **Deine Medikamente** und **Arztbericht** —
+dort steckt keine Demo-Aussage drin. Das ist eine Zusicherung, keine
+Nachlässigkeit.
 
 **Zusammenführung:** `D_DRUGS` wird an `R_DRUGS` angehängt und die
 Wirkstoffindizes der Demo-Positionen um den Versatz verschoben. Danach sind
