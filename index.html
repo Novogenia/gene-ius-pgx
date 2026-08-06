@@ -217,6 +217,28 @@
   .genebox.b-unk .gscale .gs-seg{background:rgba(255,255,255,.82)}
   .gi-unk{background:var(--unk-bg);color:var(--unk-t)}
   .wsleg.h-unk .lr1,.wsleg.h-unk .lr1 svg{color:var(--unk-t)} .wsleg.h-unk .n{background:var(--unk)}
+  /* Befundzeile auf der Genkarte */
+  .gbef{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:750;
+    margin-top:9px;padding-top:9px;border-top:1px solid var(--line);color:var(--muted)}
+  .gbef svg{width:15px;height:15px;flex:none}
+  .gbef.neg{color:var(--plum)}
+  /* Positionsblock im aufgeklappten Teil der Genkarte */
+  .gpos{margin-top:4px}
+  .gpos-r{border:1.5px solid var(--line2);border-radius:10px;padding:8px 10px;margin-bottom:6px;background:#fff}
+  .gpos-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;margin-bottom:5px}
+  .gpos-rs{font-family:var(--mono,monospace);font-weight:700}
+  .gpos-rs a{color:var(--blue);text-decoration:none}.gpos-rs a:hover{text-decoration:underline}
+  .gpos-gt{font-family:var(--mono,monospace);background:var(--panel);border:1.5px solid var(--line2);
+    border-radius:6px;padding:0 6px;font-weight:700}
+  .gpos-ev{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--faint)}
+  .gpos-ev b{font-weight:700;color:var(--muted);font-size:11px}
+  .gpos-s{display:flex;gap:7px;align-items:flex-start;font-size:12px;line-height:1.45;margin-top:4px}
+  .gpos-s svg{width:15px;height:15px;flex:none;color:var(--muted);margin-top:1px}
+  .gpos-s.neg svg{color:var(--plum)}
+  .gpos-s b{font-weight:750}.gpos-s span{color:var(--muted)}
+  .gpos-rest{font-size:11.5px;color:var(--faint);line-height:1.7;margin-top:6px}
+  .gpos-rest code{font-family:var(--mono,monospace);background:var(--panel);border-radius:5px;
+    padding:0 5px;color:var(--muted);font-size:11.5px}
   /* Einzelpositionen mit Studienhinweis. Bewusst OHNE Ampelfarben - das
      ist eine Beobachtung, keine Bewertung, und darf nie wie eine aussehen. */
   .rsband{background:#fff;border-radius:18px;box-shadow:var(--sh);padding:22px 24px;margin-top:22px}
@@ -2261,7 +2283,7 @@ function sortedGenes(){
 }
 /* Gen im Berichtsformat: die gewohnte Genkarte links, die Erl&auml;uterung rechts */
 function geneReportCard(g){
-  const lvl=PHENO[g].lvl, sv=GSEV[lvl], gn=GENO[g];
+  const lvl=PHENO[g].lvl, sv=geneSev(g), gn=GENO[g];
   const tested=testedAlleles(g), mine=geneCopies(g).map(c=>c[0]);
   const chips=tested.map(a=>{const fn=alleleFn(g,a),c=AFNC[fn]||'warn';
     const isMine=mine.some(m=>m===a);
@@ -2475,8 +2497,68 @@ function rsGeneHtml(g,liste){
     <div class="rsg-h"><span class="rsg-n">${g}</span><span class="rsg-sub">${sub}</span></div>
     ${liste.map(rsPosHtml).join('')}</div>`;
 }
-var rsOffen=false;
-function toggleRs(){rsOffen=!rsOffen;render();}
+/* Ab v65 faerben negative Befunde die Genkarte. Die Zusicherung aus v63,
+   dass diese Ebene die Bewertung nie anfasst, ist damit aufgehoben -
+   Ansage Daniel: "Eine negative Auswirkung hat das Ganze? Gelb oder Rot
+   fahren." Die Evidenzstufe entscheidet zwischen Gelb und Rot, weil sie die
+   einzige Groesse in den Daten ist, die belegt von beobachtet trennt.
+   Guenstige Befunde und reine Abbau-Hinweise faerben nicht. */
+function rsGeneSev(g){
+  const l=RS_BY[g]; if(!l)return null;
+  let sev=null;
+  l.forEach(p=>{
+    if(!p[4].some(x=>x[0]===1||x[0]===3))return;
+    if(RSRANG[p[3]]<=1)sev='crit';
+    else if(sev!=='crit')sev='warn';
+  });
+  return sev;
+}
+/* Die Stufe eines Gens: die schaerfere aus Phaenotyp und rs-Befund.
+   EINE Stelle, weil Genkarte und Arztbericht sonst auseinanderlaufen -
+   in der ersten Fassung war der Berichtsrahmen gelb und die Karte darin
+   rot. */
+const GSEVR={ok:0,ultra:0,none:0,unk:1,warn:2,crit:3};
+function geneSev(g){
+  const p=PHENO[g]; if(!p)return 'none';
+  const psv=GSEV[p.lvl]||'unk', rsv=rsGeneSev(g);
+  return (rsv&&GSEVR[rsv]>GSEVR[psv])?rsv:psv;
+}
+/* Positionen eines Gens ohne eigenen Befund - der Vollstaendigkeit halber,
+   damit die Karte weiter belegt, was gelesen wurde. */
+function gPosRest(g){
+  const mitBefund={}; (RS_BY[g]||[]).forEach(p=>{mitBefund[p[0]]=1;});
+  const pg=PGENE[g];
+  return ((pg&&pg.var)||[]).filter(v=>!mitBefund[v[0]]);
+}
+/* Der Positionsblock im aufgeklappten Teil der Genkarte */
+function gPosHtml(g){
+  const bef=(RS_BY[g]||[]).slice().sort((a,b)=>
+    (rsNeg(b[4])?1:0)-(rsNeg(a[4])?1:0)||RSRANG[a[3]]-RSRANG[b[3]]);
+  const rest=gPosRest(g);
+  if(!bef.length&&!rest.length)return '';
+  const zeilen=bef.map(p=>{
+    const sig=p[4].slice().sort((a,b)=>(a[0]===1||a[0]===3?0:1)-(b[0]===1||b[0]===3?0:1))
+      .map(([code,idx])=>{
+        const r=R_RICHT[code]||['ver&auml;ndert','s-up'];
+        return `<div class="gpos-s ${(code===1||code===3)?'neg':''}">${ico(r[1],'',15)}
+          <div><b>${r[0]}</b> <span>beobachtet bei ${idx.map(i=>R_DRUGS[i]).join(', ')}</span></div></div>`;
+      }).join('');
+    const isRs=/^rs\d+$/.test(p[0]);
+    return `<div class="gpos-r">
+      <div class="gpos-h">
+        <span class="gpos-rs">${isRs?`<a href="https://www.ncbi.nlm.nih.gov/snp/${p[0]}"
+          target="_blank" rel="noopener">${p[0]}</a>`:p[0]}</span>
+        <span class="gpos-gt">${p[2]}</span>
+        <span class="gpos-ev">${rsDots(p[3])}</span>
+      </div>${sig}</div>`;}).join('');
+  const restHtml=rest.length
+    ? `<div class="gpos-rest">Weitere gelesene Stellen ohne hinterlegte
+        Ver&ouml;ffentlichung (${rest.length}):<br>
+        ${rest.map(v=>`<code>${v[0]} ${v[1]}</code>`).join(' ')}</div>`
+    : '';
+  return `<div class="gsec sp">Einzelne gelesene Stellen</div>
+    <div class="gpos">${zeilen}${restHtml}</div>`;
+}
 function rsBefundeHtml(){
   const gene=Object.keys(RS_BY);
   if(!gene.length)return '';
@@ -2532,12 +2614,18 @@ function variantenHtml(){
       sie, weil sie belegen, was gepr&uuml;ft wurde.${ihelp('offen')}</p>
     <div class="vlist">${bloecke}</div>`;
 }
+/* Gene mit Karte: alle mit Ergebnis plus alle mit gelesenen Positionen.
+   Damit sind CYP4F2, IFNL3 und UGT1A1 wieder dabei - sie haben keinen
+   Metabolisierer-Status, aber belegte Positionen mit Befund. */
+function geneListe(){
+  const mit={}; P_GENES.forEach(g=>{if((g.var||[]).length)mit[g.g]=1;});
+  return Object.keys(PHENO).filter(g=>PHENO[g].lvl>=0||mit[g])
+    .sort((a,b)=>GORDER.indexOf(PHENO[a].lvl)-GORDER.indexOf(PHENO[b].lvl)||a.localeCompare(b));
+}
 function vGene(){
   return `<div class="sec-title">Deine Gene</div>
   <p class="sec-sub">${PATIENT}, das sind die Gene, die dar&uuml;ber entscheiden, wie du Medikamente verarbeitest. Jede Karte zeigt deine zwei Genkopien und was sie zusammen bewirken${ihelp("gene")} &mdash; anklicken f&uuml;r Klartext, Fachdetails und Quellen.${ihelp("metab")}</p>
-  <div class="genegrid">${sortedGenes().map(g=>geneCardHtml(g)).join('')}</div>
-  ${rsBefundeHtml()}
-  ${variantenHtml()}`;
+  <div class="genegrid">${geneListe().map(g=>geneCardHtml(g)).join('')}</div>`;
 }
 /* ---- Gen-Eintrag (aufklappbar) ---- */
 function geneItemHtml(g,ctx){
@@ -2750,32 +2838,50 @@ function gwhyText(g){
 }
 function geneCardHtml(g,opts){
   opts=opts||{};
-  const has=!!PHENO[g], lvl=has?PHENO[g].lvl:null, sv=has?GSEV[lvl]:'none', gn=GENO[g];
+  const has=!!PHENO[g], lvl=has?PHENO[g].lvl:null, sv=geneSev(g), gn=GENO[g];
   if(!has)return `<div class="genebox flat"><div class="gb-top">
     <div class="gb-ic" style="background:var(--panel);opacity:.45">${helix(2)}</div>
     <div class="gb-tx"><div class="gn">${g}</div><div class="gs" style="color:var(--muted)">nicht getestet</div></div></div></div>`;
   const segs=[0,1,2,3].map(i=>`<div class="gs-seg s${i} ${i===lvl?'on':''}"></div>`).join('');
   const labs=['Langsam','Vermindert','Normal','Schnell'].map((t,i)=>
     `<span class="${i===lvl?'on':''}" title="${['Langsamer Metabolisierer (PM)','Intermedi&auml;rer Metabolisierer (IM)','Normaler Metabolisierer (NM)','Ultraschneller Metabolisierer (UM)'][i]}">${t}</span>`).join('');
-  const short=lvlLabel(g).t;
+  /* Gen ohne Metabolisierer-Status, aber mit gelesenen Positionen. Muss VOR
+     `why` und `skala` stehen, die beide darauf zugreifen - const kennt kein
+     Hoisting (Fallstrick 5). */
+  const nurPos=lvl<0&&PGENE[g]&&(PGENE[g].var||[]).length;
+  const short=nurPos?'Nur Einzelpositionen':lvlLabel(g).t;
   const colr=sv==='ultra'?'#0b6b36':sv==='ok'?'var(--ok-t)':sv==='warn'?'var(--warn-t)'
     :sv==='unk'?'var(--unk-t)':'var(--crit-t)';
   /* Bei offenem Ergebnis gehoert der Grund auf die Karte. Ohne den steht dort
      nur "Nicht bestimmbar" und der Nutzer haelt es fuer einen Anzeigefehler. */
-  const why=lvl<0?`<div class="gwhy">${gwhyText(g)}</div>`:'';
+  const why=(lvl<0&&!nurPos)?`<div class="gwhy">${gwhyText(g)}</div>`:'';
   /* Risiko-, Ziel- und HLA-Gene haben keinen Metabolisierertyp. Eine
      Metabolisierer-Skala waere dort schlicht falsch, also steht statt der
      Skala der Befund im Wortlaut. */
-  const skala=(PGENE[g]&&PGENE[g].flach)
+  /* Ohne Metabolisierer-Status keine Metabolisierer-Skala - die gibt es
+     dort nicht, und "Kein Ergebnis" hat v62 aus der Oberflaeche geworfen. */
+  const skala=nurPos
+    ? `<div class="gflat">${ico('n-dna','',15)} Kein Metabolisierer-Status &mdash;
+        ${(PGENE[g].var||[]).length} gelesene Position${(PGENE[g].var||[]).length===1?'':'en'}</div>`
+    : (PGENE[g]&&PGENE[g].flach)
     ? `<div class="gflat">${ico('st-ok','',15)} ${PGENE[g].de}</div>`
     : `<div class="gsrow"><div class="genepair">${genePair(lvl)}</div>
       <div class="gsbar"><div class="gscale">${segs}</div><div class="gs-lab">${labs}</div></div></div>`;
+  /* Befundzeile auf der Vorderseite - macht sichtbar, warum die Karte
+     faerbt, ohne die Detailzeilen schon aufzuklappen. */
+  const nBef=(RS_BY[g]||[]).filter(p=>rsNeg(p[4])).length;
+  const nGes=(RS_BY[g]||[]).length;
+  const befZeile=nGes
+    ? `<div class="gbef ${nBef?'neg':''}">${ico(nBef?'st-excl':'st-ok','',15)}
+        ${nBef?`${nBef} Position${nBef===1?'':'en'} mit negativem Befund`
+              :`${nGes} Position${nGes===1?'':'en'} mit Studienhinweis`}</div>`
+    : '';
   const key='gene:'+g+(opts.ctx||''), open=openGenes[key];
   if(opts.flat)return `<div class="genebox flat b-${sv}">
     <div class="gb-top"><div class="gb-ic gi-${sv}">${helix(lvl)}</div>
       <div class="gb-tx"><div class="gn">${g}</div><div class="gs" style="color:${colr}">${short}</div></div></div>
     ${skala}
-    ${why}</div>`;
+    ${why}${befZeile}</div>`;
   return `<div class="genebox b-${sv} ${open?'open':''}" onclick="toggleGene('${key}')">
     <div class="gb-top">
       <div class="gb-ic gi-${sv}">${helix(lvl)}</div>
@@ -2783,12 +2889,13 @@ function geneCardHtml(g,opts){
       ${ico('chev','gchev')}
     </div>
     ${skala}
-    ${why}
+    ${why}${befZeile}
     <div class="gexp" onclick="event.stopPropagation()">
       <div class="gsec">Was heisst das f&uuml;r dich?</div>
       <div class="plain sm">${plainSentence(g)}</div>
       <div class="gsec sp">Deine zwei Genkopien</div>
       <div class="gcopies">${copiesHtml(g)}</div>
+      ${gPosHtml(g)}
       ${techToggleHtml(g,key+':tech')}
       <button class="btn btn-plum gmore" onclick="event.stopPropagation();openGene('${g}')">Alle Details und Empfehlungen ${ico('arr','',15)}</button>
     </div>

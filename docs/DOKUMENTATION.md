@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-06 · **Version:** v64 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
+**Stand:** 2026-08-06 · **Version:** v65 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil, lauffähig
 
 **Repository:** `origin` ist seit 2026-07-30 Azure DevOps —
 `https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics`
@@ -497,7 +497,8 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v61 | Offene Gene (6) und offene Wirkstoffe (2) ausgeblendet, Liste unter „Deine Medikamente" mehrspaltig, Genansicht mit rollenabhängiger Skala statt fester Metabolisierer-Matrix |
 | v62 | „Offen" vollständig aus der Oberfläche: Verteilungsbalken, Ampel-Legende und Abdeckungstabelle im Arztbericht |
 | v63 | Einzelpositionen mit Studienhinweis: 39 rs-Nummern aus PharmGKB gegen die gelesenen Positionen geschnitten, eigene Hinweis-Ebene ohne Ampelfarben |
-| v64 | Jede gelesene Position wird eine Karte im Genkarten-Format; Hinweis-Band und Variantenliste aufgelöst. 20 Gen- und 611 Positionskarten mit Nachladen |
+| v64 | *verworfen* — jede Position als eigene Karte (611 Stück), rs-fokussiert statt gen-fokussiert |
+| v65 | rs-Befunde liegen in der Genkarte und färben sie: negativ + Evidenz 1A → rot, negativ + schwächere Evidenz → gelb |
 
 
 ---
@@ -946,15 +947,66 @@ Vier Positionen ließen sich notationsbedingt nicht zuordnen und bleiben außen
 vor: zwei hemizygote G6PD-Calls (männliche Probe, ein Allel), ein RYR1-Indel
 und ein CYP3A5-Indel.
 
-### Positionen als Karten (ab v64)
+### Befunde in der Genkarte (ab v65)
 
-Vorgabe Daniel, 2026-08-06: „RS-Nummern als Genkarten darstellen. Das
-dazugehörige Gen sollte genauso angezeigt werden, und RS-Nummern sollten hier
-nicht separat anders gehandhabt werden."
+Vorgabe Daniel, 2026-08-06: „Ich möchte die Karten gen-fokussiert haben und
+nicht RS-Nummern. Eine negative Auswirkung hat das Ganze? Gelb oder Rot
+fahren."
 
-Damit fallen beide Sonderbehandlungen weg — das Hinweis-Band aus v63
-(`rsBefundeHtml`) und die aufklappbare Variantenliste (`variantenHtml`). Der
-Inhalt steckt jetzt in den Karten selbst.
+Das korrigiert v64, wo jede Position eine eigene Karte bekam — 611 Karten,
+rs-fokussiert statt gen-fokussiert. Zu wörtlich genommen;
+`tools/patch_pharmcat13.py` ist entfernt, v65 setzt auf v63 auf.
+
+**Die Karte bleibt das Gen.** Alles rs-Bezogene liegt darin: vorne eine Zeile
+„N Positionen mit negativem Befund", aufgeklappt die Signalzeilen mit
+Evidenzpunkten und danach die übrigen gelesenen Stellen als kompakte Liste mit
+Genotyp. Damit entfallen beide Sonderebenen — das Hinweis-Band aus v63
+(`rsBefundeHtml`) und die aufklappbare Variantenliste (`variantenHtml`).
+Nichts geht verloren, alles sitzt am Gen.
+
+#### Die Farbregel
+
+Bis v63 galt: die Hinweis-Ebene fasst die Bewertung nie an. **Diese Zusicherung
+ist ab v65 aufgehoben**, auf ausdrückliche Ansage. Neu:
+
+| Befund | Stufe |
+|---|---|
+| negativ, Evidenz 1A/1B | **rot** |
+| negativ, Evidenz 2A–4 | **gelb** |
+| kein negativer Befund | Farbe wie bisher aus dem Phänotyp |
+
+Negativ heißt *höheres Risiko* oder *schwächeres Ansprechen*. Günstige Befunde
+und reine Abbau-Hinweise färben nicht. Die Karte nimmt immer die schärfere der
+beiden Stufen — heruntergestuft wird nie.
+
+Die Evidenzstufe entscheidet zwischen Gelb und Rot, weil sie die einzige Größe
+in den Daten ist, die *belegt* von *beobachtet* trennt. Damit bleibt der
+Unterschied erhalten, den in v63 die Punkte getragen haben.
+
+`geneSev()` ist die einzige Stelle, an der das gerechnet wird — Genkarte und
+Arztbericht greifen beide darauf zu. In der ersten Fassung tat das nur die
+Karte, dann stand ein gelber Berichtsrahmen um eine rote Karte.
+
+Ergebnis bei NA17454 — **6 rot, 6 gelb, 7 grün, 1 ultraschnell**:
+
+| | Gene |
+|---|---|
+| rot durch 1A-Befund | ABCG2, CYP2B6, CYP4F2, IFNL3, SLCO1B1, VKORC1 |
+| gelb durch schwächere Evidenz | CYP2C19, CYP3A5, NAT2, RYR1, UGT1A1 |
+
+**Zwei davon sind erklärungsbedürftig:**
+
+- **SLCO1B1** meldet „Normale Transportfunktion" und wird trotzdem **rot**,
+  weil rs4149056 T/T bei Cyclophosphamid, Docetaxel, Fluorouracil und
+  Mycophenolat als ungünstiges Signal geführt ist (1A). Die Karte sagt beides —
+  das ist kein Widerspruch, sondern zwei verschiedene Aussagen: der Phänotyp
+  beschreibt die Transportfunktion, der Befund eine beobachtete Assoziation.
+- **RYR1** meldet „Keine Risikovariante gefunden" und wird **gelb** wegen
+  rs186983396 C/C — schwächeres Ansprechen auf **Koffein**, Evidenzstufe 3.
+  Formal korrekt, inhaltlich dünn. Wenn das stört, ist die Schwelle eine Zeile:
+  in `rsGeneSev()` die Stufen 3 und 4 nicht mehr färben lassen.
+
+#### Warum es keine Positionskarten gibt
 
 **Zur Erwartung „mehrere hundert Gene": Karten ja, Gene nein.** Die 611
 gelesenen Positionen verteilen sich auf **19 Gene**:
@@ -968,44 +1020,27 @@ gelesenen Positionen verteilen sich auf **19 Gene**:
 | CYP2C9 | 52 | CYP3A4 | 23 | ABCG2 | 1 |
 | TPMT | 38 | CYP3A5 | 5 | IFNL3 · VKORC1 | je 1 |
 
-Das Panel hat 23 Gene, mehr gibt es nicht. Die Ansicht zeigt **20 Genkarten
-und 611 Positionskarten**, zusammen 631. 94 der 611 tragen keine rs-Nummer,
-sondern eine andere Notation (Indels, HGVS) — sie werden gleich behandelt, nur
-ohne dbSNP-Link.
+Das Panel hat 23 Gene, mehr gibt es nicht — hunderte Genkarten kann es also
+nicht geben. Die Ansicht zeigt **20 Genkarten**. 94 der 611 Positionen tragen
+keine rs-Nummer, sondern eine andere Notation (Indels, HGVS); sie stehen in
+derselben Liste, nur ohne dbSNP-Link.
 
-**Reihenfolge:** je Gen zuerst die Genkarte, dann ihre Positionen, Befunde
-zuerst. So steht das dazugehörige Gen unmittelbar bei seinen Positionen.
-
-**Status einer Positionskarte**, ausschließlich aus den Daten:
-
-| Signal | Stufe |
-|---|---|
-| höheres Risiko / schwächeres Ansprechen | warn |
-| geringeres Risiko / besseres Ansprechen | ok |
-| nur veränderter Abbau | schlicht |
-| keine Annotation (572 von 611) | schlicht, „keine Veröffentlichung hinterlegt" |
-
-Der letzte Fall ist eine Aussage über die **Literatur**, nicht über unsere
-Analyse — der Genotyp steht ja auf der Karte. Deshalb ist das kein Rückfall in
+Von den 611 Positionen haben **39 einen Befund**; die übrigen 572 stehen
+aufgeklappt als kompakte Liste „Weitere gelesene Stellen ohne hinterlegte
+Veröffentlichung" mit Genotyp. Das ist eine Aussage über die **Literatur**,
+nicht über unsere Analyse — der Genotyp steht ja da. Deshalb kein Rückfall in
 den „Offen"-Zustand, den v62 entfernt hat.
-
-Die Evidenzpunkte bleiben auf jeder Karte mit Befund. Sie sind der Grund,
-warum alle Evidenzstufen mitkönnen, ohne dass ein Stufe-3-Befund wie ein
-Leitlinienbefund aussieht.
 
 **Drei Gene bekommen wieder eine Karte**, weil sie gelesene Positionen haben:
 CYP4F2, IFNL3, UGT1A1. Ihre Karte zeigt **keine Metabolisierer-Skala** — die
 gibt es dort nicht — und **nicht** den „Kein Ergebnis"-Text aus v62, sondern
 „Nur Einzelpositionen · Kein Metabolisierer-Status — N gelesene Positionen".
 
-**Leistung:** 631 Karten auf einmal sind zu viel (Fallstrick 6). Dieselbe
-Lösung wie in der Wirkstoffliste: 150 Karten vorab, Nachladeknopf für den
-Rest. Aufbau der Kartenliste 14 ms, erstes Rendern rund 730 ms.
-
-Zwei Fallstricke beim Bau, beide schon dokumentiert und trotzdem wieder
-zugeschlagen: die TDZ bei `const` (Fallstrick 5 — `nurPos` stand hinter seiner
-ersten Verwendung, das Skript brach mit „Cannot access before initialization"
-ab) und ein Anker, der im Quelltext anders aussah als in der Anzeige.
+Fallstrick beim Bau, dokumentiert und trotzdem wieder zugeschlagen: die TDZ bei
+`const` (Fallstrick 5 — `nurPos` stand hinter seiner ersten Verwendung, die
+Ansicht brach mit „Cannot access before initialization" ab). Das Patch-Skript
+prüft das jetzt selbst, indem es die Position der Deklaration mit der ihrer
+Verwendungen vergleicht.
 
 ### Vierter Zustand „Offen"
 
