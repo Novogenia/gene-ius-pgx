@@ -171,11 +171,20 @@
   .card:hover{box-shadow:0 4px 8px rgba(30,10,30,.06),0 18px 40px -18px rgba(40,0,35,.32)}
   .c-ok,.c-warn,.c-crit{background:#fff}
   .card.faded{opacity:.42;filter:grayscale(.7)}
-  .chead{position:relative;display:flex;align-items:center;gap:10px;padding:13px 30px 13px 13px;cursor:pointer;min-width:0}
+  /* flex-start statt center: sonst rutscht der Statusblock bei einem
+     dreizeiligen Namen in die Mitte und wirkt wie verrutscht. */
+  .chead{position:relative;display:flex;align-items:flex-start;gap:10px;padding:13px 30px 13px 13px;cursor:pointer;min-width:0}
+  .chead .pill,.chead .cstate,.chead .cchev{margin-top:1px}
   .pill{flex:none;width:42px;height:42px}
   .cmain{flex:1 1 auto;min-width:0;overflow:hidden}
-  .cname{font-size:15.5px;font-weight:800;letter-spacing:-.004em;line-height:1.15;color:#221c26;text-transform:uppercase;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* Umbruch statt Abschneiden. overflow-wrap:anywhere ist noetig, weil
+     chemische Namen wie (2-benzhydryloxyethyl)diethyl-methylammonium keine
+     Leerzeichen haben und die Karte sonst aufschieben. Nach vier Zeilen
+     doch abschneiden, sonst wird eine Karte beliebig hoch - der
+     vollstaendige Name steht ohnehin im title-Attribut. Vier statt drei,
+     weil bei drei genau ein Name der Datenbank noch geklemmt hat. */
+  .cname{font-size:15.5px;font-weight:800;letter-spacing:-.004em;line-height:1.18;color:#221c26;text-transform:uppercase;
+    overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
   .cbrands{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.35;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .cbrands b{color:#4b4451;font-weight:700}
@@ -409,12 +418,36 @@
     display:flex;flex-direction:column;gap:6px}
   .wsactions .wbtn{width:34px;height:34px;border-radius:10px}
   .wbtn.del:hover{border-color:var(--crit);color:var(--crit);background:var(--crit-bg)}
+  /* Der Austausch war zwei lose Karten mit einer Textzeile dazwischen -
+     man sah zwei Medikamente, nicht einen Vorgang. Jetzt eine Gruppe mit
+     Rahmen, Kopfzeile und durchgezogenem Pfeil. */
+  .swapbox{border:1.5px solid var(--plum-ln,#D9C3D4);border-radius:16px;background:var(--plum-050);
+    padding:10px 11px 11px;position:relative}
+  .swaphead{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--plum);margin:0 0 9px 2px}
+  .swaphead svg{width:15px;height:15px}
+  .swapitem{position:relative}
+  .swaplabel{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 4px 3px}
+  .swapitem.alt .swaplabel{color:var(--faint);text-decoration:line-through}
+  .swapitem.neu .swaplabel{color:var(--plum)}
+  /* Durchgezogener Pfeil statt Textzeile */
+  .swaparrow{display:flex;flex-direction:column;align-items:center;margin:5px 0 7px}
+  .swaparrow .ln{width:2.5px;height:13px;background:var(--plum);opacity:.5}
+  .swaparrow .hd{width:26px;height:26px;border-radius:50%;background:var(--plum);color:#fff;
+    display:grid;place-items:center}
+  .swaparrow .hd svg{width:15px;height:15px;transform:rotate(90deg)}
   .replrow{display:flex;align-items:center;justify-content:center;gap:7px;margin:-2px 0 8px;color:var(--plum);
     font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
   .wsurface.hot{outline:2px dashed var(--plum);outline-offset:-6px;background:var(--plum-050)}
   .ws-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
   .ws-head h3{margin:0;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--plum);padding:6px 14px;border-radius:999px}
-  #wsvg{position:absolute;inset:0;pointer-events:none;z-index:6}
+  /* z-index 2: ueber den Karten (.wrow liegt auf 1), aber unter dem
+     Knopfstreifen (.wsactions liegt auf 4). Vorgabe Daniel, 2026-08-07 -
+     die Verbindungslinie lief vorher ueber Tausch- und Loeschknopf.
+     pointer-events:none bleibt zwingend (Fallstrick 4); der
+     Interaktionsknopf sitzt rechts neben dem Streifen und bleibt frei. */
+  #wsvg{position:absolute;inset:0;pointer-events:none;z-index:2}
   /* transform-box:fill-box ist zwingend - ohne das bezieht sich transform-origin
      bei SVG auf den Viewport statt auf das Element, und der Knopf springt beim
      Ueberfahren an eine andere Stelle */
@@ -3316,10 +3349,22 @@ function wsCard(id){
   const sev=overallSev(id,workspace),chosen=altChoice[id];
   if(chosen){
     const aid=findDrug(chosen);
+    /* Der Austausch als EIN Vorgang: Rahmen um beide Karten, die abgesetzte
+       durchgestrichen beschriftet, dazwischen ein durchgezogener Pfeil. */
     return `<div class="wrow" data-row="${id}">
-      ${cardHtml(id,'ws',{sevPool:workspace,faded:true})}
-      <div class="replrow">${ico('arr','',16)} ersetzt durch</div>
-      ${aid?cardHtml(aid,'wsalt',{sevPool:workspace}):''}
+      <div class="swapbox">
+        <div class="swaphead">${ico('swap','',15)} Ausgetauscht</div>
+        <div class="swapitem alt">
+          <div class="swaplabel">bisher</div>
+          ${cardHtml(id,'ws',{sevPool:workspace,faded:true})}
+        </div>
+        <div class="swaparrow"><div class="ln"></div>
+          <div class="hd">${ico('arr','',15)}</div><div class="ln"></div></div>
+        <div class="swapitem neu">
+          <div class="swaplabel">neu</div>
+          ${aid?cardHtml(aid,'wsalt',{sevPool:workspace}):''}
+        </div>
+      </div>
       ${wsActions(id,sev,true)}
     </div>`;
   }

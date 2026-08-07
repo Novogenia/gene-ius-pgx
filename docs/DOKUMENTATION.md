@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-06 · **Version:** v70 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
+**Stand:** 2026-08-07 · **Version:** v71 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
 
 > ⚠️ **Die Demo-Genotypen sind in der Oberfläche seit v70 nicht mehr als solche
 > gekennzeichnet** (Ansage Daniel, 2026-08-06 — sie sollen wie reale Genotypen
@@ -519,6 +519,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v68 | **Demo-Genotypen**: 842 erfundene Positionen in 482 Genen, 488 Genkarten statt 20. Regel 1 für den Clickdummy ausgesetzt |
 | v69 | Demo-Daten färben kein gemessenes Gen mehr (CYP3A4, DPYD waren betroffen); Demo-Hinweis auch auf der Startseite; Startseite zählt alle 488 Gene |
 | v70 | Demo-Kennzeichnung aus der Oberfläche entfernt; Wirkstoffkarte zeigt Markennamen statt Anwendungsgebiet (`handelsnamen.json` verdrahtet, 1.220 statt 35); links und rechts unter „Deine Medikamente" identisch |
+| v71 | Wirkstoffnamen brechen um statt abzuschneiden; Interaktions-SVG liegt hinter den Aktionsknöpfen; Austausch als zusammenhängende Gruppe |
 
 
 ---
@@ -1081,6 +1082,38 @@ nichts.
 nicht anwenden, oder in der Datei `DUMMY_AKTIV` auf `false` setzen — dann
 verschwindet das Banner, die Demo-Gene bleiben aber in `RS_BY`. Sauber ist der
 erste Weg.
+
+### Kartendarstellung (ab v71)
+
+Drei Vorgaben Daniel, 2026-08-07.
+
+**Wirkstoffnamen brechen um.** `.cname` hatte `white-space:nowrap` plus
+`text-overflow:ellipsis` — lange Namen standen als „(2-BENZHYDRYLOX…" da.
+Jetzt Umbruch mit `-webkit-line-clamp:4`. `overflow-wrap:anywhere` ist nötig,
+weil chemische Namen keine Leerzeichen haben und die Karte sonst aufschieben.
+`.chead` wechselt von `align-items:center` auf `flex-start`, sonst rutscht der
+Statusblock bei mehrzeiligem Namen in die Mitte.
+
+Der Namensbereich ist bei dreispaltiger Liste nur **161 px** breit, deshalb
+brauchen viele Namen zwei bis drei Zeilen. **Ein** Name der Datenbank
+(„(2-benzhydryloxyethyl)diethyl-methylammonium iodide", 51 Zeichen) passt auch
+in vier Zeilen nicht und bleibt geklemmt — der vollständige Name steht im
+`title`-Attribut. Ohne Begrenzung würde diese eine Karte beliebig hoch.
+
+**Das Interaktions-SVG liegt hinter den Aktionsknöpfen.** `#wsvg` stand auf
+`z-index:6` gegen `.wsactions` auf `4` — die rote Verbindungslinie lief über
+Tausch- und Löschknopf. Jetzt `z-index:2`: weiter über den Karten (`.wrow`
+liegt auf 1), aber unter den Knöpfen. **Fallstrick 4 bleibt gewahrt** — das SVG
+behält `pointer-events:none`, und der Interaktionsknopf sitzt rechts neben dem
+Knopfstreifen, wird also von nichts verdeckt. Nachgemessen: Knopf weiterhin per
+`elementFromPoint` erreichbar.
+
+**Der Austausch ist ein Vorgang, keine zwei Karten.** Vorher: zwei lose Karten
+mit der Textzeile „ERSETZT DURCH" dazwischen. Jetzt eine Gruppe mit Rahmen,
+Kopfzeile „Ausgetauscht", der abgesetzten Karte unter der Marke „bisher"
+(ausgegraut), einem durchgezogenen Pfeil und der neuen Karte unter „neu". Die
+Namen stehen nur noch auf den Karten selbst — in der ersten Fassung standen sie
+dreifach.
 
 ### Wirkstoffkarte: Markennamen statt Anwendungsgebiet (ab v70)
 
