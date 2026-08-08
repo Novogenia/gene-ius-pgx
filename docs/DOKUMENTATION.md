@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-08 · **Version:** v72 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
+**Stand:** 2026-08-08 · **Version:** v73 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
 
 > ⚠️ **Die Demo-Genotypen sind in der Oberfläche seit v70 nicht mehr als solche
 > gekennzeichnet** (Ansage Daniel, 2026-08-06 — sie sollen wie reale Genotypen
@@ -521,6 +521,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v70 | Demo-Kennzeichnung aus der Oberfläche entfernt; Wirkstoffkarte zeigt Markennamen statt Anwendungsgebiet (`handelsnamen.json` verdrahtet, 1.220 statt 35); links und rechts unter „Deine Medikamente" identisch |
 | v71 | Wirkstoffnamen brechen um statt abzuschneiden; Interaktions-SVG liegt hinter den Aktionsknöpfen; Austausch als zusammenhängende Gruppe |
 | v72 | Gelöste Wechselwirkungen ausgegraut statt rot, und sie färben die Ampel nicht mehr; Bilanz der geprüften Paare im Kopf der Einnahmeliste |
+| v73 | Bilanz als Band über die volle Breite, mit Medikamenten *und* Wechselwirkungen; Genansicht ohne Nachladen; Arztbericht zählt 488 statt 17; fremder Genotyp im Beurteilungskasten abgesetzt |
 
 
 ---
@@ -1200,6 +1201,81 @@ WECHSELWIRKUNGEN
 Sie steht im Kopf der Einnahmeliste, rechts neben der Überschrift. Der rechte
 Randstreifen selbst — wo die runden Knöpfe sitzen — ist mit 79 px zu schmal
 für Text.
+
+### Kein fremder Genotyp als Beurteilung (ab v73)
+
+Daniel am 2026-08-08, zu Clopidogrel im Arztbericht: oben stand „Empfehlung,
+die genau auf deinen Genotyp *normaler Metabolisierer* passt — keine Anpassung
+nötig", darunter „CYP2C19 **intermediate** metabolizers … are at increased
+risk". Vorgabe: „auf den Genotyp des Kunden Rücksicht nehmen und nur dann ein
+Medikament mit Alarm versehen, wenn der Genotyp, den der Patient hat, zu einer
+Anpassung führt."
+
+**Die Ampel tat das bereits.** `statusFor` geht über PharmCAT (genotypgenau),
+dann die Matrix (alle Genbedingungen müssen zutreffen), dann den Rückfall mit
+`lvl >= 0` auf beiden Seiten. Clopidogrel steht korrekt auf OK — die Patientin
+ist CYP2C19 Normal, die Matrix hat nur Zeilen für PM und IM, `recFor()` liefert
+deshalb zu Recht `null`.
+
+**Der Widerspruch stand im Text.** Fiel `recFor()` aus, zeigte `assessBox`
+ersatzweise `d.pro` — einen allgemeinen Wirkstofftext, der einen *anderen*
+Genotyp beschreibt. Im Kasten „Beurteilung für dein Genprofil" las sich das wie
+eine Aussage über diese Person. Betroffen: **24 Wirkstoffe**, 6 davon nennen
+ausdrücklich einen Metabolisierertyp.
+
+Der Text bleibt erhalten — er ist richtig, nur nicht für diesen Genotyp —,
+steht aber jetzt abgesetzt unter eigener Überschrift:
+
+```
+GILT FUER ANDERE GENOTYPEN            nicht auf dich zutreffend
+CYP2C19 intermediate metabolizers receiving clopidogrel ...
+```
+
+Blass, mit linkem Balken (`.ab-fremd`), damit er nicht als Befund gelesen wird.
+
+Zweiter Widerspruch, beim Bauen entstanden und gleich mitbehoben: der Satz
+„Für deinen Genotyp liegt keine Leitlinien-Empfehlung vor" stand direkt unter
+den CPIC-Empfehlungen für genau diesen Genotyp. Er erscheint jetzt nur noch,
+wenn auch **keine** PharmCAT-Empfehlung vorliegt.
+
+### Bilanz der Einnahmeliste (ab v73)
+
+Vorgabe Daniel: prominenter, über die rechte Seite, und nicht nur
+Wechselwirkungen — „wie viele Medikamente mit Alarm, wie viele mit Achtung und
+wie viele mit OK".
+
+Aus dem schmalen Kasten neben der Überschrift wurde ein Band über die volle
+Breite der Einnahmeliste, zweispaltig:
+
+| Deine Medikamente | Wechselwirkungen |
+|---|---|
+| 4 auf der Liste | 1 mit Alarm |
+| 2 mit Alarm | 0 mit Achtung |
+| 1 mit Achtung | 0 gelöst |
+| 1 unauffällig | 5 unauffällig |
+| | *6 Paare geprüft* |
+
+Die Medikamentenzahlen kommen aus `overallSev()`, also derselben Stelle wie die
+Kartenfarbe; ein ersetzter Wirkstoff zählt mit seiner Ersatzwahl. Die
+Paarzahlen wie in v72.
+
+### Genansicht ohne Nachladen (ab v73)
+
+Der Nachladeknopf ist weg, alle 488 Karten stehen sofort da. Gemessen: rund
+980 ms beim ersten Rendern. Fallstrick 6 zielte auf 2.697 Karten in der
+Wirkstoffliste — dort bleibt die Begrenzung.
+
+### Arztbericht: 488 statt 17 Gene (ab v73)
+
+`covBlock` zählte nur die Panel-Gene mit Diplotyp. Ausgewertet werden inzwischen
+alle Gene der Genansicht. Die Tabelle darunter kann das nicht spiegeln — sie hat
+Spalten für Diplotyp, Phänotyp und Score, die es nur bei den Panel-Genen gibt.
+Deshalb steht über ihr jetzt ein Satz, der sagt, was sie zeigt und was nicht.
+
+**Bestätigt auf Nachfrage:** Gene, die nur über Einzelpositionen definiert sind,
+tragen ein **grünes Häkchen**, wenn keine Position einen negativen Befund hat.
+Nachgemessen: alle 291 solcher Gene stehen auf `ok` mit Kugel `#12A150` und
+Häkchen; die 177 mit Befund auf `warn`.
 
 ### Kugelsymbol für den Metabolisierertyp (ab v67)
 

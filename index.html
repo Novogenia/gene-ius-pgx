@@ -448,22 +448,24 @@
      pointer-events:none bleibt zwingend (Fallstrick 4); der
      Interaktionsknopf sitzt rechts neben dem Streifen und bleibt frei. */
   #wsvg{position:absolute;inset:0;pointer-events:none;z-index:2}
-  /* Bilanz der Wechselwirkungen im Kopf der Einnahmeliste */
-  .wshead{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;justify-content:space-between}
-  .wshead>div:first-child{min-width:0;flex:1 1 260px}
-  .ixscore{flex:none;background:var(--panel);border:1.5px solid var(--line2);border-radius:14px;
-    padding:11px 14px;min-width:210px}
+  /* Bilanzband ueber die volle Breite der Einnahmeliste */
+  .ixscore{background:var(--panel);border:1.5px solid var(--line2);border-radius:16px;
+    padding:15px 18px;margin:2px 0 18px}
+  .ixs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 26px}
+  @media(max-width:760px){.ixs-grid{grid-template-columns:1fr}}
   /* 11px ist die Untergrenze der Pruefroutine (Abschnitt 7) - nicht darunter */
-  .ixscore .ist{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
-    color:var(--faint);margin-bottom:7px}
-  .ixscore .isr{display:flex;align-items:center;gap:8px;font-size:12.5px;line-height:1.7}
-  .ixscore .isn{flex:none;min-width:20px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
-  .ixscore .isd{flex:none;width:9px;height:9px;border-radius:50%}
-  .ixscore .isr.crit .isn{color:var(--crit-t)} .ixscore .isr.crit .isd{background:var(--crit)}
-  .ixscore .isr.warn .isn{color:var(--warn-t)} .ixscore .isr.warn .isd{background:var(--warn)}
-  .ixscore .isr.done .isn{color:var(--muted)}  .ixscore .isr.done .isd{background:#9A93A3}
-  .ixscore .isr.ok .isn{color:var(--ok-t)}     .ixscore .isr.ok .isd{background:var(--ok)}
-  .ixscore .issum{margin-top:8px;padding-top:8px;border-top:1px solid var(--line);
+  .ixs-col>.ist{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:9px}
+  .ixs-row{display:flex;gap:18px;flex-wrap:wrap}
+  .ixs-k{display:flex;align-items:baseline;gap:7px;min-width:0}
+  .ixs-n{font-size:26px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em}
+  .ixs-l{font-size:12px;font-weight:700;color:var(--muted);line-height:1.25}
+  .ixs-k.crit .ixs-n{color:var(--crit-t)} .ixs-k.warn .ixs-n{color:var(--warn-t)}
+  .ixs-k.ok .ixs-n{color:var(--ok-t)}     .ixs-k.done .ixs-n{color:#7A7382}
+  .ixs-k.neutral .ixs-n{color:var(--ink)}
+  .ixs-k.null .ixs-n{color:var(--faint)}  .ixs-k.null .ixs-l{color:var(--faint)}
+  .ixs-sum{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);
     font-size:11.5px;color:var(--faint)}
   /* transform-box:fill-box ist zwingend - ohne das bezieht sich transform-origin
      bei SVG auf den Viewport statt auf das Element, und der Knopf springt beim
@@ -501,6 +503,11 @@
   .strength{font-size:13.5px;color:#3c3540;margin-top:12px}
   .strength b{color:var(--plum)}
   /* Eine Box fuer Beurteilung und Leitlinie */
+  /* Text, der einen anderen Genotyp beschreibt als den des Patienten. Steht
+     bewusst blass und mit eigener Ueberschrift, damit er nicht als Aussage
+     ueber diese Person gelesen wird - genau das war bei Clopidogrel der Fall. */
+  .ab-fremd{opacity:.72;border-left:3px solid var(--line2);padding-left:11px;margin-top:10px}
+  .ab-fremd .ab-gh{color:var(--faint)}
   .abox{border-radius:16px;border:2px solid;overflow:hidden;background:#fff;margin:2px 0 4px}
   .abox.s-crit{border-color:var(--crit)} .abox.s-warn{border-color:var(--warn)} .abox.s-ok{border-color:var(--ok)}
   .abox .ab-h{display:flex;align-items:center;gap:9px;padding:10px 14px;color:#fff;
@@ -2371,13 +2378,16 @@ function covBlock(){
     <div class="cov-h">${ico('c-pillbox','',17)} Grundlage dieser Auswertung</div>
     <div class="cov-b">
       <div class="cov-g">
-        <div class="cov-k"><span class="n">${zeigbar.length}</span><span class="l">Gene ausgewertet</span></div>
+        <div class="cov-k"><span class="n">${geneListe().length}</span><span class="l">Gene ausgewertet</span></div>
         <div class="cov-k"><span class="n">${M.posda.toLocaleString('de-DE')}</span><span class="l">Stellen gelesen</span></div>
         <div class="cov-k"><span class="n">${pct}&thinsp;%</span><span class="l">Abdeckung der ben&ouml;tigten Stellen</span></div>
       </div>
       <p class="cov-p">Probe <b>${M.probe}</b> &middot; Referenz <b>${M.build}</b> &middot;
         Allel-Definitionen <b>ClinPGx</b> &middot; Auswertung <b>PharmCAT ${M.ver}</b> &middot;
         Stand <b>${M.stand}</b>.</p>
+      <p class="cov-p">Die Tabelle f&uuml;hrt die <b>${zeigbar.length} Gene mit
+        Diplotyp-Auswertung</b> aus dem PharmCAT-Panel. Die &uuml;brigen Gene werden
+        &uuml;ber einzelne Positionen bewertet und stehen unter &bdquo;Deine Gene&ldquo;.</p>
       <table class="cov-tab">
         <thead><tr><th>Gen</th><th>Diplotyp</th><th>Ph&auml;notyp</th><th>Score</th>
           <th>Stellen</th><th>Status</th></tr></thead>
@@ -2549,13 +2559,9 @@ function vMeine(){
     <div class="wsurface" id="ws" ondragover="wsOver(event)" ondragleave="wsLeave(event)" ondrop="wsDrop(event)">
       <svg id="wsvg"></svg>
       <div class="colh">${ico('n-pill','',16)} Schritt 2 &mdash; deine Einnahmeliste</div>
-      <div class="wshead">
-        <div>
-          <h2 class="wstitle">${PATIENT}, das sind <em>deine</em> Medikamente</h2>
-          <p class="wssub">${workspace.length} aktiv eingenommene Medikamente &middot; nach Bewertung sortiert</p>
-        </div>
-        ${ixScoreHtml()}
-      </div>
+      <h2 class="wstitle">${PATIENT}, das sind <em>deine</em> Medikamente</h2>
+      <p class="wssub">${workspace.length} aktiv eingenommene Medikamente &middot; nach Bewertung sortiert</p>
+      ${ixScoreHtml()}
       <div id="wsrows"></div>
     </div>
   </div>`;
@@ -2794,13 +2800,11 @@ function vGene(){
   <p class="sec-sub">${PATIENT}, das sind die Gene, die dar&uuml;ber entscheiden, wie du Medikamente verarbeitest. Jede Karte zeigt deine zwei Genkopien und was sie zusammen bewirken${ihelp("gene")} &mdash; anklicken f&uuml;r Klartext, Fachdetails und Quellen.${ihelp("metab")}</p>
   ${demoBannerHtml()}
   ${(()=>{const k=geneListe(),z=geneZahlen();
-    const zeig=k.slice(0,geneLimit);
-    return `<div class="genecount">${z.alle} Gene ausgewertet${
-      k.length>geneLimit?' &middot; '+geneLimit+' angezeigt':''}</div>
-    <div class="genegrid">${zeig.map(g=>geneCardHtml(g)).join('')}</div>
-    ${k.length>geneLimit?`<button class="moreb" onclick="moreGene()">Weitere
-      ${Math.min(240,k.length-geneLimit)} von ${(k.length-geneLimit).toLocaleString('de-DE')}
-      anzeigen ${ico('chev','',16)}</button>`:''}`;})()}`;
+    /* Alle Karten sofort, kein Nachladeknopf (Vorgabe Daniel, 2026-08-08).
+       488 Karten kosten rund 760 ms beim ersten Rendern - Fallstrick 6 zielte
+       auf 2.697 Karten in der Wirkstoffliste, nicht auf diese Groessenordnung. */
+    return `<div class="genecount">${z.alle} Gene ausgewertet</div>
+    <div class="genegrid">${k.map(g=>geneCardHtml(g)).join('')}</div>`;})()}`;
 }
 /* ---- Gen-Eintrag (aufklappbar) ---- */
 function geneItemHtml(g,ctx){
@@ -3343,18 +3347,45 @@ function ixScore(){
   });
   return {paare,crit,warn,done,ok:Math.max(0,paare-crit-warn-done)};
 }
+/* Die Medikamente nach Ampel - aus overallSev(), also derselben Stelle wie
+   die Kartenfarbe. Ein ersetzter Wirkstoff zaehlt mit seiner Ersatzwahl. */
+function medScore(){
+  const z={crit:0,warn:0,ok:0,unk:0};
+  workspace.forEach(id=>{
+    const ersatz=altChoice[id]?findDrug(altChoice[id]):null;
+    const s=overallSev(ersatz||id,workspace);
+    z[s]=(z[s]||0)+1;
+  });
+  return z;
+}
 function ixScoreHtml(){
-  const z=ixScore();
-  if(z.paare<1)return '';
-  const zeile=(k,c,l)=>c?`<div class="isr ${k}"><span class="isd"></span>
-    <span class="isn">${c}</span><span>${l}</span></div>`:'';
+  if(!workspace.length)return '';
+  const z=ixScore(), m=medScore();
+  const kachel=(k,c,l)=>`<div class="ixs-k ${c?k:'null'}">
+    <span class="ixs-n">${c}</span><span class="ixs-l">${l}</span></div>`;
   return `<div class="ixscore">
-    <div class="ist">Wechselwirkungen</div>
-    ${zeile('crit',z.crit,z.crit===1?'Alarm':'mit Alarm')}
-    ${zeile('warn',z.warn,z.warn===1?'Achtung':'mit Achtung')}
-    ${zeile('done',z.done,z.done===1?'gel&ouml;st':'gel&ouml;st')}
-    ${zeile('ok',z.ok,'unauff&auml;llig')}
-    <div class="issum">${z.paare} Paar${z.paare===1?'':'e'} gepr&uuml;ft</div>
+    <div class="ixs-grid">
+      <div class="ixs-col">
+        <div class="ist">Deine Medikamente</div>
+        <div class="ixs-row">
+          ${kachel('neutral',workspace.length,'auf der Liste')}
+          ${kachel('crit',m.crit,'mit Alarm')}
+          ${kachel('warn',m.warn,'mit Achtung')}
+          ${kachel('ok',m.ok,'unauff&auml;llig')}
+        </div>
+      </div>
+      <div class="ixs-col">
+        <div class="ist">Wechselwirkungen</div>
+        <div class="ixs-row">
+          ${kachel('crit',z.crit,'mit Alarm')}
+          ${kachel('warn',z.warn,'mit Achtung')}
+          ${kachel('done',z.done,'gel&ouml;st')}
+          ${kachel('ok',z.ok,'unauff&auml;llig')}
+        </div>
+        <div class="ixs-sum">${z.paare} Paar${z.paare===1?'':'e'} gepr&uuml;ft &mdash;
+          jede Kombination deiner Medikamente einzeln</div>
+      </div>
+    </div>
   </div>`;
 }
 function renderWorkspace(){
@@ -3490,11 +3521,14 @@ function assessBox(id,sev){
         <div class="ab-gx">${rc.txt}</div>
         <div class="ab-gs">${rc.gl.length?rc.gl.join(' &middot; '):'PharmGKB'} &middot; Originaltext englisch${ihelp('leit')}${rc.om?' &middot; OM '+rc.om:''}</div>
       </div>`
-    :(d.pro?`<div class="ab-sep"></div><div class="ab-g"><div class="ab-gx">${d.pro}</div>
-        <div class="ab-gs">PharmGKB &middot; Originaltext englisch${ihelp('leit')}</div></div>`
-      :`<div class="ab-sep"></div>
-        <div class="ab-none">F&uuml;r diesen Wirkstoff liegt keine genotypspezifische
-          Leitlinien-Empfehlung vor.</div>`)}
+    :`<div class="ab-sep"></div>
+        ${pharmRec(id)?'':`<div class="ab-none">F&uuml;r deinen Genotyp liegt zu diesem
+          Wirkstoff keine Leitlinien-Empfehlung vor.</div>`}
+        ${d.pro?`<div class="ab-g ab-fremd">
+          <div class="ab-gh">${ico('c-search','',15)} Gilt f&uuml;r andere Genotypen
+            <span class="ab-gt">nicht auf dich zutreffend</span></div>
+          <div class="ab-gx">${d.pro}</div>
+          <div class="ab-gs">PharmGKB &middot; Originaltext englisch${ihelp('leit')}</div></div>`:''}`}
   </div>`;
 }
 /* ---- Alternativen-Auswahl als Karten-Modal ---- */
