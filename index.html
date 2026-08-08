@@ -281,7 +281,8 @@
   .rsmore svg{transition:.16s}.rsmore[aria-expanded="true"] svg{transform:rotate(180deg)}
 /* Abdeckungsblock im Arztbericht: was der Test wirklich lesen konnte */
   .cov{margin:0 0 18px;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
-  .cov-h{display:flex;align-items:center;gap:9px;padding:11px 15px;background:var(--plum-050);
+  .cov-h{display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--plum-050);
+    font-size:17px;font-weight:800;letter-spacing:-.01em;
     border-bottom:1px solid var(--line);font-size:13px;font-weight:800;color:var(--plum)}
   .cov-h svg{flex:none;color:var(--plum)}
   .cov-b{padding:13px 15px 15px}
@@ -292,6 +293,15 @@
   .cov-k .l{display:block;font-size:10.5px;font-weight:700;color:var(--muted);line-height:1.35;margin-top:3px}
   .cov-p{margin:0;font-size:12.5px;line-height:1.6;color:#3c3540}
   .cov-p b{color:var(--plum)}
+  .cov-sub{font-size:14px;font-weight:800;letter-spacing:-.01em;margin:16px 0 8px;color:var(--ink)}
+  /* Alle uebrigen Gene, dicht gesetzt */
+  .cov-rest{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:5px 12px}
+  .cov-rg{display:flex;align-items:center;gap:7px;font-size:12px;min-width:0}
+  .cov-rd{flex:none;width:8px;height:8px;border-radius:50%}
+  .cov-rd.ok{background:var(--ok)} .cov-rd.warn{background:var(--warn)}
+  .cov-rd.crit{background:var(--crit)}
+  .cov-rn{font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cov-rp{flex:none;color:var(--faint);font-size:11px}
   .cov-tab{width:100%;border-collapse:collapse;margin-top:11px;font-size:11.5px}
   .cov-tab th{text-align:left;font-weight:800;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--line);
     font-size:10px;letter-spacing:.05em;text-transform:uppercase}
@@ -451,12 +461,12 @@
   /* Bilanzband ueber die volle Breite der Einnahmeliste */
   .ixscore{background:var(--panel);border:1.5px solid var(--line2);border-radius:16px;
     padding:15px 18px;margin:2px 0 18px}
-  .ixs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 26px}
-  @media(max-width:760px){.ixs-grid{grid-template-columns:1fr}}
+  .ixs-grid{display:block}
   /* 11px ist die Untergrenze der Pruefroutine (Abschnitt 7) - nicht darunter */
   .ixs-col>.ist{font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
     color:var(--faint);margin-bottom:9px}
-  .ixs-row{display:flex;gap:18px;flex-wrap:wrap}
+  .ixs-row{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+  .ixs-trenn{flex:none;width:1px;align-self:stretch;background:var(--line2);margin:2px 4px}
   .ixs-k{display:flex;align-items:baseline;gap:7px;min-width:0}
   .ixs-n{font-size:26px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;
     letter-spacing:-.02em}
@@ -506,6 +516,11 @@
   /* Text, der einen anderen Genotyp beschreibt als den des Patienten. Steht
      bewusst blass und mit eigener Ueberschrift, damit er nicht als Aussage
      ueber diese Person gelesen wird - genau das war bei Clopidogrel der Fall. */
+  .ab-ursache{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.55;
+    border-radius:11px;padding:9px 12px;margin-top:10px;background:var(--warn-bg);color:var(--warn-t)}
+  .ab-ursache.s-crit{background:var(--crit-bg);color:var(--crit-t)}
+  .ab-ursache svg{flex:none;width:16px;height:16px;margin-top:1px}
+  .ab-ursache b{font-weight:800}
   .ab-fremd{opacity:.72;border-left:3px solid var(--line2);padding-left:11px;margin-top:10px}
   .ab-fremd .ab-gh{color:var(--faint)}
   .abox{border-radius:16px;border:2px solid;overflow:hidden;background:#fff;margin:2px 0 4px}
@@ -2385,13 +2400,28 @@ function covBlock(){
       <p class="cov-p">Probe <b>${M.probe}</b> &middot; Referenz <b>${M.build}</b> &middot;
         Allel-Definitionen <b>ClinPGx</b> &middot; Auswertung <b>PharmCAT ${M.ver}</b> &middot;
         Stand <b>${M.stand}</b>.</p>
-      <p class="cov-p">Die Tabelle f&uuml;hrt die <b>${zeigbar.length} Gene mit
-        Diplotyp-Auswertung</b> aus dem PharmCAT-Panel. Die &uuml;brigen Gene werden
-        &uuml;ber einzelne Positionen bewertet und stehen unter &bdquo;Deine Gene&ldquo;.</p>
+      <div class="cov-sub">Gene mit Diplotyp-Auswertung (${zeigbar.length})</div>
       <table class="cov-tab">
         <thead><tr><th>Gen</th><th>Diplotyp</th><th>Ph&auml;notyp</th><th>Score</th>
           <th>Stellen</th><th>Status</th></tr></thead>
         <tbody>${rows}</tbody></table>
+      ${(()=>{
+        /* Alle uebrigen Gene - die ohne Diplotyp, nur ueber Einzelpositionen
+           bewertet. Standen bisher gar nicht im Bericht. Auffaellige zuerst. */
+        const rest=geneListe().filter(g=>!zeigbar.some(z=>z.g===g));
+        if(!rest.length)return '';
+        const srt=rest.slice().sort((a,b)=>{
+          const R={crit:0,warn:1,ok:2,ultra:2,unk:3};
+          return (R[geneSev(a)]||3)-(R[geneSev(b)]||3)||a.localeCompare(b);});
+        const auff=srt.filter(g=>['warn','crit'].indexOf(geneSev(g))>=0).length;
+        return `<div class="cov-sub">Weitere ausgewertete Gene (${rest.length})</div>
+          <p class="cov-p" style="margin:0 0 9px">Ohne Diplotyp, bewertet &uuml;ber
+            einzelne Positionen &mdash; <b>${auff}</b> davon auff&auml;llig.</p>
+          <div class="cov-rest">${srt.map(g=>{
+            const sv=geneSev(g), nP=(RS_BY[g]||[]).length;
+            return `<div class="cov-rg"><span class="cov-rd ${sv}"></span>
+              <span class="cov-rn">${g}</span>
+              <span class="cov-rp">${nP}</span></div>`;}).join('')}</div>`;})()}
     </div></div>`;
 }
 /* Reihenfolge der Gene: langsam, intermedi&auml;r, normal, ultraschnell */
@@ -3092,8 +3122,13 @@ function geneCardHtml(g,opts){
   const short=nurPos
     ? ((RS_BY[g]||[]).some(p=>rsNeg(p[4]))?'Auff&auml;llig':'Unauff&auml;llig')
     : lvlLabel(g).t;
-  const colr=sv==='ultra'?'#0b6b36':sv==='ok'?'var(--ok-t)':sv==='warn'?'var(--warn-t)'
-    :sv==='unk'?'var(--unk-t)':'var(--crit-t)';
+  /* Die Statuszeile nennt den Metabolisierertyp - also traegt sie dessen
+     Farbe, nicht die der Karte. Sonst stand "Normaler Metabolisierer" in
+     Gelb, weil ein rs-Befund der Stufe 3 die Karte gelb faerbt. Von Daniel
+     gefunden, 2026-08-08. Die Karte bleibt gelb, die Befundzeile sagt warum. */
+  const fsv=nurPos?sv:(has?GSEV[lvl]:sv);
+  const colr=fsv==='ultra'?'#0b6b36':fsv==='ok'?'var(--ok-t)':fsv==='warn'?'var(--warn-t)'
+    :fsv==='unk'?'var(--unk-t)':'var(--crit-t)';
   /* Bei offenem Ergebnis gehoert der Grund auf die Karte. Ohne den steht dort
      nur "Nicht bestimmbar" und der Nutzer haelt es fuer einen Anzeigefehler. */
   const why=(lvl<0&&!nurPos)?`<div class="gwhy">${gwhyText(g)}</div>`:'';
@@ -3363,29 +3398,22 @@ function ixScoreHtml(){
   const z=ixScore(), m=medScore();
   const kachel=(k,c,l)=>`<div class="ixs-k ${c?k:'null'}">
     <span class="ixs-n">${c}</span><span class="ixs-l">${l}</span></div>`;
+  /* Eine Reihe, nicht zwei Bloecke (Vorgabe Daniel, 2026-08-08). Die
+     Wechselwirkungen stehen als eigene Kacheln in derselben Aufzaehlung,
+     durch einen Trenner abgesetzt. */
   return `<div class="ixscore">
-    <div class="ixs-grid">
-      <div class="ixs-col">
-        <div class="ist">Deine Medikamente</div>
-        <div class="ixs-row">
-          ${kachel('neutral',workspace.length,'auf der Liste')}
-          ${kachel('crit',m.crit,'mit Alarm')}
-          ${kachel('warn',m.warn,'mit Achtung')}
-          ${kachel('ok',m.ok,'unauff&auml;llig')}
-        </div>
-      </div>
-      <div class="ixs-col">
-        <div class="ist">Wechselwirkungen</div>
-        <div class="ixs-row">
-          ${kachel('crit',z.crit,'mit Alarm')}
-          ${kachel('warn',z.warn,'mit Achtung')}
-          ${kachel('done',z.done,'gel&ouml;st')}
-          ${kachel('ok',z.ok,'unauff&auml;llig')}
-        </div>
-        <div class="ixs-sum">${z.paare} Paar${z.paare===1?'':'e'} gepr&uuml;ft &mdash;
-          jede Kombination deiner Medikamente einzeln</div>
-      </div>
+    <div class="ist">Deine Liste auf einen Blick</div>
+    <div class="ixs-row">
+      ${kachel('neutral',workspace.length,'Medikamente')}
+      ${kachel('crit',m.crit,'mit Alarm')}
+      ${kachel('warn',m.warn,'mit Achtung')}
+      ${kachel('ok',m.ok,'unauff&auml;llig')}
+      <span class="ixs-trenn"></span>
+      ${kachel('crit',z.crit+z.warn,z.crit+z.warn===1?'Wechselwirkung':'Wechselwirkungen')}
+      ${kachel('done',z.done,'davon gel&ouml;st')}
     </div>
+    <div class="ixs-sum">${z.paare} Paar${z.paare===1?'':'e'} gepr&uuml;ft &mdash;
+      jede Kombination deiner Medikamente einzeln</div>
   </div>`;
 }
 function renderWorkspace(){
@@ -3513,6 +3541,19 @@ function assessBox(id,sev){
       <span>Beurteilung f&uuml;r dein Genprofil</span>
       <span class="ab-badge b-${sev}">${SLABEL[sev]}</span></div>
     <div class="ab-plain">${st.text}</div>
+    ${(()=>{
+      /* Kommt die Stufe nicht aus der Genetik, sondern aus einer
+         Wechselwirkung, muss das hier stehen. Sonst prangt oben ALARM und
+         daneben "Es ist keine Anpassung noetig" - genau das war bei
+         Clopidogrel der Fall (Genetik ok, Alarm durch Omeprazol). */
+      const off=ddisOffen(id,workspace).filter(x=>RANK[x.sev]>RANK[st.sev]);
+      if(!off.length)return '';
+      const schaerfste=off.slice().sort((a,b)=>RANK[b.sev]-RANK[a.sev])[0];
+      const partner=off.map(x=>DRUGS[x.a===id?x.b:x.a].name);
+      return `<div class="ab-ursache s-${schaerfste.sev}">${ico('c-ix','',16)}
+        <div><b>${SLABEL[schaerfste.sev]} kommt nicht aus deinen Genen</b>, sondern aus
+          der Wechselwirkung mit <b>${partner.join(', ')}</b>. Genetisch ist
+          ${d.name} f&uuml;r dich ${SLABEL[st.sev].toLowerCase()==='ok'?'unauff&auml;llig':SLABEL[st.sev]}.</div></div>`;})()}
     ${pharmBoxHtml(id)}
     ${rc?`<div class="ab-sep"></div>
       <div class="ab-g">
