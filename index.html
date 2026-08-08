@@ -1887,6 +1887,21 @@ function statusFor(id){
    ein unauffaelliges Ergebnis, aber kein belegter Handlungsbedarf. */
 const RANK={ok:0,unk:1,warn:2,crit:3};
 const SLABEL={ok:"OK",unk:"Offen",warn:"Achtung",crit:"ALARM"};
+/* Woher kommt die Stufe - aus dem Genprofil oder aus einer Wechselwirkung?
+   'ix' nur, wenn die Wechselwirkung die Stufe ANHEBT. Ist ein Wirkstoff
+   schon genetisch auf Alarm, bleibt ALARM stehen; sonst verschwaende das
+   genetische Ergebnis hinter dem Etikett. */
+function sevQuelle(id,pool){
+  if(!pool)return 'gen';
+  const g=statusFor(id).sev, ges=overallSev(id,pool);
+  return RANK[ges]>RANK[g]?'ix':'gen';
+}
+function sevLabel(id,sev,pool){
+  return sevQuelle(id,pool)==='ix'?'Interaktion':SLABEL[sev];
+}
+function sevIcon(id,sev,pool){
+  return sevQuelle(id,pool)==='ix'?'c-ix':(sev==='ok'?'st-ok':'st-excl');
+}
 function ddisFor(id,pool){return DDI.filter(x=>(x.a===id&&pool.includes(x.b))||(x.b===id&&pool.includes(x.a)));}
 /* Geloest = einer der beiden Partner wurde ersetzt. Die Linie bleibt
    sichtbar, aber sie faerbt nichts mehr - sonst stuende Clopidogrel weiter
@@ -2025,8 +2040,8 @@ function cardHtml(id,ctx,opts){
         <div class="cbrands" title="${brandsOf(id).join(', ')}">${brandsOf(id).join(', ')}</div>
       </div>
       <div class="cstate">
-        ${ico(sev==='ok'?'st-ok':'st-excl','st s-'+sev)}
-        <span class="sw t-${sev}">${SLABEL[sev]}</span>
+        ${ico(sevIcon(id,sev,opts.sevPool),'st s-'+sev)}
+        <span class="sw t-${sev}">${sevLabel(id,sev,opts.sevPool)}</span>
       </div>
       ${ico('chev','cchev')}
     </div>
@@ -2471,7 +2486,7 @@ function drugReportBlock(id,pool){
     <div class="rd-body">
       <div class="rd-head">
         <h4>${d.name}</h4>
-        <span class="pillbadge b-${sev}">${ico(sev==='ok'?'st-ok':'st-excl','',15)} ${SLABEL[sev]}</span>
+        <span class="pillbadge b-${sev}">${ico(sevIcon(id,sev,pool),'',15)} ${sevLabel(id,sev,pool)}</span>
       </div>
       <div class="rd-meta">
         ${d.brands.length?`<span><b>Handelsnamen:</b> ${d.brands.join(', ')}</span>`:''}
@@ -3384,11 +3399,14 @@ function ixScore(){
 }
 /* Die Medikamente nach Ampel - aus overallSev(), also derselben Stelle wie
    die Kartenfarbe. Ein ersetzter Wirkstoff zaehlt mit seiner Ersatzwahl. */
+/* Nur die GENETISCHE Stufe - die Wechselwirkungen stehen als eigene
+   Kacheln daneben. Vorher lief das ueber overallSev, dadurch tauchte
+   dieselbe Wechselwirkung in beiden Gruppen auf. */
 function medScore(){
   const z={crit:0,warn:0,ok:0,unk:0};
   workspace.forEach(id=>{
     const ersatz=altChoice[id]?findDrug(altChoice[id]):null;
-    const s=overallSev(ersatz||id,workspace);
+    const s=listSev(ersatz||id);
     z[s]=(z[s]||0)+1;
   });
   return z;
@@ -3405,9 +3423,9 @@ function ixScoreHtml(){
     <div class="ist">Deine Liste auf einen Blick</div>
     <div class="ixs-row">
       ${kachel('neutral',workspace.length,'Medikamente')}
-      ${kachel('crit',m.crit,'mit Alarm')}
-      ${kachel('warn',m.warn,'mit Achtung')}
-      ${kachel('ok',m.ok,'unauff&auml;llig')}
+      ${kachel('crit',m.crit,'genetisch Alarm')}
+      ${kachel('warn',m.warn,'genetisch Achtung')}
+      ${kachel('ok',m.ok,'genetisch unauff&auml;llig')}
       <span class="ixs-trenn"></span>
       ${kachel('crit',z.crit+z.warn,z.crit+z.warn===1?'Wechselwirkung':'Wechselwirkungen')}
       ${kachel('done',z.done,'davon gel&ouml;st')}
@@ -3539,7 +3557,7 @@ function assessBox(id,sev){
   return `<div class="abox s-${sev}">
     <div class="ab-h">${ico(sev==='ok'?'st-ok':sev==='unk'?'c-search':'st-excl','',18)}
       <span>Beurteilung f&uuml;r dein Genprofil</span>
-      <span class="ab-badge b-${sev}">${SLABEL[sev]}</span></div>
+      <span class="ab-badge b-${sev}">${sevLabel(id,sev,workspace)}</span></div>
     <div class="ab-plain">${st.text}</div>
     ${(()=>{
       /* Kommt die Stufe nicht aus der Genetik, sondern aus einer
