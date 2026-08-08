@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-07 · **Version:** v71 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
+**Stand:** 2026-08-08 · **Version:** v72 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
 
 > ⚠️ **Die Demo-Genotypen sind in der Oberfläche seit v70 nicht mehr als solche
 > gekennzeichnet** (Ansage Daniel, 2026-08-06 — sie sollen wie reale Genotypen
@@ -520,6 +520,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v69 | Demo-Daten färben kein gemessenes Gen mehr (CYP3A4, DPYD waren betroffen); Demo-Hinweis auch auf der Startseite; Startseite zählt alle 488 Gene |
 | v70 | Demo-Kennzeichnung aus der Oberfläche entfernt; Wirkstoffkarte zeigt Markennamen statt Anwendungsgebiet (`handelsnamen.json` verdrahtet, 1.220 statt 35); links und rechts unter „Deine Medikamente" identisch |
 | v71 | Wirkstoffnamen brechen um statt abzuschneiden; Interaktions-SVG liegt hinter den Aktionsknöpfen; Austausch als zusammenhängende Gruppe |
+| v72 | Gelöste Wechselwirkungen ausgegraut statt rot, und sie färben die Ampel nicht mehr; Bilanz der geprüften Paare im Kopf der Einnahmeliste |
 
 
 ---
@@ -1151,6 +1152,54 @@ Die linke Spalte rendert in dieser Ansicht jetzt mit demselben `sevPool`.
 Nachgemessen: gleiche Klasse `c-crit`, gleiches Label ALARM, gleiche
 Info-Boxen, gleiche Markennamen. Nebeneffekt und erwünscht — ein Medikament,
 das mit der eigenen Liste kollidiert, zeigt das schon in der Suche.
+
+### Gelöste Wechselwirkungen und die Bilanz (ab v72)
+
+Vorgabe Daniel, 2026-08-08: eine gelöste Interaktion soll sichtbar bleiben,
+aber ausgegraut — und rechts daneben eine Bilanz, „damit man sieht, wo man so
+steht".
+
+**Gelöst** heißt: mindestens einer der beiden Partner wurde ersetzt
+(`altChoice` gesetzt). Der ursprüngliche Wirkstoff bleibt durchgestrichen unter
+„BISHER" stehen, also bleibt auch die Verbindungslinie stehen.
+
+Drei Stellen, nicht nur die Linie:
+
+| Stelle | vorher | jetzt |
+|---|---|---|
+| `drawLinks` | rote Linie, Ausrufezeichen, Pulsieren | graue gestrichelte Linie, Häkchen, kein Pulsieren |
+| `overallSev` | Interaktion färbt die Karte weiter | gelöste Interaktion färbt nicht mehr |
+| `ixBox` | „Kritisch" | „Gelöst" |
+
+Ohne den mittleren Punkt wäre das Ausgrauen reine Kosmetik: Clopidogrel stand
+weiter auf ALARM, obwohl Omeprazol längst durch Dexlansoprazol ersetzt war —
+genau das war auf Daniels Screenshot zu sehen. Die Ampel muss der Lösung
+folgen.
+
+**Die Bilanz zählt Paare, nicht Wirkstoffe.** Bei 4 Medikamenten sind das
+4·3/2 = 6 Paare, und jedes ist genau eines von vier Dingen — Alarm, Achtung,
+gelöst oder unauffällig. Die Summe ergibt immer die Paarzahl, dadurch ist
+nachvollziehbar, wovon die Zahl kommt:
+
+```
+WECHSELWIRKUNGEN
+1  Alarm
+5  unauffaellig
+6 Paare geprueft
+```
+
+nach dem Austausch:
+
+```
+WECHSELWIRKUNGEN
+1  geloest
+5  unauffaellig
+6 Paare geprueft
+```
+
+Sie steht im Kopf der Einnahmeliste, rechts neben der Überschrift. Der rechte
+Randstreifen selbst — wo die runden Knöpfe sitzen — ist mit 79 px zu schmal
+für Text.
 
 ### Kugelsymbol für den Metabolisierertyp (ab v67)
 
