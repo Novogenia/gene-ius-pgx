@@ -504,7 +504,10 @@
   .wrow.menuopen,.altpair.menuopen{z-index:60}
   .wrow .card{min-width:0;margin-bottom:0}
   .wtools{flex:none;width:44px;display:flex;flex-direction:column;align-items:center;gap:7px;padding-top:14px;position:relative}
-  .wbtn{width:38px;height:38px;border-radius:11px;border:1.5px solid var(--line2);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--muted)}
+  .wbtn{width:38px;height:38px;border-radius:11px;border:1.5px solid var(--line2);background:#fff;
+    display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--muted);font:inherit}
+  .wbtn svg{flex:none;width:17px;height:17px}
+  .wb-l{display:none}
   .wbtn.good{border-color:var(--ok-ln);background:var(--ok-bg);color:var(--ok)}
   .wbtn.alt{border-color:var(--warn-ln);background:var(--warn-bg);color:var(--warn-t)}
   .wbtn:hover{border-color:var(--plum);color:var(--plum)}
@@ -651,9 +654,19 @@
     /* Die Aktionsknoepfe sitzen sonst absolut 44px RECHTS AUSSERHALB der
        Zeile - auf dem Telefon ragen sie damit aus dem Bild. Hier stehen sie
        als Reihe unter der Karte. */
+    /* Eine Leiste, die an der Karte klebt: die Karte verliert unten ihre
+       Rundung, die Leiste bekommt sie - zusammen ein Block. Vorher hingen
+       hier zwei nackte Symbolquadrate rechtsbuendig im Nichts. */
     .wsactions{position:static;transform:none;right:auto;top:auto;
-      display:flex;flex-direction:row;gap:8px;justify-content:flex-end;
-      margin:-6px 0 12px}
+      display:grid;grid-template-columns:1fr 1fr;gap:1.5px;margin:0;
+      background:var(--line2);border:1.5px solid var(--line2);border-top:0;
+      border-radius:0 0 16px 16px;overflow:hidden}
+    .wrow .card{border-bottom-left-radius:0;border-bottom-right-radius:0}
+    .wsactions .wbtn{width:auto;height:auto;min-height:46px;border:0;border-radius:0;
+      font-size:12.5px;font-weight:750;padding:0 10px}
+    .wsactions .wbtn.good{color:var(--ok-t)}
+    .wsactions .wbtn.del{color:var(--crit-t)}
+    .wb-l{display:inline;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ixs-trenn{display:none}
     .ixs-row{gap:14px}
     .ixs-n{font-size:22px}
@@ -683,7 +696,6 @@
        ausserhalb des Bildes - deshalb hier die Zeile statt der Linie. */
     #wsvg{display:none}
     .wsix{display:block}
-    .wsactions{margin:-4px 0 0}
     .wrow{margin-bottom:20px}
     .wrow .card{margin-bottom:0}
     main#main{padding:16px 14px calc(84px + env(safe-area-inset-bottom,0px))}
@@ -702,7 +714,7 @@
     .gpos-h,.gpos-s{font-size:13px}
     /* Beruehrflaechen: 44px ist die uebliche Untergrenze */
     .btn,.moreb,.bf,.sfb,.fchip,.heartbtn,.wbtn,.tab{min-height:44px}
-    .wbtn{width:44px}
+
     .lirow{margin-bottom:16px}
     .lirow .card{margin-bottom:0}
     .fchip{padding:0 14px}
@@ -3699,13 +3711,17 @@ function wsIxRows(id){
       ${ico('chev','wsix-c',15)}</button>`;}).join('')}</div>`;
 }
 function wsActions(id,sev,replaced){
+  /* Die Beschriftungen sieht man nur am Telefon - dort haengt die Leiste
+     unter der Karte und braucht Worte. Am Desktop steht sie rechts daneben,
+     da erklaert die Position die Zugehoerigkeit und Text passt nicht hin. */
+  const L=t=>`<span class="wb-l">${t}</span>`;
   const swap=replaced
-    ? `<button class="wbtn alt" title="Ersetzung aufheben" onclick="event.stopPropagation();chooseAlt('${id}','')">${ico('swap','',17)}</button>`
+    ? `<button class="wbtn alt" title="Ersetzung aufheben" onclick="event.stopPropagation();chooseAlt('${id}','')">${ico('swap','',17)}${L('Ersetzung aufheben')}</button>`
     : sev==='ok'
-      ? `<button class="wbtn good" title="Unauff&auml;llig &mdash; keine Alternative n&ouml;tig" disabled>${ico('s-check','',17)}</button>`
-      : `<button class="wbtn alt" title="Alternative w&auml;hlen" onclick="event.stopPropagation();openAltPick('${id}')">${ico('swap','',17)}</button>`;
+      ? `<button class="wbtn good" title="Unauff&auml;llig &mdash; keine Alternative n&ouml;tig" disabled>${ico('s-check','',17)}${L('Keine Alternative n&ouml;tig')}</button>`
+      : `<button class="wbtn alt" title="Alternative w&auml;hlen" onclick="event.stopPropagation();openAltPick('${id}')">${ico('swap','',17)}${L('Alternative w&auml;hlen')}</button>`;
   return `<div class="wsactions">${swap}
-    <button class="wbtn del" title="Von deiner Liste entfernen" onclick="event.stopPropagation();removeWs('${id}')">${ico('trash','',17)}</button>
+    <button class="wbtn del" title="Von deiner Liste entfernen" onclick="event.stopPropagation();removeWs('${id}')">${ico('trash','',17)}${L('Entfernen')}</button>
   </div>`;
 }
 function wsCard(id){
