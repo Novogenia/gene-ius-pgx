@@ -604,6 +604,10 @@
     flex-wrap:wrap;margin-bottom:4px}
   .wshead2>div:first-child{min-width:0;flex:1 1 240px}
   .addbtn{flex:none;white-space:nowrap}
+  /* Angehefteter Knopf - nur am Telefon. Bei vier oder mehr Medikamenten ist
+     der Knopf oben aus dem Bild gescrollt, und genau dann will man etwas
+     hinzufuegen. */
+  .fab{display:none}
   /* Wechselwirkungszeile - nur am Telefon, dort ersetzt sie die Linie */
   .wsix{display:none}
   .wsix-r{display:flex;align-items:center;gap:9px;width:100%;margin-top:8px;
@@ -684,6 +688,22 @@
     nav.rail .patient{margin:0 0 0 auto;padding:0;border-top:0;gap:9px}
     nav.rail .patient span{display:none}
     .tabbar{display:flex}
+    /* Der Knopf oben ueber die volle Breite statt schmal neben der
+       Ueberschrift - er war so kaum als Handlungsaufforderung erkennbar. */
+    .wshead2{display:block}
+    /* .wshead2 .addbtn statt nur .addbtn: die Sammelregel fuer
+       Beruehrflaechen setzt min-height:44px und steht weiter unten im
+       Stylesheet - bei gleicher Spezifitaet gewinnt die spaetere. Mit zwei
+       Klassen ist die Reihenfolge egal. */
+    .wshead2 .addbtn{display:flex;width:100%;min-height:52px;justify-content:center;
+      margin-top:14px;font-size:15px}
+    .fab{display:flex;align-items:center;gap:9px;position:fixed;right:14px;
+      bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:55;
+      min-height:52px;padding:0 20px;border:0;border-radius:999px;cursor:pointer;
+      background:var(--plum);color:#fff;font:inherit;font-size:14.5px;font-weight:800;
+      box-shadow:0 10px 26px -8px rgba(94,0,71,.7);-webkit-tap-highlight-color:transparent}
+    .fab svg{flex:none;width:20px;height:20px}
+    .fab:active{transform:scale(.97)}
     /* Weniger Platzbedarf. Achtung: .scope, .colh und .wsurface werden
        weiter unten im Stylesheet nochmals definiert und wuerden hier
        verlieren - sie stehen deshalb im Schlussblock. */
@@ -698,7 +718,7 @@
     .wsix{display:block}
     .wrow{margin-bottom:20px}
     .wrow .card{margin-bottom:0}
-    main#main{padding:16px 14px calc(84px + env(safe-area-inset-bottom,0px))}
+    main#main{padding:16px 14px calc(146px + env(safe-area-inset-bottom,0px))}
     /* Schrift: Basis 16px. Darunter zoomt iOS beim Fokussieren von
        Eingabefeldern automatisch hinein - deshalb bekommt die Suche sie fest. */
     body{font-size:16px}
@@ -721,7 +741,7 @@
     .infogrid{grid-template-columns:1fr}
   }
   @media(max-width:430px){
-    main#main{padding:14px 12px calc(84px + env(safe-area-inset-bottom,0px))}
+    main#main{padding:14px 12px calc(146px + env(safe-area-inset-bottom,0px))}
     .hero{padding:20px 15px;border-radius:16px}
     .wsurface{padding:15px 13px 17px}
     .rsband,.ixscore{padding:13px 13px}
@@ -2825,10 +2845,12 @@ function vMeine(){
         <p class="wssub">${workspace.length} aktiv eingenommene Medikamente &middot; nach Bewertung sortiert</p>
       </div>
       <button class="btn btn-plum addbtn" onclick="openAdd()">
-        ${ico('c-search','',16)} Medikament hinzuf&uuml;gen</button>
+        ${ico('plus','',17)} Medikament hinzuf&uuml;gen</button>
     </div>
     <div id="wsrows"></div>
-  </div>`;
+  </div>
+  <button class="fab" onclick="openAdd()" aria-label="Medikament hinzuf&uuml;gen">
+    ${ico('plus','',20)}<span>Medikament hinzuf&uuml;gen</span></button>`;
 }
 function vListe(){
   return `<div class="sec-title">Medikamentliste</div>
@@ -3661,7 +3683,7 @@ function renderWorkspace(){
       <span style="font-size:13px">In der Medikamentliste suchen und mit
       <b>Auf meine Liste</b> aufnehmen.</span><br>
       <button class="btn btn-plum" style="margin-top:14px"
-        onclick="openAdd()">${ico('c-search','',16)} Medikament hinzuf&uuml;gen</button>
+        onclick="openAdd()">${ico('plus','',17)} Medikament hinzuf&uuml;gen</button>
       </div>`;drawLinks();return;}
   const cnt={ok:0,warn:0,crit:0};
   workspace.forEach(id=>cnt[overallSev(id,workspace)]++);
