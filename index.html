@@ -589,6 +589,18 @@
   .gb-top{display:flex;align-items:center;gap:11px}
   .gb-ic{flex:none;width:46px;height:46px;border-radius:13px;display:grid;place-items:center}
   .gb-ic svg{width:34px;height:44px}
+  /* Wechselwirkungszeile - nur am Telefon, dort ersetzt sie die Linie */
+  .wsix{display:none}
+  .wsix-r{display:flex;align-items:center;gap:9px;width:100%;margin-top:8px;
+    padding:11px 12px;min-height:46px;border-radius:12px;cursor:pointer;font:inherit;
+    font-size:13.5px;text-align:left;border:1.5px solid var(--crit-ln);
+    background:var(--crit-bg);color:var(--crit-t);-webkit-tap-highlight-color:transparent}
+  .wsix-r.warn{border-color:var(--warn-ln);background:var(--warn-bg);color:var(--warn-t)}
+  .wsix-r.done{border-color:var(--line2);background:var(--panel);color:var(--muted)}
+  .wsix-r>svg:first-child{flex:none;width:16px;height:16px}
+  .wsix-t{flex:1;min-width:0}
+  .wsix-t b{font-weight:800}
+  .wsix-c{flex:none;width:15px;height:15px;transform:rotate(-90deg);opacity:.6}
   /* ---------- Tableiste (nur Telefon) ---------- */
   .tabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;
     background:#fff;border-top:1px solid var(--line2);
@@ -645,6 +657,14 @@
     nav.rail .patient{margin:0 0 0 auto;padding:0;border-top:0;gap:9px}
     nav.rail .patient span{display:none}
     .tabbar{display:flex}
+    /* Die Verbindungslinien setzen zwei Spalten und einen 79px-Randstreifen
+       voraus. Einspaltig laufen sie ins Leere und der runde Knopf liegt
+       ausserhalb des Bildes - deshalb hier die Zeile statt der Linie. */
+    #wsvg{display:none}
+    .wsix{display:block}
+    .wsactions{margin:-4px 0 0}
+    .wrow{margin-bottom:20px}
+    .wrow .card{margin-bottom:0}
     main#main{padding:16px 14px calc(84px + env(safe-area-inset-bottom,0px))}
     /* Schrift: Basis 16px. Darunter zoomt iOS beim Fokussieren von
        Eingabefeldern automatisch hinein - deshalb bekommt die Suche sie fest. */
@@ -1132,6 +1152,27 @@
   @media(max-width:800px){.mx{grid-template-columns:26px 1fr 1fr}.mx .mxd,.mx .mxs{display:none}}
 
   .foot{margin-top:34px;text-align:center;color:var(--faint);font-size:11.5px}
+
+  /* ---------- Modale am Telefon: Bottom-Sheets -----------------------
+     Steht bewusst am Ende des Stylesheets: die Basisregeln von .genemodal
+     und .infomodal kommen weiter oben nach dem Mobilblock, und bei gleicher
+     Spezifitaet gewinnt die spaetere Regel.
+     Aus dem unteren Rand herein, volle Breite, in Daumenreichweite. Zweiter
+     Grund fuer den Umbau: die bisherige Breite haengt an 94vw, und vw loest
+     in eingebetteten Ansichten nicht immer auf - gemessen kamen alle vier
+     Fenster auf 0px. Mit left/right/bottom statt Breite plus Mittenversatz
+     kann das nicht mehr passieren. */
+  @media(max-width:820px){
+    .ixmodal,.genemodal,.altpick,.infomodal{
+      left:0;right:0;top:auto;bottom:0;width:auto;max-width:none;
+      max-height:88vh;border-radius:22px 22px 0 0;
+      transform:translateY(18px) scale(1)}
+    .ixmodal.open,.genemodal.open,.altpick.open,.infomodal.open{
+      transform:translateY(0) scale(1)}
+    .ixmodal .ix-b,.genemodal .gm-b,.altpick .ap-b,.infomodal .if-b{
+      padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+    .ix-h{padding:16px}
+  }
 </style>
 
 <svg style="display:none" aria-hidden="true">
@@ -3586,6 +3627,20 @@ function sortedWorkspace(){
   return out;
 }
 /* Aktionen als Icons rechts neben der Karte, im Randstreifen */
+/* Am Telefon ersetzt diese Zeile die Verbindungslinie: die SVG-Ebene
+   braucht zwei Spalten und einen 79px-Randstreifen, beides gibt es dort
+   nicht. Antippen oeffnet dasselbe Fenster wie der runde Knopf am Desktop. */
+function wsIxRows(id){
+  const dd=ddisFor(id,workspace);
+  if(!dd.length)return '';
+  return `<div class="wsix">${dd.map(x=>{
+    const other=DRUGS[x.a===id?x.b:x.a];
+    const g=ixGeloest(x);
+    return `<button class="wsix-r ${g?'done':x.sev}" onclick="event.stopPropagation();openIx('${x.a}','${x.b}')">
+      ${ico(g?'s-check':'c-ix','',16)}
+      <span class="wsix-t">${g?'Gel&ouml;st':'Wechselwirkung'} mit <b>${other.name}</b></span>
+      ${ico('chev','wsix-c',15)}</button>`;}).join('')}</div>`;
+}
 function wsActions(id,sev,replaced){
   const swap=replaced
     ? `<button class="wbtn alt" title="Ersetzung aufheben" onclick="event.stopPropagation();chooseAlt('${id}','')">${ico('swap','',17)}</button>`
@@ -3617,9 +3672,10 @@ function wsCard(id){
         </div>
       </div>
       ${wsActions(id,sev,true)}
+      ${wsIxRows(id)}
     </div>`;
   }
-  return `<div class="wrow" data-row="${id}">${cardHtml(id,'ws',{sevPool:workspace})}${wsActions(id,sev,false)}</div>`;
+  return `<div class="wrow" data-row="${id}">${cardHtml(id,'ws',{sevPool:workspace})}${wsActions(id,sev,false)}${wsIxRows(id)}</div>`;
 }
 
 
