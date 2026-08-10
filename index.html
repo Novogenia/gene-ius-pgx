@@ -210,9 +210,15 @@
   .cbrands b{color:#4b4451;font-weight:700}
   .cbrands .nobr{color:var(--faint);font-style:italic}
   /* feste Spalte + zentriert -> Symbole aller Ratings exakt untereinander */
-  .cstate{flex:none;width:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+  /* Keine feste Breite mehr: "INTERAKTION" braucht 82px, "OK" 62px reichten.
+     Die Spalte waechst auf den Text, .cmain schrumpft dafuer (flex:1 1 auto,
+     min-width:0). Die Obergrenze verhindert, dass ein langes Wort die
+     Wirkstoffspalte auffrisst. */
+  .cstate{flex:none;min-width:62px;max-width:96px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:4px}
   .cstate svg.st{width:29px;height:29px;flex:none;display:block}
-  .cstate .sw{font-size:11px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;text-align:center;line-height:1.1}
+  .cstate .sw{font-size:11px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;
+    text-align:center;line-height:1.1;max-width:100%;overflow-wrap:anywhere}
   .cchev{position:absolute;right:10px;bottom:9px;width:18px;height:18px;color:var(--faint);transition:transform .2s}
   .card.open .cchev{transform:rotate(180deg)}
   .cbody{display:none;padding:0 13px 14px}
@@ -955,16 +961,21 @@
      420px-Sonderregeln. */
   .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,var(--cardw)),1fr));
     justify-content:start;gap:0 14px;align-items:start}
-  /* Herz-Merkbutton in der Karte */
-  .lirow{position:relative}
-  .heartbtn{position:absolute;top:9px;right:9px;z-index:3;height:32px;border-radius:999px;
-    padding:0 12px;gap:7px;
-    border:1.5px solid var(--line2);background:#fff;display:grid;place-items:center;cursor:pointer;
-    color:var(--faint);transition:.14s;padding:0}
-  .heartbtn:hover{border-color:var(--plum);color:var(--plum);transform:scale(1.08)}
-  .heartbtn.on{background:var(--plum);border-color:var(--plum);color:#fff}
+  /* Knopf "Auf meine Liste" - eine eigene Zeile UNTER der Karte, nicht mehr
+     als Kreis darueber. Als Ueberlagerung traf er Statuszeile und
+     Aufklapppfeil, sobald er eine Beschriftung bekam; ausserdem lagen mit
+     display:grid und place-items:center Symbol und Text in derselben
+     Rasterzelle und damit uebereinander. Beides ist mit einer normalen
+     Flex-Zeile im Fluss per Konstruktion ausgeschlossen. */
   .lirow{width:var(--cardw);max-width:100%}
-  .lirow .cstate{margin-right:22px}
+  .lirow .card{margin-bottom:0}
+  .heartbtn{display:flex;align-items:center;justify-content:center;gap:8px;
+    width:100%;min-height:40px;margin:8px 0 14px;border-radius:11px;padding:0 14px;
+    border:1.5px solid var(--line2);background:#fff;cursor:pointer;font:inherit;
+    color:var(--muted);transition:.14s}
+  .heartbtn:hover{border-color:var(--plum);color:var(--plum);background:var(--plum-050)}
+  .heartbtn.on{background:var(--plum);border-color:var(--plum);color:#fff}
+  .heartbtn svg{flex:none;width:17px;height:17px}
   /* Ampelfilter in der Suche */
   .sevfilters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:11px}
   .sfb{display:flex;align-items:center;justify-content:center;gap:6px;font:inherit;font-size:12px;font-weight:800;
@@ -1181,12 +1192,9 @@
      Fenster auf 0px. Mit left/right/bottom statt Breite plus Mittenversatz
      kann das nicht mehr passieren. */
   @media(max-width:820px){
-    /* Aus dem Herzkreis wird ein breiter Knopf mit Text - ein nackter Kreis
-       sagt am Telefon nicht, dass er das Medikament auf die Liste setzt. */
-    .heartbtn{position:static;width:100%;height:auto;min-height:46px;border-radius:12px;
-      display:flex;align-items:center;justify-content:center;gap:9px;margin-top:9px;
-      font-size:14px;font-weight:800}
-    .hb-l{display:inline}
+    /* Der Knopf steht seit v82 in allen Groessen unter der Karte; am Telefon
+       nur groesser fuer die Beruehrflaeche. */
+    .heartbtn{min-height:46px;font-size:14px}
     /* Platz sparen: Erklaerkasten kleiner, Schrittzeilen weg - die
        Bereichskopfzeilen sagen dasselbe kuerzer -, Arbeitsflaeche ohne
        eigenen Kasten, weil sie am Telefon die ganze Breite ist. */
