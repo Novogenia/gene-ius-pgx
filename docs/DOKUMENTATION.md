@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-08 · **Version:** v78 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
+**Stand:** 2026-08-08 · **Version:** v79 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
 
 > ⚠️ **Die Demo-Genotypen sind in der Oberfläche seit v70 nicht mehr als solche
 > gekennzeichnet** (Ansage Daniel, 2026-08-06 — sie sollen wie reale Genotypen
@@ -521,6 +521,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v70 | Demo-Kennzeichnung aus der Oberfläche entfernt; Wirkstoffkarte zeigt Markennamen statt Anwendungsgebiet (`handelsnamen.json` verdrahtet, 1.220 statt 35); links und rechts unter „Deine Medikamente" identisch |
 | v71 | Wirkstoffnamen brechen um statt abzuschneiden; Interaktions-SVG liegt hinter den Aktionsknöpfen; Austausch als zusammenhängende Gruppe |
 | v72 | Gelöste Wechselwirkungen ausgegraut statt rot, und sie färben die Ampel nicht mehr; Bilanz der geprüften Paare im Kopf der Einnahmeliste |
+| v79 | Aufklappbare Bereiche unter Deine Medikamente am Telefon, breiter Hinzufüge-Knopf, durchgehend direkte Anrede, Menüpunkte umbenannt |
 | v78 | Wechselwirkungen am Telefon: SVG-Linien aus, antippbare Zeile je Karte; Modale werden Bottom-Sheets |
 | v77 | **Viewport-Meta ergänzt** — es fehlte komplett, deshalb rendete jedes Handy auf 980px und skalierte herunter. Dazu Tableiste unten, Kopfzeile, 16px Basisschrift, 44px Berührflächen |
 | v76 | Mobilansicht: Kartenraster wachsen mit statt fester 352px; `minmax(0,1fr)` gegen die Grid-Falle; Tabellen scrollen im eigenen Kasten; Aktionsknöpfe unter die Karte |

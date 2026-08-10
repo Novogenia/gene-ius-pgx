@@ -589,6 +589,19 @@
   .gb-top{display:flex;align-items:center;gap:11px}
   .gb-ic{flex:none;width:46px;height:46px;border-radius:13px;display:grid;place-items:center}
   .gb-ic svg{width:34px;height:44px}
+  /* Aufklappbare Bereiche - Kopfzeilen nur am Telefon sichtbar */
+  .msec-h{display:none;align-items:center;gap:10px;width:100%;margin-bottom:12px;
+    padding:13px 15px;min-height:52px;border-radius:14px;cursor:pointer;font:inherit;
+    font-size:15px;font-weight:800;text-align:left;color:var(--ink);
+    background:#fff;border:1.5px solid var(--line2);-webkit-tap-highlight-color:transparent}
+  .msec.auf>.msec-h{border-color:var(--plum);color:var(--plum);box-shadow:0 2px 8px rgba(94,0,71,.10)}
+  .msec-h>svg:first-child{flex:none;width:17px;height:17px}
+  .msec-t{flex:1;min-width:0}
+  .msec-n{flex:none;min-width:24px;height:24px;border-radius:999px;background:var(--plum);
+    color:#fff;font-size:12px;font-weight:800;line-height:24px;text-align:center;padding:0 7px}
+  .msec-c{flex:none;width:16px;height:16px;transition:.18s;opacity:.6}
+  .hb-l{display:none}
+  .msec.auf .msec-c{transform:rotate(180deg)}
   /* Wechselwirkungszeile - nur am Telefon, dort ersetzt sie die Linie */
   .wsix{display:none}
   .wsix-r{display:flex;align-items:center;gap:9px;width:100%;margin-top:8px;
@@ -612,8 +625,10 @@
     -webkit-tap-highlight-color:transparent}
   .tabbar .tab .tb-ic{position:relative;display:grid;place-items:center;line-height:0}
   .tabbar .tab svg{width:22px;height:22px}
-  .tabbar .tab .tb-l{font-size:11px;font-weight:750;letter-spacing:-.01em;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  /* Zweizeilig: "Deine Medikamente" passt nicht in ein Fuenftel von 390px
+     auf eine Zeile. 11px ist die Untergrenze der Pruefroutine. */
+  .tabbar .tab .tb-l{font-size:11px;font-weight:750;letter-spacing:-.015em;
+    line-height:1.12;text-align:center;max-width:100%}
   .tabbar .tab.on{color:var(--plum)}
   .tabbar .tab.on .tb-l{font-weight:800}
   .tb-b{position:absolute;top:-5px;right:-9px;min-width:16px;height:16px;border-radius:999px;
@@ -657,6 +672,18 @@
     nav.rail .patient{margin:0 0 0 auto;padding:0;border-top:0;gap:9px}
     nav.rail .patient span{display:none}
     .tabbar{display:flex}
+    /* Immer genau ein Bereich offen - sonst steht die eigene Liste hinter
+       150 Suchtreffern und ist nicht auffindbar. */
+    .msec-h{display:flex}
+    .msec>.msec-b{display:none}
+    .msec.auf>.msec-b{display:block}
+    /* Weniger Platzbedarf. Achtung: .scope, .colh und .wsurface werden
+       weiter unten im Stylesheet nochmals definiert und wuerden hier
+       verlieren - sie stehen deshalb im Schlussblock. */
+    .toolbar{padding:0;background:none;border:0;box-shadow:none}
+    .col-scroll{max-height:none;overflow:visible;padding-right:0}
+    .wstitle{font-size:20px}
+    .sec-title{margin-bottom:10px}
     /* Die Verbindungslinien setzen zwei Spalten und einen 79px-Randstreifen
        voraus. Einspaltig laufen sie ins Leere und der runde Knopf liegt
        ausserhalb des Bildes - deshalb hier die Zeile statt der Linie. */
@@ -681,7 +708,9 @@
     .gpos-h,.gpos-s{font-size:13px}
     /* Beruehrflaechen: 44px ist die uebliche Untergrenze */
     .btn,.moreb,.bf,.sfb,.fchip,.heartbtn,.wbtn,.tab{min-height:44px}
-    .heartbtn,.wbtn{width:44px}
+    .wbtn{width:44px}
+    .lirow{margin-bottom:16px}
+    .lirow .card{margin-bottom:0}
     .fchip{padding:0 14px}
     .infogrid{grid-template-columns:1fr}
   }
@@ -1163,6 +1192,18 @@
      Fenster auf 0px. Mit left/right/bottom statt Breite plus Mittenversatz
      kann das nicht mehr passieren. */
   @media(max-width:820px){
+    /* Aus dem Herzkreis wird ein breiter Knopf mit Text - ein nackter Kreis
+       sagt am Telefon nicht, dass er das Medikament auf die Liste setzt. */
+    .heartbtn{position:static;width:100%;height:auto;min-height:46px;border-radius:12px;
+      display:flex;align-items:center;justify-content:center;gap:9px;margin-top:9px;
+      font-size:14px;font-weight:800}
+    .hb-l{display:inline}
+    /* Platz sparen: Erklaerkasten kleiner, Schrittzeilen weg - die
+       Bereichskopfzeilen sagen dasselbe kuerzer -, Arbeitsflaeche ohne
+       eigenen Kasten, weil sie am Telefon die ganze Breite ist. */
+    .scope{padding:11px 13px;font-size:13px;margin-bottom:14px}
+    .colh{display:none}
+    .wsurface{padding:0;background:none;box-shadow:none;min-height:0}
     .ixmodal,.genemodal,.altpick,.infomodal{
       left:0;right:0;top:auto;bottom:0;width:auto;max-width:none;
       max-height:88vh;border-radius:22px 22px 0 0;
@@ -1753,6 +1794,12 @@ let workspace=["clopidogrel","omeprazol","metoprolol","bisoprolol"];
 let favorites=new Set(["clopidogrel"]);
 let watchlist=new Set(["clopidogrel","warfarin","ibuprofen"]);
 let openCards={}, openBoxes={dose:false,gene:false,alt:false}, openGenes={}, altChoice={}, altMenuOpen=null;
+/* Am Telefon ist unter "Deine Medikamente" immer genau einer der beiden
+   Bereiche offen. Voreingestellt die eigene Liste - das ist die Ansicht,
+   die man oeffnet um nachzusehen, nicht um zu suchen. Am Desktop ohne
+   Wirkung, dort sind beide Bereiche offen. */
+let meineAuf='liste';
+function setMeine(t){meineAuf=t;render();}
 let q="", fCat="all", fSev="all", fFav=false, fWatch=false, geneTech={};
 
 /* ---- PharmCATs eigene Empfehlungen ---------------------------------------
@@ -2235,10 +2282,10 @@ const NAV=[
   /* kurz = Beschriftung der Tableiste. "Deine Medikamente" passt auf einem
      Telefon nicht in ein Fuenftel der Breite. */
   {id:"dashboard",label:"Start",kurz:"Start",ic:"n-dash",group:"&Uuml;bersicht"},
-  {id:"meine",label:"Deine Medikamente",kurz:"Medikamente",ic:"n-pill",badge:"ws",group:"Deine Daten"},
+  {id:"meine",label:"Deine Medikamente",kurz:"Deine<br>Medikamente",ic:"n-pill",badge:"ws",group:"Deine Daten"},
   {id:"gene",label:"Deine Gene",kurz:"Gene",ic:"n-dna"},
   {id:"merk",label:"F&uuml;r deinen Arzt",kurz:"Arzt",ic:"star",badge:"watch"},
-  {id:"liste",label:"Alle Medikamente",kurz:"Datenbank",ic:"n-list",group:"Datenbank"}
+  {id:"liste",label:"Alle Medikamente",kurz:"Medikament-<br>liste",ic:"n-list",group:"Datenbank"}
 ];
 function renderNav(){
   document.getElementById('rail').innerHTML=NAV.map(n=>{
@@ -2336,9 +2383,12 @@ function toggleWs(id,e){
 }
 function addBtnHtml(id){
   const on=workspace.includes(id);
+  /* Am Telefon ein breiter Knopf MIT Text - ein nackter Herzkreis sagt dort
+     nicht, dass er das Medikament auf die Liste setzt. Am Desktop bleibt es
+     der Kreis, die Beschriftung ist dort ausgeblendet. */
   return `<button class="heartbtn ${on?'on':''}" onclick="toggleWs('${id}',event)"
     aria-pressed="${on}" title="${on?'Auf deiner Liste &mdash; zum Entfernen klicken':'Medikament merken &mdash; auf deine Liste setzen'}">
-    ${ico(on?'heart':'hearto','',17)}</button>`;
+    ${ico(on?'heart':'hearto','',17)}<span class="hb-l">${on?'Auf deiner Liste':'Auf meine Liste'}</span></button>`;
 }
 /* Markennamen aus der Zusatzquelle nachziehen, ohne den Datenblock zu
    veraendern. Dubletten der Quelle (abarelix -> Plenaxis, Plenaxis)
@@ -2402,7 +2452,7 @@ function vDashboard(){
         <div class="st-head">
           <div>
             <div class="st-eyebrow">${ico('n-pill','',15)} Deine pers&ouml;nliche Einnahmeliste</div>
-            <h2>${PATIENT} nimmt derzeit ${workspace.length} Medikamente</h2>
+            <h2>${PATIENT}, du nimmst derzeit ${workspace.length} Medikamente</h2>
             <p>${cnt.crit?`<b class="t-crit">${cnt.crit} davon mit Alarm</b> &mdash; hier besteht Handlungsbedarf. `:''}${cnt.warn?`${cnt.warn} mit Achtung. `:''}${cnt.ok} unauff&auml;llig.</p>
           </div>
           <button class="cta" onclick="go('meine')">${ico('arr','',20)} Zu deinen Medikamenten</button>
@@ -2498,7 +2548,7 @@ function vDashboard(){
   </div>
   ${start}
 
-  <div class="sec-title" style="margin-top:26px">Was die Auswertung ergeben hat</div>
+  <div class="sec-title" style="margin-top:26px">${PATIENT}, das ist dein Ergebnis</div>
   <div class="scope scope-db">${ico('n-list','',18)}
     <div>Wir haben nicht nur deine eigenen Medikamente gepr&uuml;ft, sondern <b>alle ${DBSTATS().total.toLocaleString('de-DE')} Wirkstoffe der Datenbank</b>
       gegen dein Genprofil gerechnet &mdash; f&uuml;r den Fall, dass dir eines davon irgendwann verschrieben wird.</div></div>
@@ -2723,12 +2773,12 @@ function vMerk(){
 
   <div class="dsec">${ico('n-dna','',18)} 2 &middot; Genetisches Profil${ihelp('metab')}</div>
   <p class="dnote">Sortiert nach Auswirkung: langsame Metabolisierer zuerst, dann intermedi&auml;re,
-    dann normale, zuletzt ultraschnelle. Die hervorgehobenen Allele wurden bei ${PATIENT} gefunden,
+    dann normale, zuletzt ultraschnelle. Die hervorgehobenen Allele wurden bei dir gefunden,
     alle &uuml;brigen der Liste wurden untersucht und ausgeschlossen.</p>
   <div class="rgenes">${genes.map(geneReportCard).join('')}</div>
 
   <div class="dsec">${ico('star','',18)} 3 &middot; Zus&auml;tzlich vorgemerkt (${ids.length})</div>
-  <p class="dnote">Wirkstoffe, die ${PATIENT} besprechen m&ouml;chte &mdash; unabh&auml;ngig davon,
+  <p class="dnote">Wirkstoffe, die du besprechen m&ouml;chtest &mdash; unabh&auml;ngig davon,
     ob sie derzeit eingenommen werden. Hier nur Wirkstoffname und Kurzbewertung.</p>
   ${ids.length
     ? `<div class="dashgrid">${ids.map(id=>cardHtml(id,'merk')).join('')}</div>`
@@ -2743,16 +2793,21 @@ function vMerk(){
 function vMeine(){
   return `<div class="sec-title">Deine Medikamente</div>
   <div class="scope scope-me">${ico('n-pill','',18)}
-    <div><b>Das sind die Medikamente, die ${PATIENT} tats&auml;chlich einnimmt.</b>
-      Links suchen und auf das <b>Herz</b> klicken (oder die Karte nach rechts ziehen). Verbundene Karten beeinflussen sich gegenseitig.${ihelp("ix")}</div></div>
+    <div><b>${PATIENT}, das sind die Medikamente, die du tats&auml;chlich einnimmst.</b>
+      Such sie links und setz sie mit dem Knopf auf deine Liste. Verbundene Karten beeinflussen sich gegenseitig.${ihelp("ix")}</div></div>
   <div class="split">
-    <div>
-      <div class="toolbar">
-        <div class="colh">${ico('c-search','',16)} Schritt 1 &mdash; Medikament suchen</div>
-        ${toolbarInner()}
+    <div class="msec ${meineAuf==='suche'?'auf':''}">
+      <button class="msec-h" onclick="setMeine('suche')" aria-expanded="${meineAuf==='suche'}">
+        ${ico('c-search','',17)}<span class="msec-t">Medikament suchen</span>
+        ${ico('chev','msec-c',16)}</button>
+      <div class="msec-b">
+        <div class="toolbar">
+          <div class="colh">${ico('c-search','',16)} Schritt 1 &mdash; Medikament suchen</div>
+          ${toolbarInner()}
+        </div>
+        <div class="listcount" id="listcount"></div>
+        <div class="col-scroll" id="listcol"></div>
       </div>
-      <div class="listcount" id="listcount"></div>
-      <div class="col-scroll" id="listcol"></div>
     </div>
     <div class="dragarrow" aria-hidden="true">
       <div class="daline"></div>
@@ -2760,6 +2815,12 @@ function vMeine(){
       <div class="datx">Karte hier<br>her&uuml;berziehen<br><span>oder Herz klicken</span></div>
       <div class="daline"></div>
     </div>
+    <div class="msec ${meineAuf==='liste'?'auf':''}">
+    <button class="msec-h" onclick="setMeine('liste')" aria-expanded="${meineAuf==='liste'}">
+      ${ico('n-pill','',17)}<span class="msec-t">Deine Liste</span>
+      <span class="msec-n">${workspace.length}</span>
+      ${ico('chev','msec-c',16)}</button>
+    <div class="msec-b">
     <div class="wsurface" id="ws" ondragover="wsOver(event)" ondragleave="wsLeave(event)" ondrop="wsDrop(event)">
       <svg id="wsvg"></svg>
       <div class="colh">${ico('n-pill','',16)} Schritt 2 &mdash; deine Einnahmeliste</div>
@@ -2768,6 +2829,7 @@ function vMeine(){
       ${ixScoreHtml()}
       <div id="wsrows"></div>
     </div>
+    </div></div>
   </div>`;
 }
 function vListe(){
