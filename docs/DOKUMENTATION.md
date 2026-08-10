@@ -1,6 +1,6 @@
 ﻿# GENE-IUS PGx — Projektdokumentation
 
-**Stand:** 2026-08-08 · **Version:** v84 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
+**Stand:** 2026-08-08 · **Version:** v85 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
 
 > ⚠️ **Die Demo-Genotypen sind in der Oberfläche seit v70 nicht mehr als solche
 > gekennzeichnet** (Ansage Daniel, 2026-08-06 — sie sollen wie reale Genotypen
@@ -521,6 +521,7 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 | v70 | Demo-Kennzeichnung aus der Oberfläche entfernt; Wirkstoffkarte zeigt Markennamen statt Anwendungsgebiet (`handelsnamen.json` verdrahtet, 1.220 statt 35); links und rechts unter „Deine Medikamente" identisch |
 | v71 | Wirkstoffnamen brechen um statt abzuschneiden; Interaktions-SVG liegt hinter den Aktionsknöpfen; Austausch als zusammenhängende Gruppe |
 | v72 | Gelöste Wechselwirkungen ausgegraut statt rot, und sie färben die Ampel nicht mehr; Bilanz der geprüften Paare im Kopf der Einnahmeliste |
+| v85 | Knopf heißt überall „Medikament hinzufügen" statt „Auf meine Liste"; Herz durch Plus/Haken ersetzt |
 | v84 | Medikament hinzufügen mit Pluszeichen: Knopf oben über volle Breite plus angehefteter Knopf unten rechts |
 | v83 | Aktionsknöpfe hängen am Telefon als beschriftete Leiste an der Karte statt frei darunter zu schweben |
 | v82 | Zwei Überlappungen behoben: Hinzufüge-Knopf lag über der Karte, Statuszeile INTERAKTION lief in den Aufklapppfeil |

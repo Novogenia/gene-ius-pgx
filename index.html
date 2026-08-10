@@ -993,7 +993,7 @@
      420px-Sonderregeln. */
   .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,var(--cardw)),1fr));
     justify-content:start;gap:0 14px;align-items:start}
-  /* Knopf "Auf meine Liste" - eine eigene Zeile UNTER der Karte, nicht mehr
+  /* Knopf "Medikament hinzufuegen" - eine eigene Zeile UNTER der Karte, nicht mehr
      als Kreis darueber. Als Ueberlagerung traf er Statuszeile und
      Aufklapppfeil, sobald er eine Beschriftung bekam; ausserdem lagen mit
      display:grid und place-items:center Symbol und Text in derselben
@@ -2419,12 +2419,15 @@ function toggleWs(id,e){
 }
 function addBtnHtml(id){
   const on=workspace.includes(id);
-  /* Am Telefon ein breiter Knopf MIT Text - ein nackter Herzkreis sagt dort
-     nicht, dass er das Medikament auf die Liste setzt. Am Desktop bleibt es
-     der Kreis, die Beschriftung ist dort ausgeblendet. */
+  /* Gleiche Handlung, gleiches Wort: der Knopf, der dieses Popup oeffnet,
+     heisst "Medikament hinzufuegen" - dann darf der Knopf, der es dann
+     tatsaechlich tut, nicht "Auf meine Liste" heissen. Das Herz stammt aus
+     der Zeit, als das hier ein Merkzeichen war; seit v80 setzt es das
+     Medikament auf die Einnahmeliste. Plus zum Hinzufuegen, Haken fuer
+     erledigt. */
   return `<button class="heartbtn ${on?'on':''}" onclick="toggleWs('${id}',event)"
-    aria-pressed="${on}" title="${on?'Auf deiner Liste &mdash; zum Entfernen klicken':'Medikament merken &mdash; auf deine Liste setzen'}">
-    ${ico(on?'heart':'hearto','',17)}<span class="hb-l">${on?'Auf deiner Liste':'Auf meine Liste'}</span></button>`;
+    aria-pressed="${on}" title="${on?'Auf deiner Liste &mdash; zum Entfernen klicken':'Auf deine Einnahmeliste setzen'}">
+    ${ico(on?'s-check':'plus','',17)}<span class="hb-l">${on?'Auf deiner Liste':'Medikament hinzuf&uuml;gen'}</span></button>`;
 }
 /* Markennamen aus der Zusatzquelle nachziehen, ohne den Datenblock zu
    veraendern. Dubletten der Quelle (abarelix -> Plenaxis, Plenaxis)
@@ -2857,7 +2860,7 @@ function vListe(){
   <div class="scope scope-db">${ico('n-list','',18)}
     <div><b>${PATIENT}, hier suchst du Medikamente und setzt sie auf deine Liste.</b>
       Alle ${DBSTATS().total.toLocaleString('de-DE')} sind gegen dein Genprofil ausgewertet. Mit
-      <b>Auf meine Liste</b> nimmst du eines auf &mdash; deine Auswahl steht unter
+      <b>Medikament hinzuf&uuml;gen</b> nimmst du eines auf &mdash; deine Auswahl steht unter
       <a href="javascript:go('meine')">Deine Medikamente</a>.${ihelp("ampel")}</div></div>
   ${bigFiltersHtml()}
   ${toolbarHtml()}<div class="listcount" id="listcount"></div><div id="listcol" class="grid3 compact"></div>`;
@@ -3574,7 +3577,7 @@ function vDetail(){
   return `<div class="detail-top">
     <button class="btn" onclick="go('liste')">${ico('back','',16)} Zur&uuml;ck</button>
     <button class="btn ${inWs?'act-on':'btn-plum'}" onclick="toggleWs('${id}',event)">
-      ${ico(inWs?'heart':'hearto','',15)} ${inWs?'Auf deiner Medikamentenliste':'Zu deinen Medikamenten'}</button>
+      ${ico(inWs?'s-check':'plus','',15)} ${inWs?'Auf deiner Liste':'Medikament hinzuf&uuml;gen'}</button>
     <button class="btn ${inWatch?'act-fav':''}" onclick="toggleWatch('${id}')">
       ${ico('star','',15)} ${inWatch?'Auf deiner Merkliste':'Zur Merkliste (Favorit)'}</button>
   </div>
@@ -3680,8 +3683,8 @@ function renderWorkspace(){
   const host=document.getElementById('wsrows');if(!host)return;
   if(!workspace.length){
     host.innerHTML=`<div class="ws-empty">Noch nichts auf deiner Liste.<br>
-      <span style="font-size:13px">In der Medikamentliste suchen und mit
-      <b>Auf meine Liste</b> aufnehmen.</span><br>
+      <span style="font-size:13px">Such ein Medikament und nimm es mit
+      <b>Medikament hinzuf&uuml;gen</b> auf.</span><br>
       <button class="btn btn-plum" style="margin-top:14px"
         onclick="openAdd()">${ico('plus','',17)} Medikament hinzuf&uuml;gen</button>
       </div>`;drawLinks();return;}
@@ -3912,7 +3915,7 @@ function renderAddBody(){
     </div>
     <div class="add-b">
       <p class="add-h">${workspace.length} auf deiner Liste &mdash; such ein Medikament und
-        nimm es mit <b>Auf meine Liste</b> dazu.</p>
+        nimm es mit <b>Medikament hinzuf&uuml;gen</b> dazu.</p>
       ${toolbarHtml()}
       <div class="listcount" id="addcount"></div>
       <div id="addcol" class="grid3 compact"></div>
