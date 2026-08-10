@@ -397,17 +397,6 @@
   .listcount{font-size:12px;color:var(--muted);margin:2px 0 10px 4px}
 
   /* ---------- Split: Liste | Arbeitsfl&auml;che ---------- */
-  .split{display:grid;grid-template-columns:minmax(0,1fr) 92px minmax(0,1fr);gap:14px;align-items:start}
-  .dragarrow{position:sticky;top:24px;display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:96px}
-  .dragarrow .daline{flex:1;width:2px;min-height:26px;background:linear-gradient(var(--line2),transparent)}
-  .dragarrow .dahead{width:48px;height:48px;border-radius:50%;background:var(--plum);color:#fff;
-    display:grid;place-items:center;box-shadow:0 8px 20px -8px rgba(94,0,71,.7);animation:danudge 2.4s ease-in-out infinite}
-  .dragarrow .dahead svg{color:#fff}
-  .dragarrow .datx{font-size:11.5px;font-weight:800;line-height:1.35;text-align:center;color:var(--plum);letter-spacing:.01em}
-  .dragarrow .datx span{font-weight:600;color:var(--muted)}
-  @keyframes danudge{0%,100%{transform:translateX(-4px)}50%{transform:translateX(4px)}}
-  @media(prefers-reduced-motion:reduce){.dragarrow .dahead{animation:none}}
-  @media(max-width:1180px){.split{grid-template-columns:minmax(0,1fr)} .dragarrow{display:none}}
   .col-scroll{max-height:78vh;overflow:auto;padding-right:4px;
     display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,292px),1fr));
     gap:0 12px;align-items:start;align-content:start}
@@ -589,19 +578,15 @@
   .gb-top{display:flex;align-items:center;gap:11px}
   .gb-ic{flex:none;width:46px;height:46px;border-radius:13px;display:grid;place-items:center}
   .gb-ic svg{width:34px;height:44px}
-  /* Aufklappbare Bereiche - Kopfzeilen nur am Telefon sichtbar */
-  .msec-h{display:none;align-items:center;gap:10px;width:100%;margin-bottom:12px;
-    padding:13px 15px;min-height:52px;border-radius:14px;cursor:pointer;font:inherit;
-    font-size:15px;font-weight:800;text-align:left;color:var(--ink);
-    background:#fff;border:1.5px solid var(--line2);-webkit-tap-highlight-color:transparent}
-  .msec.auf>.msec-h{border-color:var(--plum);color:var(--plum);box-shadow:0 2px 8px rgba(94,0,71,.10)}
-  .msec-h>svg:first-child{flex:none;width:17px;height:17px}
-  .msec-t{flex:1;min-width:0}
-  .msec-n{flex:none;min-width:24px;height:24px;border-radius:999px;background:var(--plum);
-    color:#fff;font-size:12px;font-weight:800;line-height:24px;text-align:center;padding:0 7px}
-  .msec-c{flex:none;width:16px;height:16px;transition:.18s;opacity:.6}
-  .hb-l{display:none}
-  .msec.auf .msec-c{transform:rotate(180deg)}
+  /* Der Knopf traegt jetzt ueberall Text - die Medikamentliste ist der Ort
+     zum Hinzufuegen, da muss erkennbar sein, was der Knopf tut. */
+  .hb-l{display:inline;font-size:12.5px;font-weight:800;letter-spacing:-.01em}
+  /* Kopf der eigenen Liste: Ueberschrift links, Knopf zur Medikamentliste
+     rechts - der Weg zum Hinzufuegen muss von hier aus sichtbar sein. */
+  .wshead2{display:flex;align-items:flex-start;gap:16px;justify-content:space-between;
+    flex-wrap:wrap;margin-bottom:4px}
+  .wshead2>div:first-child{min-width:0;flex:1 1 240px}
+  .addbtn{flex:none;white-space:nowrap}
   /* Wechselwirkungszeile - nur am Telefon, dort ersetzt sie die Linie */
   .wsix{display:none}
   .wsix-r{display:flex;align-items:center;gap:9px;width:100%;margin-top:8px;
@@ -672,11 +657,6 @@
     nav.rail .patient{margin:0 0 0 auto;padding:0;border-top:0;gap:9px}
     nav.rail .patient span{display:none}
     .tabbar{display:flex}
-    /* Immer genau ein Bereich offen - sonst steht die eigene Liste hinter
-       150 Suchtreffern und ist nicht auffindbar. */
-    .msec-h{display:flex}
-    .msec>.msec-b{display:none}
-    .msec.auf>.msec-b{display:block}
     /* Weniger Platzbedarf. Achtung: .scope, .colh und .wsurface werden
        weiter unten im Stylesheet nochmals definiert und wuerden hier
        verlieren - sie stehen deshalb im Schlussblock. */
@@ -969,7 +949,8 @@
     justify-content:start;gap:0 14px;align-items:start}
   /* Herz-Merkbutton in der Karte */
   .lirow{position:relative}
-  .heartbtn{position:absolute;top:9px;right:9px;z-index:3;width:32px;height:32px;border-radius:50%;
+  .heartbtn{position:absolute;top:9px;right:9px;z-index:3;height:32px;border-radius:999px;
+    padding:0 12px;gap:7px;
     border:1.5px solid var(--line2);background:#fff;display:grid;place-items:center;cursor:pointer;
     color:var(--faint);transition:.14s;padding:0}
   .heartbtn:hover{border-color:var(--plum);color:var(--plum);transform:scale(1.08)}
@@ -1794,12 +1775,9 @@ let workspace=["clopidogrel","omeprazol","metoprolol","bisoprolol"];
 let favorites=new Set(["clopidogrel"]);
 let watchlist=new Set(["clopidogrel","warfarin","ibuprofen"]);
 let openCards={}, openBoxes={dose:false,gene:false,alt:false}, openGenes={}, altChoice={}, altMenuOpen=null;
-/* Am Telefon ist unter "Deine Medikamente" immer genau einer der beiden
-   Bereiche offen. Voreingestellt die eigene Liste - das ist die Ansicht,
-   die man oeffnet um nachzusehen, nicht um zu suchen. Am Desktop ohne
-   Wirkung, dort sind beide Bereiche offen. */
-let meineAuf='liste';
-function setMeine(t){meineAuf=t;render();}
+/* Der Aufklapp-Mechanismus aus v79 ist entfallen: er loeste das
+   Nebeneinander von Suche und eigener Liste am Telefon, und dieses
+   Nebeneinander gibt es seit v80 nicht mehr. */
 let q="", fCat="all", fSev="all", fFav=false, fWatch=false, geneTech={};
 
 /* ---- PharmCATs eigene Empfehlungen ---------------------------------------
@@ -2228,7 +2206,7 @@ function cardHtml(id,ctx,opts){
   const d=DRUGS[id],sev=opts.sevPool?overallSev(id,opts.sevPool):listSev(id);
   const key=ctx+":"+id,open=openCards[key];
   return `<div class="card c-${sev} ${open?'open':''} ${opts.faded?'faded':''}" data-id="${id}"
-      ${ctx==='list'?`draggable="true" ondragstart="dragStart(event,'${id}')" ondragend="dragEnd(event)"`:''}>
+      >
     <div class="chead" onclick="toggleCard('${key}')">
       ${ico('pillimg','pill')}
       <div class="cmain">
@@ -2791,53 +2769,34 @@ function vMerk(){
       Dosis&auml;nderungen geh&ouml;ren in &auml;rztliche Hand.${ihelp('leit')}</div></div>`;
 }
 function vMeine(){
+  /* Nur noch deine Liste. Gesucht und hinzugefuegt wird in der
+     Medikamentliste - Vorgabe Daniel, 2026-08-08. Damit entfallen die
+     zweispaltige Aufteilung, der Ziehpfeil und Drag and Drop. */
   return `<div class="sec-title">Deine Medikamente</div>
   <div class="scope scope-me">${ico('n-pill','',18)}
     <div><b>${PATIENT}, das sind die Medikamente, die du tats&auml;chlich einnimmst.</b>
-      Such sie links und setz sie mit dem Knopf auf deine Liste. Verbundene Karten beeinflussen sich gegenseitig.${ihelp("ix")}</div></div>
-  <div class="split">
-    <div class="msec ${meineAuf==='suche'?'auf':''}">
-      <button class="msec-h" onclick="setMeine('suche')" aria-expanded="${meineAuf==='suche'}">
-        ${ico('c-search','',17)}<span class="msec-t">Medikament suchen</span>
-        ${ico('chev','msec-c',16)}</button>
-      <div class="msec-b">
-        <div class="toolbar">
-          <div class="colh">${ico('c-search','',16)} Schritt 1 &mdash; Medikament suchen</div>
-          ${toolbarInner()}
-        </div>
-        <div class="listcount" id="listcount"></div>
-        <div class="col-scroll" id="listcol"></div>
+      Verbundene Karten beeinflussen sich gegenseitig.${ihelp("ix")}</div></div>
+  <div class="wsurface" id="ws">
+    <svg id="wsvg"></svg>
+    <div class="wshead2">
+      <div>
+        <h2 class="wstitle">${PATIENT}, das sind <em>deine</em> Medikamente</h2>
+        <p class="wssub">${workspace.length} aktiv eingenommene Medikamente &middot; nach Bewertung sortiert</p>
       </div>
+      <button class="btn btn-plum addbtn" onclick="go('liste')">
+        ${ico('c-search','',16)} Medikament hinzuf&uuml;gen</button>
     </div>
-    <div class="dragarrow" aria-hidden="true">
-      <div class="daline"></div>
-      <div class="dahead">${ico('arr','',26)}</div>
-      <div class="datx">Karte hier<br>her&uuml;berziehen<br><span>oder Herz klicken</span></div>
-      <div class="daline"></div>
-    </div>
-    <div class="msec ${meineAuf==='liste'?'auf':''}">
-    <button class="msec-h" onclick="setMeine('liste')" aria-expanded="${meineAuf==='liste'}">
-      ${ico('n-pill','',17)}<span class="msec-t">Deine Liste</span>
-      <span class="msec-n">${workspace.length}</span>
-      ${ico('chev','msec-c',16)}</button>
-    <div class="msec-b">
-    <div class="wsurface" id="ws" ondragover="wsOver(event)" ondragleave="wsLeave(event)" ondrop="wsDrop(event)">
-      <svg id="wsvg"></svg>
-      <div class="colh">${ico('n-pill','',16)} Schritt 2 &mdash; deine Einnahmeliste</div>
-      <h2 class="wstitle">${PATIENT}, das sind <em>deine</em> Medikamente</h2>
-      <p class="wssub">${workspace.length} aktiv eingenommene Medikamente &middot; nach Bewertung sortiert</p>
-      ${ixScoreHtml()}
-      <div id="wsrows"></div>
-    </div>
-    </div></div>
+    ${ixScoreHtml()}
+    <div id="wsrows"></div>
   </div>`;
 }
 function vListe(){
-  return `<div class="sec-title">Alle Medikamente &mdash; Datenbank</div>
+  return `<div class="sec-title">Medikamentliste</div>
   <div class="scope scope-db">${ico('n-list','',18)}
-    <div><b>Das ist die Medikamenten-Datenbank</b>, ausgewertet gegen dein Genprofil &mdash;
-      <u>nicht</u> die Liste der Medikamente, die du einnimmst.
-      Deine eigene Liste findest du unter <a href="javascript:go('meine')">Deine Medikamente</a>.${ihelp("ampel")}</div></div>
+    <div><b>${PATIENT}, hier suchst du Medikamente und setzt sie auf deine Liste.</b>
+      Alle ${DBSTATS().total.toLocaleString('de-DE')} sind gegen dein Genprofil ausgewertet. Mit
+      <b>Auf meine Liste</b> nimmst du eines auf &mdash; deine Auswahl steht unter
+      <a href="javascript:go('meine')">Deine Medikamente</a>.${ihelp("ampel")}</div></div>
   ${bigFiltersHtml()}
   ${toolbarHtml()}<div class="listcount" id="listcount"></div><div id="listcol" class="grid3 compact"></div>`;
 }
@@ -3659,8 +3618,11 @@ function renderWorkspace(){
   const host=document.getElementById('wsrows');if(!host)return;
   if(!workspace.length){
     host.innerHTML=`<div class="ws-empty">Noch nichts auf deiner Liste.<br>
-      <span style="font-size:12.5px">Links ein Medikament suchen und auf das <b>Herz</b> klicken &mdash;
-      oder die Karte hierher ziehen.</span></div>`;drawLinks();return;}
+      <span style="font-size:13px">In der Medikamentliste suchen und mit
+      <b>Auf meine Liste</b> aufnehmen.</span><br>
+      <button class="btn btn-plum" style="margin-top:14px"
+        onclick="go('liste')">${ico('c-search','',16)} Zur Medikamentliste</button>
+      </div>`;drawLinks();return;}
   const cnt={ok:0,warn:0,crit:0};
   workspace.forEach(id=>cnt[overallSev(id,workspace)]++);
   const leg=[['crit','Alarm','st-excl','Handlungsbedarf &mdash; Dosis &auml;ndern oder Alternative w&auml;hlen.'],
@@ -3962,15 +3924,9 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeIx();closeAltP
 function toggleAltMenu(id){openAltPick(id);}
 function chooseAlt(id,name){if(name)altChoice[id]=name;else delete altChoice[id];altMenuOpen=null;closeAltPick();render();}
 function removeWs(id){workspace=workspace.filter(x=>x!==id);delete altChoice[id];render();}
-let dragId=null;
-function dragStart(e,id){dragId=id;e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='copy';}
-function dragEnd(){dragId=null;}
-function wsOver(e){e.preventDefault();e.dataTransfer.dropEffect='copy';document.getElementById('ws').classList.add('hot');}
-function wsLeave(e){if(e.currentTarget.contains(e.relatedTarget))return;document.getElementById('ws').classList.remove('hot');}
-function wsDrop(e){e.preventDefault();document.getElementById('ws').classList.remove('hot');
-  const id=e.dataTransfer.getData('text/plain')||dragId;
-  if(id&&DRUGS[id]&&!workspace.includes(id))workspace.push(id);
-  render();}
+/* Drag and Drop ist entfallen (Vorgabe Daniel, 2026-08-08): auf dem Telefon
+   hat es nie funktioniert, am Desktop war es eine zweite, unauffindbare Art,
+   dasselbe zu tun wie der Knopf auf der Karte. */
 document.addEventListener('click',()=>{if(altMenuOpen){altMenuOpen=null;renderWorkspace();}});
 
 /* ================= RENDER ================= */
