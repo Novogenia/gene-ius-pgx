@@ -1,12 +1,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GENE-IUS PGx</title>
-<meta name="description" content="Pharmakogenetik-Clickdummy - Prototyp zur Abstimmung, kein Medizinprodukt.">
+<title>NOVO Drug Response</title>
+<meta name="description" content="NOVO Drug Response - Pharmakogenetik-Clickdummy. Prototyp zur Abstimmung, kein Medizinprodukt.">
 <meta name="theme-color" content="#5E0047">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="GENE-IUS PGx">
+<meta name="apple-mobile-web-app-title" content="NOVO Drug Response">
 <style>
   :root{
     --plum:#5E0047; --plum-700:#400031; --plum-050:#FBF6F9; --plum-100:#F3E8EF;
@@ -36,7 +36,7 @@
   @media(max-width:1080px){nav.rail{position:static;height:auto}}
   .brand{display:flex;align-items:center;gap:12px;color:#fff;font-weight:800;font-size:17.5px;letter-spacing:-.015em;padding:2px 6px 30px}
   .brand .logo{width:36px;height:36px;border-radius:11px;background:radial-gradient(120% 120% at 20% 15%,#9DBF00 0%,transparent 52%),rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px}
-  .brand small{display:block;font-weight:600;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#d8b6cd;margin-top:2px}
+  .brand small{display:block;font-weight:600;font-size:10.5px;letter-spacing:.055em;text-transform:uppercase;color:#d8b6cd;margin-top:2px;line-height:1.25}
   .nav-item{display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:11px;border:0;background:transparent;
     font-size:14.5px;font-weight:600;letter-spacing:0;color:#e0c7d8;cursor:pointer;text-align:left;width:100%;
     white-space:normal;line-height:1.25;transition:.15s}
@@ -1298,7 +1298,7 @@
 
 <div class="shell">
   <nav class="rail">
-    <div class="brand"><div class="logo">G</div><div>GENE-IUS<small>PGx</small></div></div>
+    <div class="brand"><div class="logo">N</div><div>NOVO<small>Drug Response</small></div></div>
     <div id="rail"></div>
     <div class="patient"><div class="av">LM</div><div><b>Lisa M.</b><br><span>233 Gene &middot; 6.566 Varianten</span></div></div>
   </nav>
@@ -1316,7 +1316,7 @@
 <script>
 /* ===== BEGIN PHARMCAT PROFIL (erzeugt, nicht von Hand aendern) ===== */
 /* ============================================================
-   GENE-IUS PGx - Genprofil aus dem PharmCAT-3.2.0-Lauf
+   NOVO Drug Response - Genprofil aus dem PharmCAT-3.2.0-Lauf
    Quelle: IT/General/PharmCAT Validation 20260730 (40 Proben)
    Erzeugt von build_pharmcat.py. Nicht von Hand aendern.
    Probe NA17454 | GRCh38.p14 | PharmCAT 3.2.0 | Daten 2026-02-09-10-28
@@ -1337,7 +1337,7 @@ const P_REC=[["Abacavir","17058",[["HLA-B","","YES"]],0,3,"0","crit",""],["Aceno
 /* ===== END PHARMCAT PROFIL ===== */
 /* ===== BEGIN RS-BEFUNDE (erzeugt, nicht von Hand aendern) ===== */
 /* ============================================================
-   GENE-IUS PGx - Einzelpositionen mit Studienhinweis
+   NOVO Drug Response - Einzelpositionen mit Studienhinweis
    Erzeugt von 30_rs_befunde.py. Nicht von Hand aendern.
    Quelle: PharmGKB clinical annotations + Novogenia
            drug_pharmacogenetics.csv, geschnitten gegen die
@@ -1363,7 +1363,7 @@ const HNAMEN={"abacavir":["Epzicom","Ziagen"],"abarelix":["Plenaxis"],"abciximab
 /* ===== END HANDELSNAMEN ===== */
 /* ===== BEGIN DEMO-GENOTYPEN (erzeugt, KEINE MESSWERTE) ===== */
 /* ============================================================
-   GENE-IUS PGx - DEMO-GENOTYPEN, KEINE MESSWERTE
+   NOVO Drug Response - DEMO-GENOTYPEN, KEINE MESSWERTE
    Erzeugt von 31_dummy_genotypen.py. Nicht von Hand aendern.
 
    Diese Positionen sind ERFUNDEN. Sie fuellen die Luecke, bis
@@ -1597,7 +1597,7 @@ const DEMO_DDI=[
 ];
 /* ===== BEGIN ECHTE WIRKSTOFFDATEN ===== */
 /* ============================================================
-   GENE-IUS PGx - Wirkstoffdaten aus den Novogenia-Quelldateien
+   NOVO Drug Response - Wirkstoffdaten aus den Novogenia-Quelldateien
    Erzeugt von build_pgx_data.py. Nicht von Hand aendern.
    Quellen: All Drugs V12.xlsx, Pharmgkb drug recommendations V4.xlsx,
             drugs_master.csv, drug_pharmacogenetics.csv, drug_interactions.csv
@@ -2493,7 +2493,7 @@ function vDashboard(){
     ? `<div class="start start-empty">
         <div class="st-ic">${ico('n-pill','',34)}</div>
         <h2>F&uuml;ge die ersten Medikamente zu deiner Liste hinzu</h2>
-        <p>Trage ein, was du t&auml;glich einnimmst. Erst dann kann GENE-IUS pr&uuml;fen, ob deine Medikamente
+        <p>Trage ein, was du t&auml;glich einnimmst. Erst dann kann NOVO Drug Response pr&uuml;fen, ob deine Medikamente
           zu deinen Genen passen und ob sie sich gegenseitig beeinflussen.</p>
         <button class="cta" onclick="go('meine')">${ico('plus','',20)} Zu deinen Medikamenten</button>
       </div>`
@@ -3517,7 +3517,7 @@ const INFO={
      das das andere abbauen soll. Dann reichert sich der zweite Wirkstoff an &mdash; oder wird gar nicht erst aktiviert.</p>
      <p>Besonders heikel wird es, wenn zus&auml;tzlich dein Gen f&uuml;r dieses Enzym schw&auml;chelt.
      Dann addieren sich beide Effekte.</p>
-     <div class="ex">Deshalb pr&uuml;ft GENE-IUS beides: dein Genprofil <b>und</b> die Kombination deiner Medikamente.</div>`],
+     <div class="ex">Deshalb pr&uuml;ft NOVO Drug Response beides: dein Genprofil <b>und</b> die Kombination deiner Medikamente.</div>`],
   ampel:["Was bedeuten die Farben?",
     `<p><b>Gr&uuml;n &mdash; OK.</b> Die Standarddosis ist f&uuml;r dich sicher und wirksam. Nichts zu tun.</p>
      <p><b>Orange &mdash; Achtung.</b> Die Dosis sollte angepasst oder die Wirkung beobachtet werden.
@@ -4058,7 +4058,7 @@ function render(){
   else if(view==='liste')m.innerHTML=vListe();
   else if(view==='gene')m.innerHTML=vGene();
   else if(view==='merk')m.innerHTML=vMerk();
-  m.insertAdjacentHTML('beforeend','<div class="foot">Clickdummy &middot; Demo-Daten (fiktive Person &bdquo;Lisa M.&ldquo;) &middot; GENE-IUS PGx</div>');
+  m.insertAdjacentHTML('beforeend','<div class="foot">Clickdummy &middot; Demo-Daten (fiktive Person &bdquo;Lisa M.&ldquo;) &middot; NOVO Drug Response</div>');
   if(view==='meine'||view==='liste'){renderList();}
   if(view==='meine'){renderWorkspace();
     const inp=document.getElementById('q');if(inp&&q){inp.focus();inp.setSelectionRange(q.length,q.length);}}

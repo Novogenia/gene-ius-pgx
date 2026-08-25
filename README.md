@@ -1,4 +1,4 @@
-# GENE-IUS PGx
+# NOVO Drug Response
 
 Clickdummy für eine Pharmakogenetik-App. Eine einzige HTML-Datei, kein Build-Schritt.
 2.697 Wirkstoffe, gegen ein echtes Genprofil aus einem PharmCAT-3.2.0-Lauf bewertet.

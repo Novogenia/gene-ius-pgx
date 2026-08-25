@@ -1,4 +1,4 @@
-﻿# GENE-IUS PGx — Projektdokumentation
+﻿# NOVO Drug Response — Projektdokumentation
 
 **Stand:** 2026-08-11 · **Version:** v86 · **Status:** Clickdummy mit echtem PharmCAT-Genprofil **plus Demo-Genotypen**, lauffähig
 
@@ -27,7 +27,7 @@ Der Rest ist Nachschlagewerk.
 
 ### Was das ist, in drei Sätzen
 
-GENE-IUS PGx ist ein Clickdummy für eine Pharmakogenetik-App: eine einzige
+NOVO Drug Response ist ein Clickdummy für eine Pharmakogenetik-App: eine einzige
 HTML-Datei ohne Build-Schritt, die 2.697 Wirkstoffe gegen ein echtes Genprofil
 bewertet. Das Genprofil kommt aus einem PharmCAT-3.2.0-Lauf, die
 Wirkstoff-Empfehlungen aus PharmCATs Reporter (CPIC/DPWG/FDA) plus Novogenias
