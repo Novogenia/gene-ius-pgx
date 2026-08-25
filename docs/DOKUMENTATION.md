@@ -370,6 +370,57 @@ Eine HTML-Datei, 2.426 Zeilen: `<style>` → SVG-Symbolbibliothek → `nav.rail`
 
 ---
 
+### Einfach und Experte (ab v88)
+
+Ein Umschalter in der Kopfleiste, zwei Ansichten. `MODE` ist `'einfach'` oder
+`'experte'`, liegt im `localStorage` unter `ndr-mode`, Voreinstellung
+**einfach**. Ein winziger `<script>`-Block **vor** `<div class="shell">` setzt
+`document.body.className` — sonst blitzt beim Laden kurz die falsche Ansicht auf.
+
+**Mechanik.** Eine Klasse am `<body>` plus zwei Markierungsklassen:
+
+```css
+body.m-einfach .x-only{display:none!important}   /* nur für Fachleute */
+body.m-experte .s-only{display:none!important}   /* nur in der einfachen Ansicht */
+```
+
+Damit gibt es **einen** Renderpfad, nicht zwei. Zwei getrennte Renderfunktionen
+wären bei dieser Dateigröße die sichere Quelle für Ansichten, die auseinander
+laufen. `setMode()` rendert trotzdem neu, weil einzelne Texte sich unterscheiden
+und Zähler mitwandern müssen.
+
+Die beiden Regeln stehen am **Ende** des Stylesheets. Früher platziert verlieren
+sie gegen spätere Grundregeln — siehe Fallstrick zu CSS-Reihenfolge.
+
+**Was in der einfachen Ansicht verschwindet**
+
+| Ort | Was |
+|---|---|
+| Medikamentenkarte | Felder `Abbau` / `Aktivierung` und `Grundlage` |
+| Genkarte | Metabolisierer-Skala (PM/IM/NM/UM), „Deine zwei Genkopien", Einzelpositionen mit rs-Nummer/Genotyp/Evidenzstufe, Knopf „Fachdetails für den Arzt" |
+| Genansicht | alle Gene ohne Phänotyp **und** ohne Befund — aus 488 Karten werden 197, eine Zeile nennt die Zahl der ausgeblendeten |
+| Arztbericht | die Quellenzeile (Referenzgenom, Allel-Definitionen, PharmCAT-Version) |
+
+**Was bewusst NICHT verschwindet**
+
+- **`Toxizität` wird zu `Risiko` umbenannt, nicht versteckt.** Eine Warnung vor
+  erhöhtem Risiko ist sicherheitsrelevant. Die Leitlinie für diese Trennung
+  lautet: **versteckt wird nur Herleitung, nie eine Folge.** `Abbau`,
+  `Aktivierung` und `Grundlage` erklären, *warum* etwas passiert; `Wirkung`,
+  `Handlung`, `Dosierung`, `Interaktion` und `Risiko` sagen, *was ist* oder
+  *was zu tun ist*.
+- **Der Arztbericht bleibt in beiden Ansichten vollständig technisch.** Er ist
+  ausdrücklich für die Ärztin; dort ist Dichte der Zweck. Die Ansicht steuert,
+  was *du* über dich siehst, nicht was der Arzt bekommt.
+
+**Falle bei `metrics()`:** die Funktion hat zwei Pfade und liefert insgesamt
+acht Feldnamen, nicht vier. Der PharmCAT-Pfad baut `[Wirkung, Abbau/Aktivierung,
+Toxizität]`, wirft alles Unbestimmte weg und hängt `Handlung` und `Grundlage`
+an; der Ersatzpfad liefert `Wirkung/Abbau/Toxizität/Dosierung`. Wer nur die
+ersten Zweige liest, übersieht `Handlung`, `Grundlage` und `Interaktion` — genau
+das ist beim Bau von v88 passiert und erst beim Messen an einer offenen Karte
+aufgefallen. Einsortiert wird deshalb in `metricBoxes()`, nicht in `metrics()`.
+
 ## 5. Festgelegte Konventionen
 
 Diese Punkte hat Daniel entschieden. Nicht ohne Rücksprache ändern.
@@ -510,6 +561,8 @@ Legende und Filterergebnis übereinstimmen. Zu klären, woher Daniels Zahlen sta
 
 | Version | Was |
 |---|---|
+| v88 | **Einfach / Experte** umschaltbar: Klasse am `<body>` plus `.x-only`/`.s-only`, Wahl im `localStorage`, Voreinstellung einfach. Einfach zeigt 197 statt 488 Genkarten, keine Herleitungsfelder, keine Einzelpositionen. Arztbericht bleibt in beiden Ansichten vollständig |
+| v87 | Umbenannt in **NOVO Drug Response** (vorher GENE-IUS PGx — der Name war mit dem Komponenten-Designsystem doppelt belegt) |
 | v13 | Gen-Karten aufklappbar mit Star-Allelen, eine Spalte mit Interaktionssortierung |
 | v24 | Arztseite als PC-Ansicht, persönliche Einleitung, 9 Erklär-Popups, Du-Form |
 | v27 | Dreispaltige Liste, ALARM statt Warnung, Herz-Button, Ampelfilter |
