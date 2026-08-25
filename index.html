@@ -1251,51 +1251,6 @@
       padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}
     .ix-h{padding:16px}
   }
-
-  /* ============================================================
-     EINFACH / EXPERTE
-     Diese beiden Regeln stehen bewusst am ENDE des Stylesheets.
-     Frueher platziert verlieren sie gegen spaetere Grundregeln -
-     in diesem Projekt schon viermal passiert.
-     ============================================================ */
-  body.m-einfach .x-only{display:none!important}
-  body.m-experte .s-only{display:none!important}
-
-  /* Der Umschalter. In der Seitenleiste steht er unter der Marke, am
-     Telefon wird die Leiste waagrecht und er rueckt in die Luecke
-     zwischen Marke und Patientenblock. */
-  .modesw{display:flex;gap:2px;padding:3px;margin:0 6px 14px;border-radius:11px;
-    background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.13)}
-  .msw-b{flex:1;min-height:32px;padding:0 10px;border:0;border-radius:8px;cursor:pointer;
-    background:transparent;color:#d8b6cd;font:inherit;font-size:12.5px;font-weight:750;
-    letter-spacing:.01em;transition:.14s;-webkit-tap-highlight-color:transparent}
-  .msw-b:hover{color:#fff}
-  body.m-einfach .msw-b[data-m="einfach"],
-  body.m-experte .msw-b[data-m="experte"]{background:#fff;color:var(--plum)}
-
-  /* Hinweiszeile, die nur in der einfachen Ansicht erscheint. */
-  .s-hint{display:flex;align-items:flex-start;gap:9px;margin:0 0 16px;padding:11px 13px;
-    border:1px solid var(--line);border-radius:12px;background:var(--plum-050);
-    color:var(--muted);font-size:12.5px;line-height:1.5}
-  .s-hint b{color:var(--ink)}
-  .s-hint svg{flex:none;width:16px;height:16px;margin-top:1px;color:var(--plum)}
-
-  @media(max-width:1080px){
-    /* Waagrechte Kopfleiste: der Umschalter sitzt zwischen Marke und
-       Patientenblock und wird kompakt. */
-    .modesw{margin:0;flex:none}
-    /* 38px statt 30: die Kopfleiste ist 60px hoch, mehr passt nicht hinein,
-       ohne sie umzubauen. Empfohlen waeren 44px - 38 ist der groesste Wert,
-       der ohne Umbau hineingeht, und deutlich naeher dran als vorher. */
-    .msw-b{min-height:38px;padding:0 11px;font-size:12px}
-  }
-  @media(max-width:430px){
-    /* Bei 375px ist zwischen Marke und Patientenblock kein Platz mehr fuer
-       zwei Woerter. Der Patientenblock gibt seinen Text ab und behaelt das
-       Kuerzel - der Name steht ohnehin gross auf der Startseite. */
-    .patient>div:last-child{display:none}
-    .msw-b{padding:0 9px;font-size:11.5px}
-  }
 </style>
 
 <svg style="display:none" aria-hidden="true">
@@ -1341,14 +1296,9 @@
   </symbol>
 </svg>
 
-<script>document.body.className='m-'+((function(){try{return localStorage.getItem('ndr-mode')||'einfach';}catch(e){return 'einfach';}})());</script>
 <div class="shell">
   <nav class="rail">
     <div class="brand"><div class="logo">N</div><div>NOVO<small>Drug Response</small></div></div>
-    <div class="modesw" role="group" aria-label="Ansicht">
-      <button type="button" class="msw-b" data-m="einfach" onclick="setMode('einfach')">Einfach</button>
-      <button type="button" class="msw-b" data-m="experte" onclick="setMode('experte')">Experte</button>
-    </div>
     <div id="rail"></div>
     <div class="patient"><div class="av">LM</div><div><b>Lisa M.</b><br><span>233 Gene &middot; 6.566 Varianten</span></div></div>
   </nav>
@@ -1877,21 +1827,11 @@ const ANNOS={
 
 /* ================= STATE ================= */
 const PATIENT="Lisa";
-let view="dashboard", detailId=null;
-/* Einfach oder Experte. Voreinstellung "einfach": das ist die Ansicht fuer
-   Nutzerinnen und Nutzer, die Expertenansicht wird bewusst zugeschaltet. */
-let MODE=(function(){try{return localStorage.getItem('ndr-mode')||'einfach';}
-  catch(e){return 'einfach';}})();
-function istEinfach(){return MODE==='einfach';}
-function setMode(m){
-  if(m===MODE)return;
-  MODE=m;
-  try{localStorage.setItem('ndr-mode',m);}catch(e){}
-  document.body.className='m-'+m;
-  /* Neu rendern statt nur ein-/auszublenden: einzelne Texte unterscheiden
-     sich, und die Zaehler ("x Gene ausgewertet") muessen mitwandern. */
-  render();
-}
+/* Beim Oeffnen zuerst die eigene Einnahmeliste, nicht die Startseite
+   (Vorgabe Daniel, 2026-08-25). render() haengt fuer "meine" renderList()
+   und renderWorkspace() an - beides laeuft damit schon beim ersten
+   Zeichnen. */
+let view="meine", detailId=null;
 let workspace=["clopidogrel","omeprazol","metoprolol","bisoprolol"];
 let favorites=new Set(["clopidogrel"]);
 let watchlist=new Set(["clopidogrel","warfarin","ibuprofen"]);
@@ -2353,20 +2293,10 @@ function cardHtml(id,ctx,opts){
   </div>`;
 }
 function metricBoxes(id){
-  return metrics(id).map(m=>{
-    /* Herleitung statt Folge: "Abbau" und "Aktivierung" erklaeren, WARUM
-       etwas passiert, "Grundlage" nennt den Genotyp, auf den sich die
-       Empfehlung stuetzt ("CYP2C19 Normal"). Das sind die Felder, die in der
-       einfachen Ansicht fallen. Was bleibt - Wirkung, Handlung, Dosierung,
-       Interaktion, Risiko - sagt, was ist oder was zu tun ist. */
-    const mechanik=(m.l==='Abbau'||m.l==='Aktivierung'||m.l==='Grundlage');
-    /* "Toxizitaet" wird umbenannt, NICHT versteckt: ein erhoehtes Risiko ist
-       sicherheitsrelevant. Versteckt wird nur Mechanik, nie eine Folge. */
-    const lab=(istEinfach()&&m.l==='Toxizit&auml;t')?'Risiko':m.l;
-    return `<div class="ibox b-${m.sev}${mechanik?' x-only':''}">
+  return metrics(id).map(m=>`<div class="ibox b-${m.sev}">
     <div class="ic s-${m.sev}">${ico(m.sym)}</div>
-    <div class="itx"><div class="il">${lab}</div><div class="iv t-${m.sev}">${m.v}</div></div>
-  </div>`;}).join('');
+    <div class="itx"><div class="il">${m.l}</div><div class="iv t-${m.sev}">${m.v}</div></div>
+  </div>`).join('');
 }
 
 /* ================= GEN-SYMBOLE ================= */
@@ -2744,7 +2674,7 @@ function covBlock(){
         <div class="cov-k"><span class="n">${M.posda.toLocaleString('de-DE')}</span><span class="l">Stellen gelesen</span></div>
         <div class="cov-k"><span class="n">${pct}&thinsp;%</span><span class="l">Abdeckung der ben&ouml;tigten Stellen</span></div>
       </div>
-      <p class="cov-p x-only">Probe <b>${M.probe}</b> &middot; Referenz <b>${M.build}</b> &middot;
+      <p class="cov-p">Probe <b>${M.probe}</b> &middot; Referenz <b>${M.build}</b> &middot;
         Allel-Definitionen <b>ClinPGx</b> &middot; Auswertung <b>PharmCAT ${M.ver}</b> &middot;
         Stand <b>${M.stand}</b>.</p>
       <div class="cov-sub">Gene mit Diplotyp-Auswertung (${zeigbar.length})</div>
@@ -3170,22 +3100,11 @@ function vGene(){
   return `<div class="sec-title">Deine Gene</div>
   <p class="sec-sub">${PATIENT}, das sind die Gene, die dar&uuml;ber entscheiden, wie du Medikamente verarbeitest. Jede Karte zeigt deine zwei Genkopien und was sie zusammen bewirken${ihelp("gene")} &mdash; anklicken f&uuml;r Klartext, Fachdetails und Quellen.${ihelp("metab")}</p>
   ${demoBannerHtml()}
-  ${(()=>{const kAlle=geneListe(),z=geneZahlen();
-    /* In der einfachen Ansicht nur die Gene, die etwas aussagen: solche mit
-       Metabolisierertyp oder mit mindestens einem Befund. Aus 488 Karten
-       werden damit die, zu denen es ueberhaupt eine Aussage gibt. */
-    const k=istEinfach()
-      ? kAlle.filter(g=>!!PHENO[g]||(RS_BY[g]||[]).some(p=>rsNeg(p[4])))
-      : kAlle;
-    const versteckt=kAlle.length-k.length;
+  ${(()=>{const k=geneListe(),z=geneZahlen();
     /* Alle Karten sofort, kein Nachladeknopf (Vorgabe Daniel, 2026-08-08).
        488 Karten kosten rund 760 ms beim ersten Rendern - Fallstrick 6 zielte
        auf 2.697 Karten in der Wirkstoffliste, nicht auf diese Groessenordnung. */
     return `<div class="genecount">${z.alle} Gene ausgewertet</div>
-    ${versteckt?`<div class="s-hint">${ico('st-ok','',16)}<div>Hier stehen die
-      <b>${k.length} Gene, zu denen es eine Aussage gibt</b>. Die &uuml;brigen
-      ${versteckt} wurden ebenfalls untersucht und waren unauff&auml;llig &mdash;
-      mit <b>Experte</b> oben siehst du alle.</div></div>`:''}
     <div class="genegrid">${k.map(g=>geneCardHtml(g)).join('')}</div>`;})()}`;
 }
 /* ---- Gen-Eintrag (aufklappbar) ---- */
@@ -3521,17 +3440,15 @@ function geneCardHtml(g,opts){
       <div class="gb-tx"><div class="gn">${g}</div><div class="gs" style="color:${colr}">${short}</div></div>
       ${ico('chev','gchev')}
     </div>
-    <div class="x-only">${skala}</div>
+    ${skala}
     ${why}${befZeile}
     <div class="gexp" onclick="event.stopPropagation()">
       <div class="gsec">Was heisst das f&uuml;r dich?</div>
       <div class="plain sm">${plainSentence(g)}</div>
-      <div class="x-only">
-        <div class="gsec sp">Deine zwei Genkopien</div>
-        <div class="gcopies">${copiesHtml(g)}</div>
-        ${gPosHtml(g)}
-        ${techToggleHtml(g,key+':tech')}
-      </div>
+      <div class="gsec sp">Deine zwei Genkopien</div>
+      <div class="gcopies">${copiesHtml(g)}</div>
+      ${gPosHtml(g)}
+      ${techToggleHtml(g,key+':tech')}
       <button class="btn btn-plum gmore" onclick="event.stopPropagation();openGene('${g}')">Alle Details und Empfehlungen ${ico('arr','',15)}</button>
     </div>
   </div>`;
