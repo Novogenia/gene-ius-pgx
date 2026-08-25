@@ -4,6 +4,10 @@ Clickdummy für eine Pharmakogenetik-App. Eine einzige HTML-Datei, kein Build-Sc
 2.697 Wirkstoffe, gegen ein echtes Genprofil aus einem PharmCAT-3.2.0-Lauf bewertet.
 
 **Prototyp zur Abstimmung — kein Medizinprodukt, keine Therapieentscheidung.**
+Die gezeigten Genotypen sind zu Vorführzwecken erzeugt, nicht die eines
+realen Menschen.
+
+**Ansehen: [novogenia.github.io/gene-ius-pgx](https://novogenia.github.io/gene-ius-pgx/)**
 
 ## Anfangen
 
@@ -20,12 +24,16 @@ Clickdummy für eine Pharmakogenetik-App. Eine einzige HTML-Datei, kein Build-Sc
 https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics
 ```
 
-`github` speist nur die öffentliche Testseite. Beim Pushen beide bedienen:
+`novo` speist die öffentliche Seite. Beim Pushen beide bedienen:
 
 ```
 git push origin main
-git push github main
+git push novo main
 ```
+
+Der dritte Remote `github` (`evolutionnext696-prog/…`) ist tot — kein
+Schreibrecht, jeder Push endet in 403. Die dortige Seite steht dauerhaft auf
+v58 und darf nicht mehr verlinkt werden. Details in `docs/DOKUMENTATION.md`.
 
 Git über cmd-Batchdateien, nicht PowerShell — PowerShell kehrt bei git zu früh
 zurück und schlägt still fehl.
@@ -34,7 +42,7 @@ zurück und schlägt still fehl.
 
 | Pfad | Was |
 |---|---|
-| `index.html` | die App, 685 kB, rein ASCII |
+| `index.html` | die App, 850 kB, rein ASCII |
 | `docs/DOKUMENTATION.md` | Aufbau, Herleitungsregeln, Fallstricke, Änderungsverlauf |
 | `docs/DATENQUELLEN_RECHERCHE.md` | Recherche zu Alternativ- und Interaktionsquellen |
 | `tools/` | Generatoren und die angewandten Umbauten, chronologisch |

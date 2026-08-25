@@ -41,14 +41,29 @@ git clone https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharm
 ```
 
 `origin` = **Azure DevOps** (verbindlich, Vorgabe von Nick Wassermann/IT).
-`github` = `github.com/evolutionnext696-prog/gene-ius-pgx` — speist nur die
-öffentliche Testseite [evolutionnext696-prog.github.io/gene-ius-pgx](https://evolutionnext696-prog.github.io/gene-ius-pgx/).
-Beim Pushen **beide** bedienen, sonst friert der Testlink ein:
+`novo` = `github.com/Novogenia/gene-ius-pgx` — speist die öffentliche Seite
+**[novogenia.github.io/gene-ius-pgx](https://novogenia.github.io/gene-ius-pgx/)**.
+Beim Pushen **beide** bedienen, sonst friert der Link ein:
 
 ```
 git push origin main
-git push github main
+git push novo main
 ```
+
+> **Der dritte Remote `github` ist tot.** Er zeigt auf
+> `evolutionnext696-prog/gene-ius-pgx`; das Konto `Novogenia` hat dort nur
+> Leserecht (`push:false`), eine Einladung existiert nicht. Jeder Push dorthin
+> endet in 403. Die alte Seite
+> `evolutionnext696-prog.github.io/gene-ius-pgx` steht deshalb dauerhaft auf
+> v58 vom 4.8.2026 — **nicht mehr verlinken**. Am 25.8.2026 wurde
+> `Novogenia/gene-ius-pgx` angelegt und v86 dorthin veröffentlicht.
+
+**Fallstrick beim Anlegen:** `gh` bewahrt seinen Zugangsschlüssel im Windows-
+Anmeldespeicher auf. Aus einem per Doppelklick gestarteten cmd-Fenster wird er
+dort nicht gefunden (`gh auth login` wird verlangt), aus einer Shell heraus
+schon. Git selbst hat eine **eigene** Anmeldung (`git:https://github.com`,
+Benutzer Novogenia) und pusht in beiden Fällen. Repo anlegen und Pages
+einschalten also über die Weboberfläche, nicht über `gh` in einer Batchdatei.
 
 Git-Operationen über **cmd-Batchdateien**, nicht PowerShell — PowerShell kehrt
 bei git zu früh zurück und schlägt still fehl.
@@ -57,7 +72,7 @@ bei git zu früh zurück und schlägt still fehl.
 
 | Pfad | Inhalt |
 |---|---|
-| `index.html` | die komplette App, 685 kB, rein ASCII, kein Build |
+| `index.html` | die komplette App, 850 kB, rein ASCII, kein Build |
 | `docs/DOKUMENTATION.md` | diese Datei |
 | `docs/DATENQUELLEN_RECHERCHE.md` | 52-Agenten-Recherche zu Alternativ- und Interaktionsquellen |
 | `tools/build_pharmcat.py` | erzeugt `pharmcat_profil.js` aus einem PharmCAT-Lauf |
