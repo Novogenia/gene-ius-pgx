@@ -1,68 +1,12 @@
-# NOVO Drug Response
+# NOVO Drug Response – Klickdummy
 
-Clickdummy für eine Pharmakogenetik-App. Eine einzige HTML-Datei, kein Build-Schritt.
-2.697 Wirkstoffe, gegen ein echtes Genprofil aus einem PharmCAT-3.2.0-Lauf bewertet.
+Ergebnisplattform zum Pharmakogenetik-Test von Novogenia, **Klickdummy mit anonymisiertem Beispielkunden**.
+Kein Medizinprodukt, keine Therapieempfehlung. Die Bewertungen stammen aus der Auswertung im Labor; die App
+zeigt sie nur an. Leitlinien- und Studientexte stehen im englischen Original, darunter eine nicht validierte
+deutsche Übersetzung – maßgeblich ist immer die englische Fassung.
 
-**Prototyp zur Abstimmung — kein Medizinprodukt, keine Therapieentscheidung.**
-Die gezeigten Genotypen sind zu Vorführzwecken erzeugt, nicht die eines
-realen Menschen.
+**Ansehen:** https://novogenia.github.io/gene-ius-pgx/
 
-**Ansehen: [novogenia.github.io/gene-ius-pgx](https://novogenia.github.io/gene-ius-pgx/)**
-
-## Anfangen
-
-1. **`docs/DOKUMENTATION.md`, Abschnitt 0** lesen. Das ist der Schnellstart und
-   erklärt in fünf Minuten Aufbau, Datenquellen, Regeln und offene Punkte.
-2. Danach Abschnitt 6 (Fallstricke) und 11 (PharmCAT).
-3. `index.html` im Browser öffnen.
-
-## Repository
-
-`origin` ist **Azure DevOps**:
-
-```
-https://novogenia@dev.azure.com/novogenia/BusinessVibeCodes/_git/pharmacogenetics
-```
-
-`novo` speist die öffentliche Seite. Beim Pushen beide bedienen:
-
-```
-git push origin main
-git push novo main
-```
-
-Der dritte Remote `github` (`evolutionnext696-prog/…`) ist tot — kein
-Schreibrecht, jeder Push endet in 403. Die dortige Seite steht dauerhaft auf
-v58 und darf nicht mehr verlinkt werden. Details in `docs/DOKUMENTATION.md`.
-
-Git über cmd-Batchdateien, nicht PowerShell — PowerShell kehrt bei git zu früh
-zurück und schlägt still fehl.
-
-## Inhalt
-
-| Pfad | Was |
-|---|---|
-| `index.html` | die App, 850 kB, rein ASCII |
-| `docs/DOKUMENTATION.md` | Aufbau, Herleitungsregeln, Fallstricke, Änderungsverlauf |
-| `docs/DATENQUELLEN_RECHERCHE.md` | Recherche zu Alternativ- und Interaktionsquellen |
-| `tools/` | Generatoren und die angewandten Umbauten, chronologisch |
-| `data/` | Ergebnisse der Datenpipeline — gebaut, aber noch nicht in der App |
-
-## Die drei Regeln
-
-1. **Nichts erfinden.** Was PharmCAT nicht ruft, bleibt sichtbar „nicht bestimmbar".
-2. **Rein ASCII.** Umlaute als HTML-Entities; jedes Skript prüft das.
-3. **Ersetzungen mit Zusicherung** — Anker genau einmal *und* im richtigen Bereich
-   (`<style>` vs. `<script>`).
-
-## Datengrundlage
-
-Genprofil: Probe **NA17454** aus dem PharmCAT-Validierungslauf vom 2026-07-30
-(40 Proben). Ein öffentliches Coriell-Referenzgenom — kein Kundendatensatz.
-
-Empfehlungen: PharmCAT-Reporter (CPIC, DPWG, FDA) plus Novogenias eigene
-Leitlinienmatrix. Wirkstoffe, ATC-Klassifikation und Wechselwirkungen aus den
-Novogenia-Quelldateien.
-
-Lizenzhinweis: DrugBank-Ableitungen sind CC BY-NC — nicht kommerziell nutzbar,
-solange keine Lizenz vorliegt. Details in `docs/DATENQUELLEN_RECHERCHE.md`.
+Dieses Repository enthält nur die gebaute App (`index.html`, `data/clinpgx_alle.json`). Herkunft und Lizenz der
+Daten: [LICENSE-DATA.md](LICENSE-DATA.md) (ClinPGx/PharmGKB, CPIC, PharmCAT unter CC BY-SA 4.0).
+Stand: 12.10.2026.
