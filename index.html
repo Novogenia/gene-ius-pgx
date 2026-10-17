@@ -2294,6 +2294,24 @@
 }
 @media(max-width:700px){.sp-z .mr-s span{display:inline}.sp-z .mr-s{padding:4px 8px}}
 @media(max-width:380px){.sp-z{gap:10px;padding:12px}.sp-pill{width:28px;height:28px}}
+
+/* ---- tools/97: Austauschen im Simpel-Modus (17.10.2026) ---- */
+.sp-tb{flex:none;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 12px;border-radius:11px;border:1.5px solid var(--warn-ln);background:var(--warn-bg);color:var(--warn-t);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}
+.sp-tb:hover{border-color:var(--warn)}
+.sp-tausch{background:#fff;border:1.5px dashed var(--warn-ln);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.sp-th{display:flex;gap:10px;align-items:flex-start;font-size:15.5px;color:var(--ink)}
+.sp-th svg{flex:none;color:var(--warn-t);margin-top:3px}
+.sp-ts{font-size:13.5px;color:var(--muted);margin-top:2px}
+.sp-tk{font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:4px 2px -2px}
+.sp-tkn{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.sp-tauschknopf{border-color:var(--warn-ln);background:var(--warn-bg);color:var(--warn-t)}
+.sp-ersatzhinweis{display:flex;align-items:center;gap:6px;margin:-4px 0 14px;font-size:14.5px;color:var(--warn-t)}
+.sp-ersatzhinweis a{font-weight:800;color:var(--warn-t)}
+@media(max-width:560px){
+  .sp-mz{flex-wrap:wrap;justify-content:flex-end;gap:6px}
+  .sp-mz .sp-z{flex-basis:100%}
+  .sp-tkn .btn{flex:1 1 auto;justify-content:center}
+}
 </style>
 </head>
 <body>
@@ -4376,7 +4394,7 @@ function vDetailSimpel(id){
     :s===2?TS('simpel.d.2','F&uuml;r dein Ergebnis ist bei diesem Medikament nichts Besonderes bekannt.')
     :TS('simpel.d.leer','Dieses Medikament wurde in deiner Genanalyse nicht bewertet.');
   return `<div class="detail-top"><button class="btn" onclick="history.length>1?history.back():go('liste')">${ico('back','',15)} Zur&uuml;ck</button>
-      <button class="btn ${inListe?'':'btn-plum'}" onclick="toggleListe('${id}')">${ico(inListe?'s-check':'plus','',15)} ${inListe?TS('wort.aufliste','Auf deiner Liste'):TS('simpel.nehme','Ich nehme dieses Medikament')}</button></div>
+      <button class="btn ${inListe?'':'btn-plum'}" onclick="toggleListe('${id}')">${ico(inListe?'s-check':'plus','',15)} ${inListe?TS('wort.aufliste','Auf deiner Liste'):TS('simpel.nehme','Ich nehme dieses Medikament')}</button>${inListe?`<button class="btn sp-tauschknopf" onclick="openErsatz('${id}')">${ico('swap','',15)} ${ersatz[id]?TS('simpel.tausch.anders','Anderen Ersatz w&auml;hlen'):TS('simpel.tausch','Austauschen')}</button>`:''}</div>${inListe&&ersatz[id]?`<p class="sp-ersatzhinweis">${ico('swap','',15)} ${TS('ersatz.kopf','Dein Ersatzvorschlag:')} <a href="#" onclick="openDetail('${ersatz[id]}');return false">${esc(name(ersatz[id]))}</a></p>`:''}
     <div class="sp-detail">
       <div class="sp-dn">${ico('pillimg','sp-pill gross')}<div><h1 class="${nameKlasse(name(id))}">${nameSoft(name(id))}</h1>${m.length?`<div class="sp-marken">${TS('simpel.marken','Auch bekannt als')}: ${m.slice(0,5).map(x=>esc(x[0])).join(', ')}</div>`:''}</div></div>
       <div class="sp-stufe s-${i.sev}">${statusIcon(s,44)}<div><div class="sp-sw t-${i.sev}">${i.kurz}</div><p>${satz}</p></div></div>
@@ -4386,13 +4404,27 @@ function vDetailSimpel(id){
     </div>
     <p class="modlink-zeile"><a href="#" onclick="setModus('standard');return false">${TS('simpel.zustandard','Mehr Einzelheiten im Standardmodus')} &rarr;</a></p>`;
 }
+/* Deine Medikamente im Simpel-Modus: Zeile mit Austauschen und Entfernen; mit notiertem
+   Ersatzvorschlag ein Block wie im Standardmodus, nur einfacher (tools/97) */
+function spMeineZeile(id){
+  const er=ersatz[id];
+  const tausch=`<button class="sp-tb" onclick="openErsatz('${id}')" title="${TS('ersatz.knopf.titel','Ersatzvorschlag notieren, zum Besprechen mit &Auml;rztin oder Arzt')}">${ico('swap','',16)}<span>${TS('simpel.tausch','Austauschen')}</span></button>`;
+  const weg=`<button class="wbtn del" title="${TS('meine.entfernen.titel','Von deiner Liste entfernen')}" onclick="entferne('${id}')">${ico('trash','',17)}</button>`;
+  if(!er)return `<div class="sp-mz">${spZeile(id)}${tausch}${weg}</div>`;
+  return `<div class="sp-tausch">
+    <div class="sp-th">${ico('swap','',16)}<div><b>${TS('ersatz.kopf','Dein Ersatzvorschlag:')}</b> ${esc(name(id))} &rarr; <b>${esc(name(er))}</b><div class="sp-ts">${TS('ersatz.satz','Zum Besprechen mit deiner &Auml;rztin oder deinem Arzt, f&uuml;r eine m&ouml;gliche Umstellung. Die App &auml;ndert nichts an deiner Medikation.')}</div></div></div>
+    <div class="sp-tk">${TS('ersatz.sp.alt','Dein Medikament')}</div>${spZeile(id)}
+    <div class="sp-tk">${TS('ersatz.sp.neu','Vorschlag')}</div>${spZeile(er)}
+    <div class="sp-tkn"><button class="btn" onclick="openErsatz('${id}')">${ico('swap','',15)} ${TS('ersatz.anderer','Anderen Vorschlag w&auml;hlen')}</button><button class="btn" onclick="aufhebenErsatz('${id}')">${ico('back','',15)} ${TS('ersatz.verwerfen','Vorschlag verwerfen')}</button><button class="btn btn-del" onclick="entferne('${id}')">${ico('trash','',15)} ${TS('meine.entfernen','Von der Liste entfernen')}</button></div>
+  </div>`;
+}
 function vMeineSimpel(){
   const add=`<button class="btn btn-plum addbtn" onclick="openAdd()">${ico('plus','',17)} Medikament hinzuf&uuml;gen</button>`;
   const kopf=`<div class="wshead2"><div><div class="sec-title">${TS('meine.titel','Deine Medikamente')}</div><p class="sec-sub">${TS('simpel.meine.sub','Trag ein, was du nimmst. Du siehst sofort, was deine Genanalyse dazu sagt.')}</p></div>${add}</div>`;
   if(!liste.length)return kopf+`<div class="ws-empty"><div class="st-ic">${ico('n-pill','',34)}</div><h2>${TS('meine.leer.titel','Trag ein, was du einnimmst')}</h2><p>${TS('simpel.meine.leer','Tippe auf &bdquo;Medikament hinzuf&uuml;gen&ldquo; und such dein Medikament &ndash; auch der Name auf der Packung funktioniert.')}</p><button class="btn btn-plum" style="margin-top:14px" onclick="openAdd()">${ico('plus','',17)} Medikament hinzuf&uuml;gen</button></div>`;
   const auff=liste.filter(id=>st(id)===0||st(id)===1).length;
   return kopf+`<p class="sp-bilanz ${auff?'warn':'ok'}">${auff?TSf('simpel.meine.auff','Bei <b>{n} von {m}</b> deiner Medikamente gibt es Handlungsbedarf oder Achtung.',{n:auff,m:liste.length}):TSf('simpel.meine.ok','Bei keinem deiner {m} Medikamente gibt es Handlungsbedarf oder Achtung.',{m:liste.length})}</p>
-    <div class="sp-liste">${liste.slice().sort((a,b)=>stRang(st(a))-stRang(st(b))).map(id=>`<div class="sp-mz">${spZeile(id)}<button class="wbtn del" title="${TS('meine.entfernen.titel','Von deiner Liste entfernen')}" onclick="entferne('${id}')">${ico('trash','',17)}</button></div>`).join('')}</div>
+    <div class="sp-liste">${liste.slice().sort((a,b)=>stRang(st(a))-stRang(st(b))).map(spMeineZeile).join('')}</div>
     ${auff?spTipp():''}
     <button class="fab" onclick="openAdd()" aria-label="Medikament hinzuf&uuml;gen">${ico('plus','',20)}<span>Medikament hinzuf&uuml;gen</span></button>`;
 }
@@ -4402,7 +4434,7 @@ function introSimpelHtml(){
   return `<div class="ix-h"><div class="ixic">${ico('hearto','',20)}</div><h2>${TS('intro.titel','So liest du dein Ergebnis')}</h2><button class="x" onclick="closeIntro()" aria-label="Schlie&szlig;en">${ico('x','',16)}</button></div>
     <div class="intro-b">
       <div class="intro-s"><div class="intro-n">1</div><div><b>${TS('simpel.intro.1.k','Die Farben')}</b><div class="intro-farben">${pill(0,'Handlungsbedarf')}${pill(1,'Achtung')}${K&&K.plat?pill(3,'Hinweis'):''}${pill(2,'Normal')}</div><p>${K&&K.plat?TS('simpel.intro.1.t','Rot: eine Leitlinie nennt f&uuml;r dich eine andere Dosis oder ein anderes Medikament. Orange: Hinweise auf m&ouml;gliche Probleme. Blau: schwache Hinweise aus einzelnen Studien. Gr&uuml;n: nichts Besonderes bekannt.'):TS('simpel.intro.1.t.alt','Rot: eine Leitlinie oder der Beipackzettel nennt etwas, das zu beachten ist. Orange: Hinweise auf m&ouml;gliche Probleme. Gr&uuml;n: nichts Besonderes bekannt.')}</p></div></div>
-      <div class="intro-s"><div class="intro-n">2</div><div><b>${TS('simpel.intro.2.k','Trag deine Medikamente ein')}</b><p>${TS('simpel.intro.2.t','Unter &bdquo;Deine Medikamente&ldquo; siehst du sofort, was deine Genanalyse zu ihnen sagt.')}</p></div></div>
+      <div class="intro-s"><div class="intro-n">2</div><div><b>${TS('simpel.intro.2.k','Trag deine Medikamente ein')}</b><p>${TS('simpel.intro.2.t','Unter &bdquo;Deine Medikamente&ldquo; siehst du sofort, was deine Genanalyse zu ihnen sagt. Mit &bdquo;Austauschen&ldquo; notierst du einen Ersatzvorschlag zum Besprechen mit deiner &Auml;rztin oder deinem Arzt.')}</p></div></div>
       <div class="intro-s"><div class="intro-n">3</div><div><b>${TS('simpel.intro.3.k','Sprich mit deiner &Auml;rztin oder deinem Arzt')}</b><p>${TS('simpel.intro.3.t','&Auml;ndere nichts selbst. &bdquo;F&uuml;r deinen Arzt&ldquo; fasst dein Ergebnis f&uuml;r die Praxis zusammen.')}</p></div></div>
       <div class="intro-f"><button class="btn btn-plum" onclick="closeIntro()">${TS('intro.los','Los geht&rsquo;s')}</button><span class="anno">${TS('intro.spaeter','Sp&auml;ter jederzeit &uuml;ber das Fragezeichen.')}</span></div>
     </div>`;
