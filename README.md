@@ -9,4 +9,4 @@ deutsche Übersetzung – maßgeblich ist immer die englische Fassung.
 
 Dieses Repository enthält nur die gebaute App (`index.html`, `data/clinpgx_alle.json`). Herkunft und Lizenz der
 Daten: [LICENSE-DATA.md](LICENSE-DATA.md) (ClinPGx/PharmGKB, CPIC, PharmCAT unter CC BY-SA 4.0).
-Stand: 12.10.2026.
+Stand: 17.10.2026.
